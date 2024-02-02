@@ -1,0 +1,36 @@
+\palavrachave{Núcleo dinâmico da atmosfera, esfera cubada, volumes finitos, dimension splitting, ponto de partida, corretor de massa}
+
+\keyword{Dynamical core, cubed-sphere, finite-volume, dimension splitting, departure point, mass fixer}
+
+% O resumo é obrigatório, em português e inglês. Estes comandos também
+% geram automaticamente a referência para o próprio documento, conforme
+% as normas sugeridas da USP.
+\resumo{
+O núcleo dinâmico FV3 do GFDL-NOAA-USA, originalmente projetado para grades de latitude e longitude, foi adaptado para a esfera-cubada
+com o objetivo de melhorar sua escalabilidade em supercomputadores.
+No entanto, esse tipo de malha apresenta um erro de padrão de onda de número 4 devido à descontinuidade das coordenadas na esfera-cubada.
+Neste trabalho, investigamos os operadores de volumes finitos do FV3 na esfera-cubada.
+Para calcular os estênceis próximos às arestas do cubo, utilizamos a abordagem \textit{duogrid}.
+Ao contrário das extrapolações usadas no FV3, essa abordagem estende as linhas de grade para painéis adjacentes,
+reduzindo o erro nas interfaces do cubo. No entanto, a conservação de massa não é mais garantida.
+Demonstramos que o corretor de massa, que faz a média dos fluxos nas interfaces do cubo, reduz o erro de truncamento local do operador de divergência em um. 
+Em seguida, propomos um corretor de massa que introduz apenas um erro de segunda ordem e gera menos erro nas bordas.
+Além disso, apresentamos um método para modificar a técnica de splitting do FV3 para obter uma precisão de segunda ordem.
+Para isso, precisamos calcular os pontos de partida, que envolvem interpolações lineares unidimensionais, adicionando um pequeno esforço computacional adicional.
+Por fim, apresentamos experimentos numéricos para a equação de advecção que concordam com nossas observações em relação aos diferentes fixadores de massa e splittings.
+%Estudaremos as propriedades de dispersão e conservação do esquema visando propor modificações nos esquemas numéricos para o desenvolvimento de uma versão mimética do método. Em seguida, vamos desenvolver um refinamento local na esfera cubada e iremos ver o seu impacto na solução numérica. Por fim, como passo final no desenvolvimento 3D, iremos analisar e incluir a discretização lagrangiana vertical do modelo FV3 e verificar como os resultados obtidos na discretização horizontal podem impactar na solução do modelo tridimensional.
+}
+
+\abstract{
+The dynamical core FV3 from GFDL-NOAA-USA, originally designed for latitude-longitude grids, has been adapted to the cubed-sphere with the aim of enhancing its scalability on massively
+parallel supercomputers. However, this type of grid experiences a wavenumber 4 pattern error due to the cubed-sphere coordinate discontinuity.
+In this study, we investigate the finite-volume operators of FV3 on the cubed-sphere. To compute stencils near the cube edges, we employ the duogrid approach.
+Unlike the extrapolations used in FV3, this approach extends the grid-lines to adjacent panels, reducing the error at the cube interfaces.
+Nevertheless, mass preservation is no longer guaranteed.
+We demonstrate that the mass fixer that averages fluxes at the cube interfaces reduces the local truncation error of the divergence operator by one.
+Subsequently, we propose a mass fixer that introduces only a second-order error and generates less error at the edges.
+Additionally, we present a method to modify the splitting technique of FV3 to achieve second-order accuracy.
+To achieve this, we need to compute departure points, which involve one-dimensional linear interpolations adding a small extra computational effort.
+Finally, we present numerical experiments for the advection equation that agree with our observations regarding the different mass fixers and splittings.
+%Then, we shall develop a local refinement on the cubed-sphere and investigate how it impacts the numerical solution. As a final stage of the 3D development, we will analyze and include the Lagrangian vertical discretization of the FV3 model and investigate how the horizontal discretization aspects can impact on the full three-dimensional model.
+}
