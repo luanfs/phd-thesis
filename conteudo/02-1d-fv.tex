@@ -676,3 +676,206 @@ the floor function. This scheme leads to a third-order error in the departure po
 \citet[Section 7.1.2]{durran:2010}). This scheme shall be referred to as \textbf{RK2}. 
 Notice that for this scheme, we need ghost values for the velocity, depending on how large the CFL number is.
 In particular, if the CFL number is less than 2, then $k=0$ and we need the ghost values $u_{-1+\frac{1}{2}}^n$ and $u_{N+\frac{3}{2}}^n$.
+
+
+\section{Reconstruction}
+\label{chp-adv1d-sec-recon}
+In this section, we will review the Piecewise-Parabolic Method (PPM).
+The analysis of its accuracy will be presented in Section \ref{chp-adv1d-sec-numerical-analysis-ppm}.
+PPM was originally proposed by \citet{colella:1984} for gas dynamic simulations, and its applicability
+to atmospheric simulations has been demonstrated by \citet{carpenter:1990}.
+This method is based on utilizing parabolas to reconstruct the function using its average values,
+ensuring both mass conservation and monotonicity. PPM is an extension of the Piecewise-Linear Method
+introduced by \citet{vanleer:1977}, and it is implemented in the FV3 model using the dimension
+splitting method developed by \citet{lin:1996}.
+
+Let's consider a function ${q}$ defined in $\Omega=[a,b]$ and a $\Delta x$-grid covering $\Omega$.
+We assume that we are given the average values ${Q}_i = \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x) \,dx$
+for each control volume $X_i$, where $i = 1, \ldots, N$.
+In this context, it is convenient to define the $\Delta x$-grid function $Q\in \mathbb{P}^{N}_{\nu}$ with the entries given by $Q_i$.
+To facilitate the discussion, we introduce the indicator function $\chi_{i}(x)$ for each control volume $X_i$, defined as:
+\begin{equation*}
+	\label{chp-adv1d-sec3-1-eq1}
+	\chi_{i}(x)=
+	\begin{cases}
+		1 & \text{if } x \in X_i,\\
+		0 & \text{otherwise.}
+	\end{cases}
+\end{equation*}
+Drawing inspiration from \citet[Chapter~1]{stoer:2002}, we consider a family of functions $\Phi(\xi;\mu)$
+defined for $\xi \in [0,1]$, depending on a parameter $\mu =(\mu_0, \mu_1,\ldots, \mu_d)\in \mathbb{R}^{d+1}$.
+The reconstruction problem involves finding a piecewise function:
+\begin{equation}
+	\label{chp-adv1d-sec3-1-eq2}
+	\tilde{q}(x;Q) = \sum_{i=1}^{N} \chi_i(x) q_i(x;Q),
+\end{equation}
+where $q_i(x;Q) = \Phi\big(\frac{x-x_{i-\frac{1}{2}}}{\Delta x};\alpha_i\big)$ and
+$\alpha_i= (\alpha_{i0},\alpha_{i1}, \ldots \alpha_{id})\in\mathbb{R}^{d+1}$. It is required that:
+\begin{equation*}
+	\frac{1}{\Delta x}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \tilde{q}(x;Q) \,dx =
+	\frac{1}{\Delta x}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} q_i(x;Q) \,dx =
+	\int_{0}^{1} \Phi(\xi;\alpha_i) \,d\xi = {Q}_i,
+\end{equation*}
+which means that $q_i(x;Q)$ preserves the mass within each control volume $X_i$.
+
+Notice that, given $q_i(x;Q) = \Phi\big(\frac{x-x_{i-\frac{1}{2}}}{\Delta x};\alpha_i\big)$, 
+it is reasonable to expect that $\Phi(0;\alpha_i)$ approximates $q_i(x_{i-\frac{1}{2}})$ and
+$\Phi(1;\alpha_i)$ approximates $q_i(x_{i+\frac{1}{2}})$. Additionally, if both $q$ and
+$\Phi$ are sufficiently differentiable, $\Phi^{(l)}(0;\alpha_i)$ should approximate
+$(\Delta x)^l q^{(l)}(x_{i-\frac{1}{2}})$ and $\Phi^{(l)}(1;\alpha_i)$ should
+approximate $(\Delta x)^l q^{(l)}(x_{i+\frac{1}{2}})$, provided these derivatives exist.
+
+One approach to estimating these values at the edges $x_{i+\frac{1}{2}}$ using the average 
+values $Q$ is by employing a reconstruction method based on primitive functions \citep[Chapter~17]{leveque:2002}. 
+It is worth noting that if we define:
+\begin{equation}
+	\label{chp-adv1d-sec-recon-ppm-eq5}
+	Q(x) = \int_{a}^x q(\xi) \,d\xi,
+\end{equation}
+we have $Q^{(l)}(x) = q^{(l-1)}(x)$. 
+Specifically, $Q^{(l)}(x_{i+\frac{1}{2}}) = q^{(l-1)}(x_{i+\frac{1}{2}})$ and 
+$Q(x_{i+\frac{1}{2}}) = \Delta x\sum_{k=1}^i Q_k$, for all $i=0, \ldots, N$.
+Therefore, we can employ finite-difference schemes to estimate $q^{(l-1)}(x_{i+\frac{1}{2}})$
+using the $\Delta x$-grid function $Q$, given that it is assumed to be known.
+
+Let us assume that the $l$-th derivative of $Q$ at $x_{i+\frac{1}{2}}$ is approximated using a
+stencil $\mathcal{S}^{(l)}_{i+\frac{1}{2}}$ and weights $\beta^{(l)}_{k,i}$, where 
+$k \in \mathcal{S}^{(l)}_{i+\frac{1}{2}}$. When $d$ is odd, we can seek a parameter
+$\alpha_i \in \mathbb{R}^{d+1}$ that ensures mass conservation and approximates
+$q$ and its derivatives at the edges by solving the following system:
+\begin{equation}
+	\label{chp-adv1d-recon-sys1}
+	\begin{cases}
+		\int_{0}^{1} \Phi(\xi;\alpha_i) \,d\xi &= {Q}_i,\\
+		\Phi^{(l)}(0;\alpha_i) &= (\Delta x)^l \sum_{k \in 
+		\mathcal{S}^{(l)}_{i-\frac{1}{2}}} \beta_{k,i}^{(l)} {Q}_k, \quad \text{for } l = 0, \ldots, d-1.
+	\end{cases}
+\end{equation}
+If $d$ is even, similarly we look for a parameter $\alpha_i \in \mathbb{R}^{d+1}$ that solves:
+\begin{equation}
+	\begin{cases}
+		\label{chp-adv1d-recon-sys2}
+		\int_{0}^{1} \Phi(\xi;\alpha_i) \,d\xi &= {Q}_i,\\
+		\Phi^{(l)}(0;\alpha_i) &= (\Delta x)^l \sum_{k \in \mathcal{S}^{(l)}_{i-\frac{1}{2}}} \beta_{k,i}^{(l)} {Q}_k, \quad \text{for } l = 0, \ldots, \frac{d}{2}-1,\\
+		\Phi^{(l)}(1;\alpha_i) &= (\Delta x)^l \sum_{k \in \mathcal{S}^{(l)}_{i+\frac{1}{2}}} \beta_{k,i}^{(l)} {Q}_k, \quad \text{for } l = 0, \ldots, \frac{d}{2}-1.
+	\end{cases}
+\end{equation}
+The reconstruction problem becomes linear when $\Phi(\xi;\mu)$ can be expressed as:
+\begin{equation*}
+	\Phi(\xi;\mu) = \sum_{k=0}^d \mu_k \Phi_k(\xi),
+\end{equation*}
+where $\Phi_k$ are functions defined on $[0,1]$. In this case, Equation 
+\eqref{chp-adv1d-recon-sys1} and Equation \eqref{chp-adv1d-recon-sys2} form $(d+1)\times (d+1)$ linear systems.
+It is common to assume that the $\Phi_k$'s are linearly independent.
+Therefore, we have described a method that allows us to reconstruct a 
+function from its average values, preserving its mass in each control volume, 
+and approximating $q$ at the edges. This method works for functions $\Phi_k$
+as long as they are sufficiently differentiable.
+For example, choosing $d=0$ and $\Phi_0(\xi)=1$ gives us piecewise constant
+functions, as used in \citet{godunov:1959}.
+If we choose $d=1$, $\Phi_0(\xi)=1$, and $\Phi_1(\xi)=\xi$, we 
+obtain a piecewise linear reconstruction, similar to \citet{vanleer:1977}.
+For polynomial reconstruction schemes, we refer to \citet{engwirda:2016} and the references therein.
+
+
+\subsection{The Piecewise-Parabolic Method}
+\label{chp-adv1d-sec-ppm}
+Hereafter, we are going the focus on the piecewise parabolic method from \citet{colella:1984} that uses $d=2$, 
+$\Phi_0(\xi)=1$, $\Phi_1(\xi)=\xi$, $\Phi_1(\xi)=(1-\xi)\xi$. 
+In order to follow the notation from \citet{colella:1984},
+we write $\alpha_{0i} = q_{L, i}$, $\alpha_{1i} = \Delta q_i$ and $\alpha_{2i} = q_{6, i}$.
+Therefore, each $q_i$ may be expressed as:
+\begin{equation}
+	\label{chp-adv1d-sec-recon-ppm-eq1}
+	q_i(x;Q) = q_{L, i} + \Delta q_i z_i(x) + q_{6, i}z_i(x)(1-z_i(x)), 
+	\quad \text{where }
+	z_i(x) = \frac{x-x_{i-\frac{1}{2}}}{\Delta x},
+	\quad x \in X_i,
+\end{equation}
+where the values $q_{L, i}$, $\Delta q_i$ and $q_{6, i}$  will be specified latter.
+Note that each $z_i$ is just a normalization function that maps $X_i$ onto $[0,1]$.
+It is easy to see that 
+$\lim_{x \to x_{i-\frac{1}{2}}^+} {q_i(x;Q)} = q_{L, i}$.
+If we define $q_{R, i} = \lim_{x \to x_{i+\frac{1}{2}}^-} {q_i(x;Q)}$,
+then we have:
+\begin{equation}
+	\label{chp-adv1d-sec-recon-ppm-eq2}
+	\Delta q_i = q_{R, i} - q_{L, i}.
+\end{equation}
+The average value of $q_i$ is given by:
+\begin{equation}
+	\label{chp-adv1d-sec-recon-ppm-eq3}
+	\frac{1}{\Delta x}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}_i(x;Q) \,dx
+	= \frac{(q_{L,i} + q_{R,i})}{2} + \frac{q_{6,i}}{6}.
+\end{equation}
+Under the hypothesis of mass conservation, we have:
+\begin{equation}
+	\label{chp-adv1d-sec-recon-ppm-eq4}
+	q_{6,i} = 6\bigg(Q_i - \frac{(q_{L,i} + q_{R,i})}{2}\bigg).
+\end{equation}
+Therefore, we have found the parameters $\Delta q_i$ and $q_{6, i}$ as
+functions of the parameters $q_{L, i}$ and $q_{R, i}$,
+such that the parabola $q_i$ from \eqref{chp-adv1d-sec3-1-eq2} 
+guarantees mass conservation. To completely determine the 
+parabola $q_i$, we need to set the values $q_{L, i}$ and
+$q_{R, i}$, which, as we have seen, represent the limits of $q_i$ when
+$x$ tends to the left and right boundaries of $X_i$, respectively.
+Hence, it is natural to seek for $q_{L, i}$ as an approximation of $q(x_{i-\frac{1}{2}})$
+and $q_{R, i}$ as an approximation of $q(x_{i+\frac{1}{2}})$.
+As we mentioned before in after introducing Equation \eqref{chp-adv1d-sec-recon-ppm-eq5}, this is achieved
+using finite-differences.
+An explicit expression for the approximation of $q(x_{i-\frac{1}{2}})$, denoted by $q_{i+\frac{1}{2}}$, is given by \citep{colella:1984}:
+\begin{equation}
+	\label{chp-adv1d-sec-recon-ppm-eq7}
+	q_{i+\frac{1}{2}} = \frac{1}{2} \bigg( Q_{i+1} + Q_{i} \bigg) - \frac{1}{6} \bigg( \delta Q_{i+1} - \delta Q_{i}\bigg),
+\end{equation}
+where $\delta Q_{i}$ is the average slope in the $i$-th control-volume:
+\begin{equation}
+	\label{chp-adv1d-sec-recon-ppm-eq8}
+	\delta Q_{i} = \frac{1}{2} \bigg( Q_{i+1} - Q_{i-1} \bigg).
+\end{equation}
+We notice that Formula \eqref{chp-adv1d-sec-recon-ppm-eq8} may be rewritten more explicitly as:
+\begin{equation}
+	\label{chp-adv1d-sec-recon-ppm-eq9}
+	q_{i+\frac{1}{2}} = \frac{7}{12} \bigg( Q_{i+1} + Q_{i} \bigg) - \frac{1}{12} \bigg(  Q_{i+2} +Q_{i-1}\bigg).
+\end{equation}
+The Formula \eqref{chp-adv1d-sec-recon-ppm-eq9} is fourth-order accurate if
+$q$ is at least $\mathcal{C}^4$ \citep{colella:1984}. Indeed, we
+prove this later in Proposition \ref{prop:ppm-bound1}.
+An explicit expression for the values of $q_{R,i}$ and $q_{L,i}$ are given by:
+\begin{align}
+	\label{chp-adv1d-sec-recon-ppm-eq10}
+	q_{R,i} = q_{i+\frac{1}{2}} = \frac{7}{12} \bigg( Q_{i+1} + Q_{i} \bigg) - \frac{1}{12} \bigg(  Q_{i+2} +Q_{i-1}\bigg), \\
+	\label{chp-adv1d-sec-recon-ppm-eq11}
+	q_{L,i} = q_{i-\frac{1}{2}} = \frac{7}{12} \bigg( Q_{i} + Q_{i-1} \bigg) - \frac{1}{12} \bigg(  Q_{i+1} +Q_{i-2}\bigg).
+\end{align}
+During this work, we refer to this PPM scheme as \textbf{hord0}.
+This name is justified because in FV3, the 1D advection solver input is named ``hord''.
+
+\subsection{Monotonization}
+\label{chp-adv1d-sec-mono}
+This section is dedicated to presenting possible ways of ensuring the creation of new 
+extrema values in the PPM reconstruction. We are going to present an alternative scheme from \citet{lin:2004},
+which was an attempt to reduce the diffusion of the original scheme \citet{colella:1984}
+and is currently employed in the FV3 dynamical core \citep{harris:2021}.
+
+\subsubsection{Limiter from \citet{lin:2004} - hord8}
+Similarly to \citet{colella:1984}, \citet{lin:2004} reduces numerical oscillations
+in the parabolas by replacing the term $\delta Q_i$ in Equation \eqref{chp-adv1d-sec-recon-ppm-eq7}
+with the values $\delta_m Q_i$ given by:
+\begin{equation}
+	\label{chp-adv1d-sec-mono-eq4}
+	\delta_m Q_{i} =
+	\max(|\delta Q_i|, 2\delta Q_{\min,i}, 2\delta Q_{\max,i}) \cdot \text{sgn}(\delta Q_i),
+\end{equation}
+where $\delta Q_{\min,i} = Q_i - \min(Q_{i+1}, Q_i, Q_{i-1})$ and
+$\delta Q_{\max,i} = \max(Q_{i+1}, Q_i, Q_{i-1}) - Q_i$.
+The monotonicity is achieved by the following scheme:
+\begin{align}
+	\label{chp-adv1d-sec-mono-eq5}
+	q_{L,i} &\leftarrow Q_i - \max(|\delta_m Q_i|, |q_{L,i}-Q_i|) \cdot \text{sgn}(\delta_m Q_i),\\
+	q_{R,i} &\leftarrow Q_i - \max(|\delta_m Q_i|, |q_{R,i}-Q_i|) \cdot \text{sgn}(\delta_m Q_i).
+\end{align}
+This scheme may be further improved to reduce the diffusion even more, as described by \citet{lin:2004},
+but we are not going to assess this approach here.
+This scheme is referred to as \textbf{hord8}.
