@@ -466,11 +466,11 @@ If we show that $\max_{k=1, \ldots, N}{|\rho(k)|} \leq 1 + \alpha \Delta t$,
 with $\alpha$ independent of $\Delta t$, $N$ and $n$, then we ensure the stability of $\mathcal{H}_{\Delta x,n}$.
 
 \subsection{Flux accuracy analysis}
-\label{chp2-sub-flux}
+\label{chp-adv1d-sub-flux}
 With the PPM operator, we can compute the amplification factor by applying it
 on each Fourier mode considering the PPM and the hybrid PPM schemes, both without monotonization.
 We assume a constant velocity equal to one and $N=100$ (number of control volumes).
-In Figure \ref{chp2-fig-amplification} we show the amplification factor for both PPM and hybrid PPM schemes
+In Figure \ref{chp-adv1d-fig-amplification} we show the amplification factor for both PPM and hybrid PPM schemes
 considering different CFL numbers.
 We can observe that both schemes damp most of the Fourier modes for larger $k$, regardless of the CFL number.
 Besides that, the hybrid scheme is more effective when reducing the Fourier modes amplitude.
@@ -483,7 +483,7 @@ For an analysis of stability for larger time-steps, we refer to \citet{lauritzen
 	\includegraphics[width=0.49\linewidth]{stability_PPM-0}
 	\includegraphics[width=0.49\linewidth]{stability_PPM-PL07}
 	\caption{Amplification factor for the PPM (left) and hybrid PPM (right) schemes for different CFL numbers.}
-	\label{chp2-fig-amplification}
+	\label{chp-adv1d-fig-amplification}
 \end{figure}
 
 \section{Convergence, consistency and stability of 2D-FV schemes}
@@ -556,5 +556,504 @@ Using the midpoint rule for integration (Theorem \ref{prop-bound-midpoint2d}), t
 	\end{split}
 \end{align}
 Therefore, in order to investigate the consistency, we may compare how well the discrete divergence approximates the divergence.
+
+\section{Finite-difference estimates}
+\label{anexo-fd}
+This Section aims to prove all finite-difference error estimations 
+used throughout this appendix.
+All the proves are very simple and consist of applying Taylor's expansions,
+as it is usual when computing the accuracy order of many numerical schemes.
+%\theoremstyle{plain} % As próximas definições usam este estilo
+%\newtheorem{lema-fd}{Lemma}
+
+\begin{lema}
+	\label{lemma:fd-ppm-est1}
+	Let $F \in \mathcal{C}^{5}(\mathbb{R})$, $x_0 \in \mathbb{R}$ and $h>0$.
+	Then, the following identity holds:
+	\begin{equation}	
+		\label{lemma:fd-ppm-est1-eq0}
+		F'(x_0) =  \frac{4}{3} \bigg(\frac{F(x_0+h) - F(x_0-h)}{2h}\bigg)
+                      - \frac{1}{3} \bigg(\frac{F(x_0+2h) - F(x_0-2h)}{4h}\bigg)
+		      + C_1h^4,
+	\end{equation}
+	where $C_1$ is a constant that depends only on $F$ and $h$.
+\end{lema}
+
+\begin{proof}
+	Given $\delta \in ]0,2h]$, then $x_0 + \delta \in ]x_0,x_0+2h]$ and $x_0 - \delta \in ]x_0-2h,x_0]$.
+	Then, we get using the Taylor expansion of $F$:
+	\begin{align*}
+		F(x_0 + \delta) = F(x_0) +  &F'(x_0)\delta + F^{(2)}(x_0)\frac{\delta ^2}{2} 
+		+ F^{(3)}(x_0)\frac{\delta ^3}{3!}
+		+ F^{(4)}(x_0)\frac{\delta ^3}{4!}
+		+ F^{(5)}(\theta_{\delta} )\frac{\delta ^5}{5!}
+		\quad \theta_{\delta} \in [x_0,x_0+\delta ],\\
+		F(x_0 - \delta) = F(x_0) -&F'(x_0)\delta  + F^{(2)}(x_0)\frac{\delta ^2}{2}
+		- F^{(3)}(x_0)\frac{\delta ^3}{3!}
+		+ F^{(4)}(x_0)\frac{\delta ^4}{4!}
+		- F^{(5)}(\theta_{-\delta})\frac{\delta ^5}{5!},		
+		\quad \theta_{-\delta} \in [x_0-\delta ,x_0].
+	\end{align*}
+	
+	Thus:
+	\begin{equation}
+		\label{lemma:fd-ppm-est1-eq1}
+		\frac{F(x_0 + \delta ) - F(x_0 - \delta )}{2\delta } = F'(x_0) + 
+		F^{(3)}(x_0)\frac{\delta^2}{3!} +
+		\bigg( F^{(5)}(\theta_{\delta}) + 
+		F^{5}(\theta_{-\delta}) \bigg) \frac{\delta ^4}{2\cdot5!} ,		
+	\end{equation}
+	
+	Applying Equation \eqref{lemma:fd-ppm-est1-eq1} for $\delta  = h$ and 
+	$\delta  = 2h$, we get, respectively:
+	\begin{equation}
+		\label{lemma:fd-ppm-est1-eq2}
+		\frac{F(x_0 + h) - F(x_0-h)}{2h} = F'(x_0) +
+		F^{(3)}(x_0)\frac{h^2}{3!} +
+		\bigg(F^{(5)}(\theta_{h}) + F^{5)}(\theta_{-h})\bigg)\frac{h^4}{2\cdot5!}, 
+		\quad \theta_{h} \in [x_0,x_0+h], \quad \theta_{-h}\in [x_0-h,x_0],
+	\end{equation}
+	and
+	\begin{align}
+	    \label{lemma:fd-ppm-est1-eq3}
+		\frac{F(x_0+2h) - F(x_0-2h)}{4h} = F'(x_0) +
+		F^{(3)}(x_0)\frac{4h^2}{3!} + 
+		\bigg( F^{(5)}(\theta_{2h}) + F^{(5)}(\theta_{-2h})\bigg) \frac{16h^4}{2\cdot5!},
+		\\ \nonumber
+		\quad \theta_{2h} \in [x_0,x_0+2h], \quad \theta_{-2h}\in [x_0-2h,x_0].
+	\end{align}
+
+	Using Equations \eqref{lemma:fd-ppm-est1-eq2} and \eqref{lemma:fd-ppm-est1-eq3}, we obtain:
+	\begin{align}
+		\label{lemma:fd-ppm-est1-eq4}
+		\frac{4}{3} \bigg(\frac{F(x_0+h) - F(x_0-h)}{2h}\bigg) &= \frac{4}{3} F'(x_0) +
+				F^{(3)}(x_0)\frac{4h^2}{3\cdot3!} +
+                \bigg( F^{(5)}(\theta_{h}) + F^{(5)}(\theta_{-h})\bigg)\frac{h^4}{2\cdot5!},\\
+        \label{lemma:fd-ppm-est1-eq5}
+	        	\frac{1}{3} \bigg(\frac{F(x_0+2h) - F(x_0-2h)}{4h}\bigg) &= \frac{1}{3} F'(x_0)+
+		       	F^{(3)}(x_0)\frac{4h^2}{3\cdot3!} +
+		        \bigg( F^{(5)}(\theta_{2h}) + F^{(5)}(\theta_{-2h})\bigg) \frac{16h^4}{3\cdot2\cdot5!} 
+	\end{align}
+
+	Subtracting Equation \eqref{lemma:fd-ppm-est1-eq5} from Equation \eqref{lemma:fd-ppm-est1-eq4} we get 
+	the desired Equation \eqref{lemma:fd-ppm-est1-eq0} with
+	\begin{equation}
+		C_1 = \frac{1}{720}\bigg( 3F^{(5)}(\theta_{h}) + 3F^{(5)}(\theta_{-h})
+            -16F^{(5)}(\theta_{2h}) - 16F^{(5)}(\theta_{-2h})\bigg), 
+		%C = \frac{1}{240}\bigg( F^{(5)}(\theta_{h}) + F^{(5)}(\theta_{-h})\bigg)
+		%- \frac{1}{45}\bigg( F^{(5)}(\theta_{2h}) + F^{(5)}(\theta_{-2h})\bigg), 
+	\end{equation}
+	where $\theta_{h} \in [x_0,x_0+h], \theta_{-h}\in [x_0-h,x_0]$, 
+	$\theta_{2h} \in [x_0,x_0+2h], \theta_{-2h}\in [x_0-2h,x_0]$.
+	Using the intermediate value theorem, we can express $C_1$ in a more compact way as
+	\begin{equation}
+	\label{lemma:fd-ppm-est1-eq6}
+	C_1 = \frac{1}{720}\bigg( 6F^{(5)}(\eta_{1}) -32F^{(5)}(\eta_{2})\bigg), 
+\end{equation}
+where $\eta_{1}, \eta_{2} \in [x_0-2h,x_0+2h]$, which concludes the proof.
+\end{proof}
+
+
+\begin{lema}
+	\label{lemma:fd-ppm-est2}
+	Let $F \in \mathcal{C}^{4}(\mathbb{R})$, $x_0 \in \mathbb{R}$ and $h>0$.
+	Then, the following identity holds:
+	\begin{equation}	
+		\label{lemma:fd-ppm-est2-eq0}
+		F''(x_0) =  \frac{-2F(x_0-2h) + 15F(x_0-h) -28F(x_0) + 20F(x_0+h) -6F(x_0+2h) + F(x_0+3h)}{6h^2}
+		      + C_2h^2,
+	\end{equation}
+	where $C_2$ is a constant that depends only on $F$ and $h$.
+\end{lema}
+
+\begin{proof}
+From the Taylor's expansion, we have:
+	\begin{align*}
+		F(x_0-2h) &= F(x_0) - 2F'(x_0)h +           2F^{(2)}(x_0)h^2  - \frac{8}{6}F^{(3)}(x_0)h^3 + \frac{16}{24}F^{(4)}(\theta_{-2h})h^4,\\
+		F(x_0-h)  &= F(x_0) -  F'(x_0)h +  \frac{1}{2}F^{(2)}(x_0)h^2 - \frac{1}{6}F^{(3)}(x_0)h^3 + \frac{1}{24}F^{(4)}(\theta_{-h})h^4, \\
+		F(x_0+h)  &= F(x_0) +  F'(x_0)h +  \frac{1}{2}F^{(2)}(x_0)h^2 + \frac{1}{6}F^{(3)}(x_0)h^3 + \frac{1}{24}F^{(4)}(\theta_{h})h^4, \\
+		F(x_0+2h) &= F(x_0) + 2F'(x_0)h +           2F^{(2)}(x_0)h^2  + \frac{8}{6}F^{(3)}(x_0)h^3 + \frac{16}{24}F^{(4)}(\theta_{2h})h^4,\\
+		F(x_0+3h) &= F(x_0) + 3F'(x_0)h + \frac{9}{2}F^{(2)}(x_0)h^2  + \frac{27}{6}F^{(3)}(x_0)h^3+ \frac{81}{24}F^{(4)}(\theta_{3h})h^4,\\
+	\end{align*}
+	where $ \theta_{-2h}\in [x_0-2h,x_0-h], \theta_{-h}\in [x_0-h,x_0], \theta_{h} \in [x_0,x_0+h], 
+	\theta_{2h} \in [x_0+h,x_0+2h], \theta_{3h}\in [x_0+2h,x_0+3h]$. 
+	Multiplying these equations by their respective coefficients given in 
+	Equation \eqref{lemma:fd-ppm-est2-eq0}, one get:
+	
+	\begin{align*}
+		 -2F(x_0-2h) &=  -2F(x_0) + 4F'(x_0)h -          4F^{(2)}(x_0)h^2   + \frac{16}{6}F^{(3)}(x_0)h^3 - \frac{32}{24}F^{(4)}(\theta_{-2h})h^4,\\
+		 15F(x_0-h)  &=  15F(x_0) -15F'(x_0)h + \frac{15}{2}F^{(2)}(x_0)h^2 - \frac{15}{6}F^{(3)}(x_0)h^3 + \frac{15}{24}F^{(4)}(\theta_{-h})h^4,\\
+		-28F(x_0)    &= -28F(x_0),\\
+		 20F(x_0+h)  &=  20F(x_0) +20F'(x_0)h +          10F^{(2)}(x_0)h^2  + \frac{20}{6}F^{(3)}(x_0)h^3 + \frac{20}{24}F^{(4)}(\theta_{h})h^4,\\
+		 -6F(x_0+2h) &=  -6F(x_0) -12F'(x_0)h -          12F^{(2)}(x_0)h^2  -            8F^{(3)}(x_0)h^3 - \frac{96}{24}F^{(4)}(\theta_{2h})h^4,\\
+		   F(x_0+3h) &=    F(x_0) + 3F'(x_0)h + \frac{9}{2}F^{(2)}(x_0)h^2  + \frac{27}{6}F^{(3)}(x_0)h^3 + \frac{81}{24}F^{(4)}(\theta_{3h})h^4.\\
+	\end{align*}
+	
+	Summing all these equations, we get the desired Formula \eqref{lemma:fd-ppm-est2-eq0} with $C_2$ given by:
+	\begin{equation}
+		C_2 = \frac{1}{24}\bigg(32F^{(4)}(\theta_{-2h}) - 15F^{(4)}(\theta_{-h}) -20F^{(4)}(\theta_{h}) +96 F^{(4)}(\theta_{2h}) - 81F^{(4)}(\theta_{3h})\bigg).
+	\end{equation}
+Using the intermediate value theorem, we can express $C_2$ in a more compact way as
+\begin{equation}
+		\label{lemma:fd-ppm-est2-eq1}
+	C_2 = \frac{1}{24}\bigg( 128F^{(5)}(\eta_{1}) -116F^{(5)}(\eta_{2})\bigg), 
+\end{equation}
+where $\eta_{1}, \eta_{2} \in [x_0-2h,x_0+3h]$, which concludes the proof.
+\end{proof}
+
+
+\begin{lema}
+	\label{lemma:fd-ppm-est3}
+	Let $F \in \mathcal{C}^{4}(\mathbb{R})$, $x_0 \in \mathbb{R}$ and $h>0$.
+	Then, the following identity holds:
+	\begin{equation}	
+		\label{lemma:fd-ppm-est3-eq0}
+		F^{(3)}(x_0) =  \frac{F(x_0-2h) - 7F(x_0-h) +16F(x_0) - 16F(x_0+h) +7F(x_0+2h) - F(x_0+3h)}{2h^3}
+		      + C_3h,
+	\end{equation}
+	where $C_3$ is a constant that depends only on $F$ and $h$.
+\end{lema}
+
+\begin{proof}
+From the Taylor's expansion, we have:
+	\begin{align*}
+		F(x_0-2h) &= F(x_0) - 2F'(x_0)h +           2F^{(2)}(x_0)h^2  - \frac{8}{6}F^{(3)}(x_0)h^3 + \frac{16}{24}F^{(4)}(\theta_{-2h})h^4,\\
+		F(x_0-h)  &= F(x_0) -  F'(x_0)h +  \frac{1}{2}F^{(2)}(x_0)h^2 - \frac{1}{6}F^{(3)}(x_0)h^3 + \frac{1}{24}F^{(4)}(\theta_{-h})h^4, \\
+		F(x_0+h)  &= F(x_0) +  F'(x_0)h +  \frac{1}{2}F^{(2)}(x_0)h^2 + \frac{1}{6}F^{(3)}(x_0)h^3 + \frac{1}{24}F^{(4)}(\theta_{h})h^4, \\
+		F(x_0+2h) &= F(x_0) + 2F'(x_0)h +           2F^{(2)}(x_0)h^2  + \frac{8}{6}F^{(3)}(x_0)h^3 + \frac{16}{24}F^{(4)}(\theta_{2h})h^4,\\
+		F(x_0+3h) &= F(x_0) + 3F'(x_0)h + \frac{9}{2}F^{(2)}(x_0)h^2  + \frac{27}{6}F^{(3)}(x_0)h^3+ \frac{81}{24}F^{(4)}(\theta_{3h})h^4,\\
+	\end{align*}
+	where $ \theta_{-2h}\in [x_0-2h,x_0-h], \theta_{-h}\in [x_0-h,x_0], \theta_{h} \in [x_0,x_0+h], 
+	\theta_{2h} \in [x_0+h,x_0+2h], \theta_{3h}\in [x_0+2h,x_0+3h]$. 
+	Multiplying these equations by their respective coefficients given in 
+	Equation \eqref{lemma:fd-ppm-est3-eq0}, one get:
+	
+	\begin{align*}
+		  F(x_0-2h) &=    F(x_0)  - 2F'(x_0)h  + \frac{4}{2}F^{(2)}(x_0)h^2  - \frac{8}{6}F^{(3)}(x_0)h^3 + \frac{16}{24}F^{(4)}(\theta_{-2h})h^4,\\
+		 -7F(x_0-h)  &=  -7F(x_0) + 7F'(x_0)h  - \frac{7}{2}F^{(2)}(x_0)h^2 + \frac{7}{6}F^{(3)}(x_0)h^3 - \frac{7}{24}F^{(4)}(\theta_{-h})h^4,\\
+		 16F(x_0)    &=  16F(x_0),\\
+		-16F(x_0+h)  &= -16F(x_0) -16F'(x_0)h  - \frac{16}{2}F^{(2)}(x_0)h^2  - \frac{16}{6}F^{(3)}(x_0)h^3 - \frac{16}{24}F^{(4)}(\theta_{h})h^4,\\
+		  7F(x_0+2h) &=   7F(x_0)  +14F'(x_0)h + \frac{28}{2}F^{(2)}(x_0)h^2  + \frac{56}{6}F^{(3)}(x_0)h^3 + \frac{112}{24}F^{(4)}(\theta_{2h})h^4,\\
+		  -F(x_0+3h) &=   -F(x_0) - 3F'(x_0)h - \frac{9}{2}F^{(2)}(x_0)h^2  - \frac{27}{6}F^{(3)}(x_0)h^3 - \frac{81}{24}F^{(4)}(\theta_{3h})h^4.\\
+	\end{align*}
+	
+	Summing all these equations, we have:
+	\begin{align*}
+	F(x_0-2h) - 7F(x_0-h) +16F(x_0) - 16F(x_0+h) +7F(x_0+2h) - F(x_0+3h) = 2F^{(3)}(x_0)h^3 - 2C_3h^4,
+	\end{align*}
+	we get the desired Formula \eqref{lemma:fd-ppm-est3-eq0} with $C_3$ given by:
+	\begin{equation}
+		C_3 = \frac{1}{48}\bigg(-16F^{(4)}(\theta_{-2h}) + 7F^{(4)}(\theta_{-h}) +16F^{(4)}(\theta_{h}) - 112F^{(4)}(\theta_{2h}) + 81F^{(4)}(\theta_{3h})\bigg). 
+	\end{equation}
+Using the intermediate value theorem, we can express $C_3$ in a more compact way as
+\begin{equation}
+		\label{lemma:fd-ppm-est2-eq2}
+	C_3 = \frac{1}{48}\bigg( 104F^{(5)}(\eta_{1}) -128F^{(5)}(\eta_{2})\bigg), 
+\end{equation}
+where $\eta_{1}, \eta_{2} \in [x_0-2h,x_0+3h]$, which concludes the proof.
+\end{proof}
+
+
+\section{PPM reconstruction accuracy analysis}
+\label{chp-adv1d-sec-numerical-analysis-ppm}
+In this Section, we are going to investigate the accuracy of the PPM reconstruction process.
+As we pointed out in Section \ref{chp-adv1d-sec-ppm}, the approximation of $q$ at the control volumes edges
+given by Equation \eqref{chp-adv1d-sec-recon-ppm-eq9} is fourth-order accurate when $q \in \mathcal{C}^4(\mathbb{R})$. 
+This is proved as a Corollary of the following Proposition \ref{prop:ppm-bound1}.
+\begin{prop}
+	\label{prop:ppm-bound1}
+	Let $q \in \mathcal{C}^{4}(\mathbb{R})$, $\overline{x} \in \mathbb{R} $ and $h>0$.
+	Then, the following identity holds:
+	\begin{equation}
+		\label{prop:ppm-bound1-eq1}
+		q(\overline{x} ) = \frac{7}{12}\bigg( \frac{1}{h} \int_{\overline{x} }^{\overline{x}+h} q(x) \,dx 
+		+ \frac{1}{h} \int_{\overline{x} -h}^{\overline{x} } q(x) \,dx  \bigg)
+		- \frac{1}{12}\bigg( \frac{1}{h} \int_{\overline{x} +h}^{\overline{x}+2h} q(x) \,dx 
+		+ \frac{1}{h} \int_{\overline{x} -2h}^{\overline{x} -h} q(x) \,dx  \bigg) + C_1h^4,
+	\end{equation}
+	where $C_1$ is a constant that depends on $q$ and $h$.
+\end{prop}
+\begin{proof}
+	We define $Q(x) = \int_{a}^{x} q(\xi) \,d\xi$ for fixed $a \in \mathbb{R}$ as in 
+	Equation \eqref{chp-adv1d-sec-recon-ppm-eq5}. It follows that:
+	\begin{align*}
+		\int_{\overline{x}}^{\overline{x}+h} q(\xi) \,d\xi + \int_{\overline{x}-h}^{\overline{x}} q(\xi) \,d\xi &=
+		Q(\overline{x}+h) - Q(\overline{x}-h), \\
+		\int_{\overline{x}+h}^{\overline{x}+2h} q(\xi) \,d\xi + \int_{\overline{x}-2h}^{\overline{x}-h} q(\xi) \,d\xi &=
+		Q(\overline{x}+2h) - Q(\overline{x}-2h) - (Q(\overline{x}+h) - Q(\overline{x}-h)). \\
+	\end{align*}
+	Using these identities, Equation \eqref{prop:ppm-bound1-eq1} may be rewritten as:
+	\begin{equation}
+		\label{prop:ppm-bound1-eq2}
+		q(\overline{x}) = \frac{4}{3} \bigg(\frac{Q(\overline{x}+h) - Q(\overline{x}-h)}{2h}\bigg)
+		- \frac{1}{3} \bigg(\frac{Q(\overline{x}+2h) - Q(\overline{x}-2h)}{4h}\bigg) + C_1h^4,
+	\end{equation}
+	which consists of finite-difference approximations. 
+	Thus, Equation \eqref{prop:ppm-bound1-eq1} follows from Lemma \ref{lemma:fd-ppm-est1}
+	with:
+	\begin{equation}
+		\label{prop:ppm-bound1-eq3}
+		C_1 = C_1(\mu_1,\mu_2) = \frac{1}{720}\bigg(6q^{(4)}(\mu{1}) -32q^{(4)}(\mu_{2})\bigg), 
+	\end{equation}
+	where $\mu_{1}, \mu_{2} \in [\overline{x}-2h,\overline{x}+2h]$,
+	which concludes the proof.
+\end{proof}
+\begin{corollary}
+	\label{prop:ppm-bound1-corollary}
+	It follows from Proposition \ref{prop:ppm-bound1} with
+	$\overline{x} = x_{i+\frac{1}{2}}$ and $h = \Delta x$
+	that $q_{i+\frac{1}{2}}$ given by Equation \eqref{chp-adv1d-sec-recon-ppm-eq9} satisfies:
+	\begin{equation}
+		\label{ppm-edges-bound1}
+		q{(x_{i+\frac{1}{2}})} - q_{i+\frac{1}{2}} = C_1\Delta x^4,
+	\end{equation}
+	with $C_1$ given by Equation \eqref{prop:ppm-bound1-eq3}, whenever $q \in \mathcal{C}^4(\mathbb{R}).$
+\end{corollary}
+
+The parabolic function from \eqref{chp-adv1d-sec-recon-ppm-eq1}  given with 
+coefficients specified before approximates $q$ with order 3 when 
+$q \in \mathcal{C}^4(\mathbb{R})$.
+In order to check this, for $x \in X_i$ we rewrite Equation 
+\eqref{chp-adv1d-sec-recon-ppm-eq1} as: 
+\begin{equation}
+	\label{chp-adv1d-ppm-newton}
+	q_i(x;Q) = q_{L,i} + \frac{(\Delta q_i + q_{6, i})}{\Delta x}(x-x_{i-\frac{1}{2}})
+	-\frac{q_{6, i}}{\Delta x^2}(x-x_{i-\frac{1}{2}})^2
+\end{equation}
+and we write $q$ using its Taylor expansion assuming $q \in \mathcal{C}^4(\mathbb{R})$:
+\begin{equation}
+	\label{chp-adv1d-ppm-taylor}
+	q(x) = q(x_{i-\frac{1}{2}}) + q'(x_{i-\frac{1}{2}})(x-x_{i-\frac{1}{2}})
+	+ \frac{q''(x_{i-\frac{1}{2}})}{2}(x-x_{i-\frac{1}{2}})^2
+	+ \frac{q^{(3)}(\theta_i)}{6}(x-x_{i-\frac{1}{2}})^3,
+\end{equation}
+where $\theta_i \in X_i$.
+Comparing Equation \eqref{chp-adv1d-ppm-newton} with Equation \eqref{chp-adv1d-ppm-taylor},
+it is reasonable to seek to some bound to the expressions:
+\begin{equation}
+	\label{chp-adv1d-ppm-bound2eq}
+	q'(x_{i-\frac{1}{2}})-\frac{(\Delta q_i + q_{6, i})}{\Delta x},
+\end{equation}
+and:
+\begin{equation} 
+	\label{chp-adv1d-ppm-bound3eq}
+	\frac{q''(x_{i-\frac{1}{2}})}{2} -\bigg(-\frac{q_{6, i}}{\Delta x^2}\bigg).
+\end{equation}
+We have seen that term $q_{L,i}$ gives a fourth-order approximation to $q(x_{i-\frac{1}{2}})$.
+The Corollary \ref{prop:ppm-bound2-corollary} shall prove that 
+the term \eqref{chp-adv1d-ppm-bound2eq} has a bound proportional to $\Delta x^2$, and
+the Corollary \ref{prop:ppm-bound3-corollary} shall prove that the
+term \eqref{chp-adv1d-ppm-bound3eq} is bounded by a constant times $\Delta x$.
+
+Before proving the desired bounds, it is useful to rewrite some terms
+explicitly as functions of the values of the $\Delta x$-grid function $Q$.
+Combining Equation \eqref{chp-adv1d-sec-recon-ppm-eq4} with Equations
+\eqref{chp-adv1d-sec-recon-ppm-eq10} and \eqref{chp-adv1d-sec-recon-ppm-eq11}, 
+we may write $q_{6,i}$ as:
+\begin{equation}
+	\label{def:q6i-2}
+	q_{6,i} = \frac{1}{4} \bigg( Q_{i-2} - 6Q_{i-1} + 10Q_{i} -6Q_{i+1}  + Q_{i+2} \bigg).
+\end{equation}
+Recalling the definition of $\Delta q_i$ from Equation \eqref{chp-adv1d-sec-recon-ppm-eq2},
+and applying Equations \eqref{chp-adv1d-sec-recon-ppm-eq10} and \eqref{chp-adv1d-sec-recon-ppm-eq11}, 
+we may express $\Delta q_i$ as:
+\begin{equation}
+	\label{def:dqi-2}
+	\Delta q_i = \frac{1}{12} \bigg(Q_{i-2} -8Q_{i-1} + 8Q_{i+1} -Q_{i+2} \bigg).
+\end{equation}
+Finally, we combine Equations \eqref{def:q6i-2} and \eqref{def:dqi-2} and write their sum as:
+\begin{equation} 
+	\label{def:dqi_d6i}
+	\frac{(\Delta q_i + q_{6, i})}{\Delta x} = 
+	\frac{2Q_{i-2}-13Q_{i-1} +15Q_i -5Q_{i+1} + Q_{i+2}}{6\Delta x}.
+\end{equation}
+The next Proposition \ref{prop:ppm-bound2} proves that Equation \eqref{def:dqi_d6i}
+approximates $q'(x_{i-\frac{1}{2}})$ with order 2.
+\begin{prop}
+	\label{prop:ppm-bound2}
+	Let $q \in \mathcal{C}^{3}(\mathbb{R})$, $\overline{x}\in \mathbb{R}$ and $h>0$.
+	Then, the following identity holds:
+	\begin{equation}
+		\begin{split}
+			\label{prop:ppm-bound2-eq1}
+			q'(\overline{x} ) = \frac{1}{6h}
+			\bigg( \frac{2}{h} \int_{\overline{x}-2h}^{\overline{x}-h} q(x) \,dx 
+			-\frac{13}{h}\int_{\overline{x}-h}^{\overline{x}} q(x) \,dx   
+			+\frac{15}{h}\int_{\overline{x}}^{\overline{x}+h} q(x) \,dx  \\ 
+			-\frac{5}{h} \int_{\overline{x}+h}^{\overline{x}+2h} q(x) \,dx   
+			+\frac{1}{h} \int_{\overline{x}+2h}^{\overline{x}+3h} q(x) \,dx   
+			\bigg) + C_2h^2,
+		\end{split}
+	\end{equation}
+	where $C_2$ is a constant that depends on $q$ and $h$.
+\end{prop}
+
+\begin{proof}
+	We consider again $Q(x) = \int_{a}^{x} q(\xi) \,d\xi$ for $a \in \mathbb{R}$ fixed as in 
+	Equation \eqref{chp-adv1d-sec-recon-ppm-eq5}. 
+	Like in Proposition \ref{prop:ppm-bound2}, we have:
+	\begin{align*}
+		\frac{1}{6h}
+		\bigg( \frac{2}{h} \int_{\overline{x}-2h}^{\overline{x}-h} q(x) \,dx 
+		-\frac{13}{h}\int_{\overline{x}-h}^{\overline{x}} q(x) \,dx   
+		+\frac{15}{h}\int_{\overline{x}}^{\overline{x}+h} q(x) \,dx 
+		-\frac{5}{h} \int_{\overline{x}+h}^{\overline{x}+2h} q(x) \,dx   
+		+\frac{1}{h} \int_{\overline{x}+2h}^{\overline{x}+3h} q(x) \,dx   
+		\bigg)\\
+		= \frac{1}{6h} \bigg(
+		\frac{2}{h}   \big( Q(\overline{x}-h)- Q(\overline{x}-2h)\big) 
+		-\frac{13}{h} \big( Q(\overline{x}) - Q(\overline{x}-h) \big) 
+		+\frac{15}{h} \big( Q(\overline{x}+h) - Q(\overline{x})  \big) \\
+		-\frac{5}{h}  \big( Q(\overline{x}+2h) - Q(\overline{x}+h)  \big) 
+		+\frac{1}{h}  \big( Q(\overline{x}+3h) - Q(\overline{x}+2h)  \big) 
+		\bigg)\\
+		= \frac{1}{6h^2}\bigg(-2Q(\overline{x}-2h) + 15Q(\overline{x}-h) - 28Q(\overline{x}) 
+		+20Q(\overline{x}+h) -6Q(\overline{x}+2h) + Q(\overline{x}+3h)  \bigg),
+	\end{align*}
+	which consists of the finite-difference scheme from Lemma \ref{lemma:fd-ppm-est2}. 
+	Therefore, Equation \eqref{prop:ppm-bound2-eq1} follows from Lemma \ref{lemma:fd-ppm-est2} with:
+	\begin{equation}
+		\label{prop:ppm-bound2-eq2}
+		C_2 = C_2(\mu_1,\mu_2) = \frac{1}{24}\bigg(128q^{(3)}(\mu_{1}) - 116q^{(3)}(\mu_{2})\bigg), 
+	\end{equation}
+	where $\mu_{1}, \mu_{2} \in [x_0-2h,x_0+3h]$, which concludes the proof.
+\end{proof}
+\begin{corollary}
+	\label{prop:ppm-bound2-corollary}
+	It follows from Proposition \ref{prop:ppm-bound2} with $\overline{x} = x_{i-\frac{1}{2}}$
+	and $h = \Delta x$ that $\Delta q_i$ given by Equation \eqref{def:dqi-2} 
+	and $q_{6,i}$ given by Equation \eqref{def:q6i-2} satisfy:
+	\begin{equation}
+		q'(x_{i-\frac{1}{2}})-\frac{(\Delta q_i + q_{6, i})}{\Delta x}  = C_2\Delta x^2,
+	\end{equation}
+	with $C_2$ given by Equation \eqref{prop:ppm-bound2-eq2}, whenever $q \in \mathcal{C}^3(\mathbb{R})$.
+\end{corollary}
+Now, we analyse the following expression:
+\begin{equation}
+	\label{def:q6i-3}
+	-\frac{2q_{6,i}}{\Delta x^2} = 
+	-\frac{1}{2\Delta x^2} \bigg( Q_{i-2} - 6Q_{i-1} + 10Q_{i} -6Q_{i+1}  + Q_{i+2} \bigg).
+\end{equation}
+deduced from Equation \eqref{def:q6i-2}
+and we prove in Proposition \ref{prop:ppm-bound3} that Equation \eqref{def:q6i-3}
+approximates $q''(x_{i-\frac{1}{2}})$ with order 1.
+\begin{prop}
+	\label{prop:ppm-bound3}
+	Let $q \in \mathcal{C}^{3}(\mathbb{R})$, $\overline{x} \in \mathbb{R}$ and $h>0$.
+	Then, the following identity holds:
+	\begin{equation}
+		\begin{split}
+			\label{prop:ppm-bound3-eq1}
+			q''(\overline{x} ) = \frac{1}{2h^2}
+			\bigg(-\frac{1}{h} \int_{\overline{x}-2h}^{\overline{x}-h} q(x) \,dx 
+			+\frac{6}{h}\int_{\overline{x}-h}^{\overline{x}} q(x) \,dx   
+			-\frac{10}{h}\int_{\overline{x}}^{\overline{x}+h} q(x) \,dx  \\ 
+			+\frac{6}{h} \int_{\overline{x}+h}^{\overline{x}+2h} q(x) \,dx   
+			-\frac{1}{h} \int_{\overline{x}+2h}^{\overline{x}+3h} q(x) \,dx   
+			\bigg) + C_3h,
+		\end{split}
+	\end{equation}
+	where $C_3$ is a constant that depends on $q$ and $h$.
+\end{prop}
+\begin{proof}
+	Similarly to Proposition \ref{prop:ppm-bound2} using the same function $Q$, we have:
+	\begin{align*}
+		\frac{1}{2h^2}
+		\bigg(-\frac{1}{h} \int_{\overline{x}-2h}^{\overline{x}-h} q(x) \,dx 
+		+\frac{6}{h}\int_{\overline{x}-h}^{\overline{x}} q(x) \,dx   
+		-\frac{10}{h}\int_{\overline{x}}^{\overline{x}+h} q(x) \,dx  
+		+\frac{6}{h} \int_{\overline{x}+h}^{\overline{x}+2h} q(x) \,dx   
+		-\frac{1}{h} \int_{\overline{x}+2h}^{\overline{x}+3h} q(x) \,dx   
+		\bigg)\\ 
+		= \frac{1}{2h^2} \bigg(
+		-\frac{1}{h}   \big( Q(\overline{x}-h)- Q(\overline{x}-2h)\big) 
+		+\frac{6}{h} \big( Q(\overline{x}) - Q(\overline{x}-h) \big) 
+		-\frac{10}{h} \big( Q(\overline{x}+h) - Q(\overline{x})  \big) \\
+		+\frac{6}{h}  \big( Q(\overline{x}+2h) - Q(\overline{x}+h)  \big) 
+		-\frac{1}{h}  \big( Q(\overline{x}+3h) - Q(\overline{x}+2h)  \big) 
+		\bigg)\\
+		= \frac{1}{2h^3}\bigg(Q(\overline{x}-2h) - 7Q(\overline{x}-h) + 16Q(\overline{x}) 
+		-16Q(\overline{x}+h) +7Q(\overline{x}+2h) - Q(\overline{x}+3h)  \bigg),
+	\end{align*}
+	which consists of the finite-difference scheme from Lemma \ref{lemma:fd-ppm-est3}. 
+	Therefore, Equation \eqref{prop:ppm-bound3-eq1} follows from 
+	Lemma \ref{lemma:fd-ppm-est3} with:
+	\begin{equation}
+		\label{prop:ppm-bound3-eq2}
+		C_3 = C_3(\mu_1,\mu_{2}) = \frac{1}{48}\bigg(104q^{(3)}(\mu_{1}) - 128q^{(3)}(\mu_{2}) \bigg), 
+	\end{equation}
+	where $\mu_{1}, \mu_{2} \in [x_0-2h,x_0+3h]$, which concludes the proof.
+\end{proof}
+\begin{corollary}
+	\label{prop:ppm-bound3-corollary}
+	It follows from Proposition \ref{prop:ppm-bound3} with 
+	$\overline{x} = x_{i-\frac{1}{2}}$ and $h = \Delta x$
+	that $q_{6,i}$ given by Equation \eqref{chp-adv1d-sec-recon-ppm-eq9} satisfies:
+	\begin{equation}
+		\label{ppm-edges-bound3}
+		q''(x_{i-\frac{1}{2}}) -\bigg(-\frac{2q_{6, i}}{\Delta x^2}\bigg) = C_3\Delta x,
+	\end{equation}
+	with $C_3$ given by Equation \eqref{prop:ppm-bound3-eq2}, whenever $q \in \mathcal{C}^3(\mathbb{R})$.
+\end{corollary}
+With the aid of Corollaries \ref{prop:ppm-bound1-corollary}, \ref{prop:ppm-bound2-corollary},
+and  \ref{prop:ppm-bound3-corollary}, we are able to prove
+that the PPM reconstruction approximates $q$ with order 3.
+Indeed, we prove this on the follow up Proposition \ref{prop:ppm-bound4}.
+\begin{prop}
+	\label{prop:ppm-bound4}
+	Let $q \in \mathcal{C}^{4}([a,b])$.
+	Then, the Piecewise-Parabolic function given by
+	Equation \eqref{chp-adv1d-sec-recon-ppm-eq1} with 
+	the parameters $q_{R,i}$ and $q_{L,i}$ obeying Equations
+	\eqref{chp-adv1d-sec-recon-ppm-eq10} and \eqref{chp-adv1d-sec-recon-ppm-eq11}
+	gives a third-order approximation to $q$ on the control volume $X_i$.
+	Namely, there exist constants $M_1$ and $M_2$ such that
+	\begin{equation*}
+		\begin{split}
+			|q(x)-q_i(x;Q)| \leq  M_1 \Delta x ^4 + M_2 \Delta x ^3, \quad \forall x \in X_i.
+		\end{split}
+	\end{equation*}
+\end{prop}
+\begin{proof}
+	For $x \in X_i$, from Equations \eqref{chp-adv1d-ppm-taylor} and \eqref{chp-adv1d-ppm-newton}, we have:
+	\begin{equation*}
+		\begin{split}
+			q(x)-q_i(x;Q) = (q'(x_{i-\frac{i}{2}})-q_{L,i})	
+			+ \bigg(q'(x_{i-\frac{1}{2}})-  \frac{(\Delta q_i + q_{6, i})}{\Delta x}\bigg)(x-x_{i-\frac{1}{2}})
+			\\+ \bigg(\frac{q''(x_{i-\frac{1}{2}})}{2} + \frac{q_{6, i}}{\Delta x^2}\bigg)(x-x_{i-\frac{1}{2}})^2
+			+ \frac{q^{(3)}(\theta_i)}{6}(x-x_{i-\frac{1}{2}})^3.
+		\end{split}
+	\end{equation*}
+	Using this fact with Corollaries \ref{prop:ppm-bound1-corollary}, \ref{prop:ppm-bound2-corollary},
+	and  \ref{prop:ppm-bound3-corollary}, we have:
+	\begin{equation*}
+		\begin{split}
+			q(x)-q_i(x;Q) =  C_1 \Delta x ^4 + C_2 \Delta x ^2(x-x_{i-\frac{1}{2}})
+			+ \frac{C_3}{2} \Delta x (x-x_{i-\frac{1}{2}})^2
+			+ C_4(x-x_{i-\frac{1}{2}})^3,
+		\end{split}
+	\end{equation*}
+	where $C_1, C_2$ and $C_3$ are given by Equations \eqref{prop:ppm-bound1-eq3},
+	\eqref{prop:ppm-bound2-eq2} and \eqref{prop:ppm-bound3-eq2}, respectively, and
+	\begin{equation}
+		\label{prop:ppm-bound4-eq3}
+		C_4 = C_4(\theta_i) = \frac{q^{(3)}(\theta_i)}{6}.
+	\end{equation}
+	For $x\in X_i$, we have $|x -x_{i-\frac{i}{2}}| \leq \Delta x$, thus:
+	\begin{equation*}
+		\begin{split}
+			|q(x)-q_i(x;Q)| \leq  M_1 \Delta x ^4 + M_2 \Delta x ^3,
+		\end{split}
+	\end{equation*}
+	where 
+	\begin{equation*}
+		M_1 = \frac{38}{720}\sup_{\xi \in [a,b]} |q^{(4)}(\xi)|, 
+	\end{equation*}
+	\begin{equation*}
+		M_2 = \bigg(\frac{244}{24} + \frac{232}{96} + \frac{1}{6} \bigg)
+		\sup_{\xi \in [a,b]} |q^{(3)}(\xi)| = \frac{143}{12} \sup_{\xi \in [a,b]} |q^{(3)}(\xi)|,
+	\end{equation*}
+	which concludes the proof.
+\end{proof}
 
 
