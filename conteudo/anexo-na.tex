@@ -35,13 +35,27 @@ for Lagrange interpolation.
 	\label{anexo-numint-lr}
    If $f$...
 	\begin{equation*}
-	\frac{d}{dx}\int_{a}^{x}f(x,t) \,dt =
-   f\big(x, x\big)+
-	\int_{a}^{x}\partial_x f(x,t) \,dt
+	\frac{d}{ds}\int_{s_0}^{s}f(s,\theta) \,d\theta =
+   f\big(s, s\big)+
+	\int_{s_0}^{x}\partial_x f(s,\theta) \,d\theta
 	\end{equation*}
 \end{thrm}
 \begin{proof}
-	See \citet[\pno~143]{courant:1999}.
+Let us define
+\begin{equation*}
+F(s) = \int_{s_0}^{s}f(s,\theta) \,d\theta.
+\end{equation*}
+Then
+\begin{align*}
+\frac{F(s+h)-F(s)}{h} &= 
+\frac{1}{h} \int_{s_0}^{s+h}f(s+h,\theta) \,d\theta - 
+\frac{1}{h} \int_{s_0}^{s}f(s,\theta) \,d\theta \\
+&= \frac{1}{h} \bigg(
+ \int_{s_0}^{s+h}f(s+h,\theta) \,d\theta 
+-\int_{s}^{s+h}f(s+h,\theta) \,d\theta 
+-\int_{s_0}^{s}f(s,\theta) \,d\theta
++\int_{s}^{s+h}f(s+h,\theta) \,d\theta \bigg)
+\end{align*}
 \end{proof}
 
 
@@ -195,124 +209,6 @@ and with the aid of the intermediate value theorem, we have
 \end{align*}
 for some $(\overline{x},\overline{y}) \in [a,b]\times[c,d]$ from which the claim follows.
 \end{proof}
-\subsection{Multi-step schemes}
-Let us consider the following problem: given a function $f \in \mathcal{C}^{m+1}([0,T])$,
-a discretization of $[0,T]$ given by $t^n= n\Delta t$, $\Delta t = \frac{T}{N_T}$, for some $N_T \in \mathbb{N}$, we wish
-to estimate $\int_{t^n}^{t^{n+1}} f(t)\,dt$ using the values $f(t_{n-k})$, for $k=0,\cdots, m$.
-This kind of problem arises, for instance, when we are interested in computing departure points as in Equation \ref{chp-sec-flux:analysis-eq4}.
-We can estimate the desired integral by computing the interpolating polynomial of $f(t_{n-k})$, for $k=0,\cdots, m$ and
-then integrating this polynomial.
-This approach is exactly what is used in multi-step Adams-Bashforth methods.
-On the next theorem, we give an expression the error of this approach.
-
-\begin{thrm}
-	\label{anexo-numint-adams}
-	If $f\in \mathcal{C}^{m+1}([0,T])$, $t^n = n\Delta t$, $n=0, \cdots, N_T$, $\Delta t = \frac{T}{N_T}$ for some 
-	$N_T \in \mathbb{N}$, then:
-	\begin{equation}
-		\label{anexo-numint-eq0}
-		\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t \sum_{k=0}^{m} \bigg(\int_{0}^{1} L_k(s) \,ds \bigg) f(t_{n-k})
-		+ \frac{(\Delta t)^{k+1}}{(m+1)!} f^{(m+1)}(\eta)\int_{0}^{1} \omega(s)\,ds, 
-	\end{equation}
-	where $w(s) = s(s+1)\cdots(s+m)$, $\eta \in [t^{n-m}, t^{n}]$.
-\end{thrm}
-
-\begin{proof}
-	We introduce auxiliary functions $\theta(s) = s\Delta t + t_n$, $s \in [-m,1]$ and $g(s) = f(\theta(s))$.
-	It is clear that $f(t_{n-k}) = g(-k)$, for $k=-1,0, \cdots, m$.
-	Hence, we can write:
-	\begin{equation}
-		\label{anexo-numint-eq1}
-		\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t \int_{0}^{1} f(\theta(s))\,ds = \Delta t \int_{0}^{1} g(s)\,ds.
-	\end{equation}
-	
-	Defining the nodes $s_k=-k$ for $k=0, \cdots, m$, it follows from Theorem 
-	\ref{anexo-interp-error1} that the interpolating polynomial $P_m$ of $g(s_k)$ satisfies:
-	\begin{equation}
-		\label{anexo-numint-eq2}
-		g(s)-P_m(s) = \omega(s)\frac{g^{(m+1)}(\xi)}{(m+1)!},
-	\end{equation}
-	where $\xi \in [-m,1]$.
-	Substituting Equation \eqref{anexo-numint-eq2} in Equation \eqref{anexo-numint-eq1}, we obtain
-	\begin{equation}
-		\label{anexo-numint-eq3}
-		\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t \sum_{k=0}^{m} \bigg(\int_{0}^{1} L_k(s) \,ds \bigg) g(-k)
-		+ \frac{\Delta t}{(m+1)!} \int_{0}^{1} g^{(m+1)}(\xi) \omega(s)\,ds.
-	\end{equation}
-	Since $w(s)$ does not change its sign in $[0,1]$ it follows from Theorem \ref{anexo-numint-mv} that:
-	\begin{equation}
-		\label{anexo-numint-eq4}
-		\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t \sum_{k=0}^{m} \bigg(\int_{0}^{1} L_k(s) \,ds \bigg) g(-k)
-		+ \frac{\Delta t}{(m+1)!} g^{(m+1)}(\overline{\xi})\int_{0}^{1} \omega(s)\,ds, 
-	\end{equation}
-	for some $\overline{\xi} \in [-m,1]$. 
-	Notice that by the chain rule we get $g^{(m+1)}(s) = (\Delta t)^k f^{(m+1)}(\theta(s))$, therefore
-	Equation \eqref{anexo-numint-eq4} in terms of $f$ reads:
-	\begin{equation}
-		\label{anexo-numint-eq5}
-		\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t \sum_{k=0}^{m} \bigg(\int_{0}^{1} L_k(s) \,ds \bigg) f(t_{n-k})
-		+ \frac{(\Delta t)^{k+1}}{(m+1)!} f^{(m+1)}({\eta})\int_{0}^{1} \omega(s)\,ds, 
-	\end{equation}
-	where $\eta \in [t^{n-m},t^n]$, which is the desired identity.
-\end{proof}
-
-In the following corollaries, we give the explicit formulas for Equation \eqref{anexo-numint-eq5}
-for $m=0,m=1,m=2$. This is achieved by computing the terms $\int_{0}^{1} L_k(s) \,ds$ and $\int_{0}^{1} \omega(s)\,ds$,
-which are trivial to be computed.
-\begin{corollary}
-	\label{anexo-numint-col1}
-	If $f\in \mathcal{C}^1([0,T])$, $t^n = n\Delta t$, $n=0, \cdots, N_T$, $\Delta t = \frac{T}{N_T}$ for some 
-	$N_T \in \mathbb{N}$, then:
-	\begin{equation}
-		\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t  f(t_{n})
-		+ \frac{\Delta t^{2}}{2} f^{'}(\overline{t}),
-	\end{equation}
-	for some $\overline{t} \in [t^n, t^{n+1}]$.
-\end{corollary}
-
-\begin{corollary}
-	\label{anexo-numint-col2}
-	If $f\in \mathcal{C}^2([0,T])$, $t^n = n\Delta t$, $n=0, \cdots, N_T$, $\Delta t = \frac{T}{N_T}$ 
-	for some $N_T \in \mathbb{N}$, then:
-	\begin{equation}
-		\int_{t^n}^{t^{n+1}} f(t)\,dt = \frac{\Delta t}{2} (3f(t_{n}) - f(t_{n-1}) )
-		+ \frac{5\Delta t^{3}}{12} f^{(2)}(\overline{t}),
-	\end{equation}
-	for some $\overline{t} \in [t^{n-1}, t^{n+1}]$.
-\end{corollary}
-
-\begin{corollary}
-	\label{anexo-numint-col3}
-	If $f\in \mathcal{C}^3([0,T])$, $t^n = n\Delta t$, $n=0, \cdots, N_T$, $\Delta t = \frac{T}{N_T}$ 
-	for some $N_T \in \mathbb{N}$, then:
-	\begin{equation}
-		\int_{t^n}^{t^{n+1}} f(t)\,dt = \frac{\Delta t}{12} (23f(t_{n}) - 16f(t_{n-1}) + 5f(t_{n-2}) )
-		+ \frac{3\Delta t^{4}}{8} f^{(3)}(\overline{t}),
-	\end{equation}
-	for some $\overline{t} \in [t^{n-2}, t^{n+1}]$.
-\end{corollary}
-
-When using these schemes for and ODE written in its integral form,
-$m=0$ gives the classical Euler method; for $m=1$ we get the second-order Adams-Bashforth scheme
-and for $m=2$ we have the third-order Adams-Bashforth scheme.
-
-Observe that from the midpoint rule (Theorem  \ref{prop-bound-midpoint1d}),
-we can write
-\begin{equation}
-	\frac{1}{\Delta t}\int_{t^n}^{t^{n+1}} f(t)\,dt = f(t_{n+\frac{1}{2}})
-	+ \frac{\Delta t^{2}}{2} f^{'}(\tilde{t}),
-\end{equation}
-where $t_{n+\frac{1}{2}} = (t_{n+1} + t_{n})/2$ and $\tilde{t} \in [t^n, t^{n+1}]$.
-Combining this with Corollary \ref{anexo-numint-col2}, we have the second-order extrapolation formula as follows.
-\begin{corollary}
-	\label{anexo-numint-col4}
-	If $f\in \mathcal{C}^2([0,T])$, $t^n = n\Delta t$, $n=0, \cdots, N_T$, $\Delta t = \frac{T}{N_T}$ 
-	for some $N_T \in \mathbb{N}$, then:
-	\begin{equation}
-		f(t_{n+\frac{1}{2}}) = \frac{3}{2}f(t_{n}) - \frac{1}{2}f(t_{n-1}) + O(\Delta t^2).
-	\end{equation}
-\end{corollary}
-
 
 \section{Convergence of 1D FV-SL schemes}
 \label{convergence-1dfvsl}
