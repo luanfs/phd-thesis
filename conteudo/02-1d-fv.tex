@@ -19,3 +19,543 @@
 \theoremstyle{plain}
 \newtheorem{definition}{Definition}[chapter]
 
+
+The aim of this chapter is to provide a detailed description of one-dimensional (1D) 
+finite-volume (FV) schemes within a Semi-Lagrangian (SL) framework, specifically applied to 
+the 1D advection equation.
+These schemes are also known as flux-form Semi-Lagrangian schemes, and they allow for time steps beyond the 
+Courant-Friedrichs-Lewy (CFL) condition while preserving the total mass.
+FV-SL schemes have been explored in the literature since the work of  \citet{leveque:1985},
+which extended the finite-volume schemes from \citet{godunov:1959}  to accommodate larger time steps.
+This approach has been further investigated in the literature (c.f, e.g. . \citet{lin:1996,leonard:1996}).
+We are going to focus on the linear advection equation because in FV3, the horizontal dynamics
+are solved by using flux advection operators to compute the fluid density, absolute vorticity, 
+and the kinetic energy \citep{lin:1997,putmanthesis:2007, harris:2013, harris:2021}.
+The boundary conditions are assumed to be periodic for simplicity.
+
+To introduce the FV-SL schemes, we begin by discretizing the spatial and temporal domains into uniform grids.
+Subsequently, the FV-SL schemes involve three steps.
+The first step involves computing the departure points of the spatial grid edges.
+The second step, known as reconstruction, utilizes the grid cell average values to
+determine a piecewise function within each cell. This piecewise function approximates the
+values of the advected quantity and ensures the preservation of its local mass within each grid cell.
+The third step involves updating the fluxes at the grid edges by integrating the reconstruction function 
+over a domain that extends from the departure point of the grid edge to the grid edge itself.
+
+The first step of FV-SL schemes can be accomplished by integrating an ordinary differential
+equation backward in time.
+The second step is performed using the Piecewise-Parabolic Method (PPM) proposed by \citet{colella:1984}.
+As the name suggests, PPM employs piecewise-parabolic functions.
+The third and final step is computed easily, as the reconstruction functions consist of parabolas that preserve the local mass.
+
+It is worth noting that the reconstruction function can be constructed using functions other than parabolas.
+In fact, PPM can be seen as an
+extension of the Piecewise-Linear method proposed by \citet{vanleer:1977}, which,
+in turn, was inspired by the Piecewise-Constant method introduced by \citet{godunov:1959}. 
+Additionally, other schemes inspired by PPM have been proposed in the literature utilizing
+higher-order polynomials, such as quartic polynomials \citep{white:2008}. For a
+comprehensive review of general piecewise-polynomial reconstruction, we recommend
+referring to the technical report by \citet{engwirda:2016}, \citet{lauritzen:2011}, and the
+references therein.
+
+The PPM approach has become popular in the literature for gas dynamics simulations, astrophysical 
+phenomena modeling \citep{woodward:1986}, and later on atmospheric simulations \citep{carpenter:1990}. 
+Indeed, PPM has been implemented in the FV3 dynamical core on its latitude-longitude grid \citep{lin:2004}
+and cubed-sphere \citep{putman:2007} versions.
+Although many other shapes for the basis functions and higher-order schemes are available in the literature, 
+\citet{harris:2021} points out that the PPM scheme suits the needs of FV3 well. It is a flexible method that
+can be modified to ensure low diffusivity or shape preservation, for example.
+Additionally, a finite-volume numerical method usually requires monotonicity constraints, which, according 
+to Godunov's order barrier theorem \citep{wesseling:2001}, limit the order of convergence to at most 1. 
+Therefore, a higher-order scheme needs to strike a well-balanced trade-off between increasing computational 
+cost and potential benefits.
+
+This chapter begins with a basic review of one-dimensional advection equation in the integral form
+in Section \ref{chp-adv1d-sec1}. In Section \ref{chp-adv1d-sec2-fvsl}, we establish the framework for general
+one-dimensional finite-volume Semi-Lagrangian schemes. Section \ref{chp-adv1d-sec-dp} presents
+methods for computing the departure point. The PPM reconstruction is described in Section \ref{chp-adv1d-sec-recon},
+while Subsection \ref{chp-adv1d-sec-mono} introduces different approaches to ensure the monotonicity of parabolas.
+Section \ref{chp-adv1d-sec-flux} focuses on the description and investigation of the PPM flux computation.
+Section \ref{chp-adv1d-sec-numerical-exp}
+presents numerical results using the PPM scheme for the advection equation.
+Finally, Section \ref{chp-adv1d-sec-conclusion} presents some concluding remarks.
+The application of PPM to solve two-dimensional problems will be addressed in Chapter \ref{chp-2d-fv}.
+
+\section{One-dimensional advection equation in integral form}
+\label{chp-adv1d-sec1}
+
+\subsection{Notation}
+\label{chp-adv1d-sec-not}
+Before introducing the FV-SL schemes, let us establish some notation by introducing
+the concepts of a $\Delta x$-grid, a $\Delta t$-temporal grid, and the
+$(\Delta x, \Delta t, \lambda)$-discretization, as well as the concept of grid function/winds.
+In this chapter, we will use the notation $\Omega=[a,b]$ to represent the interval under consideration,
+and $\nu$ to represent a non-negative integer indicating the number of ghost cell layers in each boundary.
+We also use the notations $\mathbb{R}^{N}_{\nu}:=\mathbb{R}^{N+2\nu}$ and
+$\mathbb{R}^{N+1}_{\nu}:=\mathbb{R}^{N+1+2\nu}$.
+\begin{definition}[$\Delta x$-grid]\label{chp-adv1d-def-dxgrid}
+	For a given interval $\Omega$ and a positive real number $\Delta x$ such that 
+    $\Delta x = (b-a)/N$ for some positive integer $N$, 
+	we say that $\Omega_{\Delta x}= \{X_i \}_{i=-\nu+1}^{N+\nu}$ is a $\Delta x$-grid for $\Omega$ if
+	\begin{align*}
+        X_i = [x_{i-\frac{1}{2}},x_{i+\frac{1}{2}}] = [a+(i-1)\Delta x, a+i\Delta x],
+    \end{align*}
+	and $\Delta x = x_{i+\frac{1}{2}} - x_{i-\frac{1}{2}}$. 
+	Each $X_i$ is referred to as a control volume or cell, and $x_{i-\frac{1}{2}}$ and 
+	$x_{i+\frac{1}{2}}$ are the edges of the control volume $X_i$.
+	The cell centroid is defined by
+    \begin{align*}
+    x_i = \frac{1}{2}(x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}}),\quad \forall i = -\nu+1, \ldots, N+\nu,
+    \end{align*}
+	and $\Delta x$ is the cell length.
+\end{definition}
+\begin{remark}
+If $1 \leq i \leq N$, we refer to $i$ as an interior index;
+otherwise, $i$ is considered a ghost cell index and we say the $X_i$ is a ghost cell.
+\end{remark}
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=1\linewidth]{1d_grid}
+	\caption{Illustration of a $\Delta x$-grid with $N=4$ cells in its interior (in black) 
+         and $\nu=2$ ghost cell layers (in gray).
+	 The edges are denoted by squares and the cell centroids are denoted using circles.\label{chp-adv1d-sec1-grid1d}}
+\end{figure}
+
+\begin{definition}[$\Delta t$-temporal grid]
+	For a given interval $[0,T]$ and a positive real number $\Delta t$ such that $\Delta t = T/N_T$
+    for some positive integer $N_T$, we say that  $T_{\Delta T}= \{T_n\}_{n=0}^{N_T}$ a $\Delta t$-temporal grid for $[0,T]$ if
+    \begin{align*}
+	T_n = [t^n, t^{n+1}], \quad t^n = n\Delta t, \quad \Delta t = \frac{T}{N_T}, \quad \forall n = 0, \ldots, N_T.
+    \end{align*}
+    In this context, we also define $t^{n+\frac{1}{2}} = \frac{t^n+t^{n+1}}{2}$.
+\end{definition}
+
+\begin{definition}[$(\Delta x,\Delta t, \lambda)$-discretization]
+\label{chp-adv1d-def-dxtimegrid}
+	Given $\Omega \times [0,T]$ and positive real numbers $\Delta x$ and $\Delta t$,
+    we say that $(\Omega_{\Delta x}, T_{\Delta t})$ is a $(\Delta x, \Delta t, \lambda)$-discretization 
+    of $\Omega \times [0,T]$ if $\Omega_{\Delta x}$ is a $\Delta x$-grid for $\Omega$, 
+    ${T}_{\Delta t}$ is a $\Delta t$-temporal grid for $[0,T]$, and $\frac{\Delta t}{\Delta x} = \lambda$.
+\end{definition}
+\begin{remark}
+	Whenever we refer to a $\Delta x$-grid, a $\Delta t$-temporal grid, or a $(\Delta x, \Delta t, \lambda)$-discretization, 
+	$X_i$, $N$, $t^n$, and $N_T$ are assumed to be implicitly defined.
+\end{remark}
+Next, we introduce the definitions of grid functions at cell centroids and edges.
+\begin{definition}[$\Delta x$-grid function]
+	For a $\Delta x$-grid, we say that $Q$ is a $\Delta x$-grid function if
+	$Q = (Q_{-\nu+1}, \ldots, Q_{N+\nu}) \in \mathbb{R}^{N}_{\nu}$.
+\end{definition}
+\begin{definition}[$\Delta x$-grid wind]
+	For a $\Delta x$-grid, we say that $u$ is a $\Delta x$-grid wind if
+	$u = (u_{-\nu+\frac{1}{2}}, \ldots, u_{N+\nu+\frac{1}{2}}) \in \mathbb{R}^{N+1}_{\nu}$.
+\end{definition}
+The definition of a $\Delta x$-grid wind is based on the Arakawa grids \citep{arakawa:1977}.
+Considering functions $q, u: \Omega \times[0,T] \to \mathbb{R}$ and a $(\Delta x,\Delta t, \lambda)$-discretization
+of $\Omega \times[0,T]$, we introduce the grid functions $q^n \in \mathbb{R}^{N}_{\nu}$ and $u^n \in \mathbb{R}^{N+1}_{\nu}$
+where ${q}^n_{i} \approx {q}(x_i, t^{n})$ and $u^n_{i+\frac{1}{2}} = u(x_{i+\frac{1}{2}},t^n)$.
+The grid function $q^n$ approximate the discrete values of $q$ at cell centroids and $u^n$ represents the values of $u$ approximates edges, both
+for each time level $t^n$ (Figure \ref{chp-adv1d-sec1-grid1d-function}).
+
+
+In this Chapter, our focus lies on periodic grid functions.
+We define a $\Delta x$-grid function $Q$ as periodic if it satisfies the following conditions:
+\begin{align*}
+    Q_{i} &= Q_{N+i}, \quad i=-\nu+1, \ldots, 0,\\
+    Q_{i} &= Q_{i-N}, \quad i=N+1, \ldots, N+\nu.
+\end{align*}
+Similarly, we define a $\Delta x$-grid wind as periodic if it meets the following requirements:
+\begin{align*}
+    u_{i-\frac{1}{2}} &= u_{N+i+\frac{1}{2}} , \quad i=-\nu, \ldots, -1,\\
+    u_{i+\frac{1}{2}} &= u_{i+\frac{1}{2}-N} , \quad i=N+1, \ldots, N+\nu.
+\end{align*}
+We use the notation $\mathbb{P}^{N}_{\nu}$ and $\mathbb{P}^{N+1}_{\nu}$ to
+represent the spaces of periodic $\Delta x$-grid functions and winds, respectively.
+\begin{figure}[!htb] 
+\centering 
+\includegraphics[width=1\linewidth]{1d_grid_function} 
+\caption{Illustration of $\Delta x$-grid function $Q$ (black circles)
+and a $\Delta x$-grid wind $u$ (blue squares) and its ghost cell
+values (in gray) assuming periodicity.\label{chp-adv1d-sec1-grid1d-function}}
+\end{figure}
+
+Given $Q \in \mathbb{P}^{N}_{\nu}$, we define the $p$-norm as
+\begin{equation}
+	\label{chp-adv1d-sec-not1}
+	\|Q\|_{p,\Delta x}=
+	\begin{cases}
+		\bigg( \sum_{i=1}^{N} |Q_i|^p \bigg)^{\frac{1}{p}} & \text{if } 1\leq p < \infty,\\
+		\max_{i=1, \ldots, N}{|Q_i|} & \text{otherwise },
+	\end{cases}
+\end{equation}
+which is indeed a norm for periodic grid functions.
+Using a similar notation as in \citet{engwirda:2016}, we define the stencil and a grid function evaluated on a stencil as follows.
+\begin{definition}[Stencil]
+	For a $\Delta x$-grid, and each $i = 0, \ldots, N$, we define a stencil as a set of the form
+	$\mathcal{S}_{i+\frac{1}{2}} = \{i-r+1, \ldots, i-1, i, i+1, \ldots, i+s\} \subset\{-\nu+1, \ldots, N+\nu\}$.
+\end{definition}
+\begin{definition}[Grid function restricted to a stencil]
+	For a $\Delta x$-grid, a stencil $\mathcal{S}_{i+\frac{1}{2}}$,
+	 and a $\Delta x$-grid function $Q$, we define $Q(\mathcal{S}_{i+\frac{1}{2}}) = (Q_k)_{k \in \mathcal{S}_{i+\frac{1}{2}}}$.
+\end{definition}
+These definitions provide the necessary notation for describing grid functions and their evaluations on stencils.
+To achieve a more compact notation in some situations, we introduce the centered difference notation:
+\begin{equation}
+    \label{chp-adv1d-sec-adv-eq5}
+	\delta_x {g}(x_i,t) = 
+	{g}(x_{i+\frac{1}{2}},t) - 
+	{g}(x_{i-\frac{1}{2}},t),
+\end{equation}
+for any function $g: \Omega \times [0,T] \to \mathbb{R}$.
+Additionally, we introduce the average value of $q$ in the $i$-th control volume at time $t$, denoted as ${Q}_i(t)$, defined by:
+\begin{equation}
+	\label{chp-adv1d-sec1-not2}
+	{Q}_i(t) = \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x,t) \,dx.
+\end{equation}
+Moreover, we define the $\Delta x$-grid function of average values as $Q(t) = (Q_i(t))_{i=-\nu+1}^{N+\nu}$.
+Here, $Q_i(t)$ represents the average value of $q$ in the $i$-th control volume at time $t$.
+
+For the consideration of periodic boundary conditions, we can define spaces of periodic functions over 
+the interval $\Omega$ as follows:
+\begin{align*}
+	\mathcal{S}_P(\Omega) &= \{q:\mathbb{R}\times[0,+\infty[\to \mathbb{R}: q(x+b-a,t)=q(x,t), \quad \forall x \in \mathbb{R}, \quad t\geq0\}.
+\end{align*}
+Similarly, the space of $k$-times periodically differentiable functions $\mathcal{C}_P^k(\Omega)$ can be defined as:
+\begin{align*}
+	\mathcal{C}_P^k(\Omega) &= \mathcal{S}_P(\Omega)\cap \mathcal{C}^k(\mathbb{R}\times[0,\infty[),
+\end{align*}
+where $\mathcal{C}^k(\mathbb{R}\times[0,+\infty[)$ denotes the space of functions that are $k$ 
+times continuously differentiable in both the spatial and temporal variables.
+In summary, $\mathcal{S}_P(\Omega)$ represents the space of periodic functions, and $\mathcal{C}_P^k(\Omega)$
+represents the space of $k$-times periodically differentiable functions over the interval $\Omega$ subject to periodic boundary conditions.
+
+\subsection{The 1D advection equation}
+In this section, we will derive the integral form of the 1D advection equation with periodic boundary conditions over the interval $\Omega$.
+What is going to be presented here follows \citet{leveque:1990,leveque:2002} closely.
+The advection equation with periodic boundary conditions in its differential form is given by:
+\begin{equation}
+	\label{chp-adv1d-sec-adv-eq1}
+	\begin{cases}
+		[{\partial_t q} + {\partial_x (uq)}](x, t)
+		= 0, \quad \forall (x,t) \in \mathbb{R}\times ]0, +\infty[,\\
+		{q}(a, t) = {q}(b, t), \quad \forall t\geq 0,\\
+		q_0(x) = q(x,0), \quad \forall x \in \Omega.
+	\end{cases}
+\end{equation}
+Here, $q \in \mathcal{C}_P^1{(\Omega)}$ represents the advected quantity, and $u \in \mathcal{C}_P^1{(\Omega)}$ represents the velocity.
+We will focus on Equation \eqref{chp-adv1d-sec-adv-eq1} over the domain $D = \Omega\times[0,T]$, where $T>0$ is a finite time.
+A strong or classical solution to the advection equation is defined as a function ${q}\in\mathcal{C}^1_P(\Omega)$ 
+and satisfies Equation \eqref{chp-adv1d-sec-adv-eq1}.
+In order to deduce the integral form of Equation \eqref{chp-adv1d-sec-adv-eq1}, we consider
+$[x_1, x_2]\times[t_1,t_2]\subset D$. 
+Integrating Equation \eqref{chp-adv1d-sec-adv-eq2} over $[x_1, x_2]$, we obtain:
+\begin{equation}
+    \label{chp-adv1d-sec-adv-eq2}
+	\frac{d}{dt} \int_{x_1}^{x_2} q(x,t) \,dx =  
+	-({(uq)}(x_2,t) - {(uq)}(x_1,t)) ,
+\end{equation}
+and integrating Equation \eqref{chp-adv1d-sec-adv-eq2} over $[t_1,t_2]$, we get
+\begin{equation}
+    \label{chp-adv1d-sec-adv-eq3}
+    \int_{x_1}^{x_2} q(x,t_2) \,dx=  \int_{x_1}^{x_2} q(x,t_1)
+	-\bigg( \int_{t_1}^{t_2} 
+	{(uq)}(x_2, t) \,dt - 
+	\int_{t_1}^{t_2}{(uq)}(x_1, t) \,dt \bigg).
+\end{equation}
+The presented problem, Problem \ref{chp-adv1d-sec2-prob1}, aims to find a solution, called weak solution, to the advection equation
+in its integral form, considering the given initial condition ${q}_0$ and velocity function $u$.
+
+\theoremstyle{plain}
+\newtheorem{prob}{Problem}[chapter]
+\begin{prob}
+	\label{chp-adv1d-sec2-prob1}
+	Given an initial condition ${q}_0$ and a velocity function $u$  we would like to find a weak solution ${q}$
+	of the advection equation in the integral form:
+	\begin{equation*}
+	        \int_{x_1}^{x_2} {q}(x, t_2) \,dx =
+       		\int_{x_1}^{x_2} {q}(x, t_1) \,dx +
+        	\int_{t_1}^{t_2} {(uq)}(x_1, t) \,dt -
+		\int_{t_1}^{t_2}{(uq)}(x_2, t) \,dt ,
+	\end{equation*}
+	$\forall [x_1, x_2]\times[t_1, t_2] \subset \Omega \times [0,T]$,
+	and
+	${q}(x,0) = {q}_0(x)$, $\forall x \in \Omega$, $q(a,t)=q(b,t)$, $\forall t \in [0,T]$.
+\end{prob}
+We point out that, for Problem \ref{chp-adv1d-sec2-prob1}, the total mass in $\Omega$ at time $t$ defined by:
+\begin{equation*}
+{M}_{[a,b]}(t) = \int_{a}^{b} q(x,t) \,dx,
+\end{equation*}
+remains constant over time, i.e.,
+\begin{equation*}
+	{M}_{[a,b]}(t) = {M}_{[a,b]}(0), \quad \forall t \in [0,T].
+\end{equation*}
+This conservation of total mass property is highly desirable for numerical schemes aiming
+to approximate general conservation law solutions accurately.
+
+Applying the steps from Equation \eqref{chp-adv1d-sec-adv-eq1} to Equation \eqref{chp-adv1d-sec-adv-eq3} in reverse order,
+one can verify that if ${q}$ is a weak solution and $q \in \mathcal{C}^1_P{(\Omega)}$, then it satisfies Equation \eqref{chp-adv1d-sec-adv-eq1}.
+Therefore, Equation \eqref{chp-adv1d-sec-adv-eq1} and Problem \eqref{chp-adv1d-sec2-prob1} are equivalent when $q \in \mathcal{C}^1_P{(\Omega)}$.
+However, Problem \eqref{chp-adv1d-sec2-prob1} can be formulated for functions that are not $\mathcal{C}^1$ and have discontinuities.
+In fact, Problem \eqref{chp-adv1d-sec2-prob1} only requires that $q$ and $uq$ are locally integrable.
+
+It is worth noting that Equation \eqref{chp-adv1d-sec-adv-eq3} holds for all $x_1, x_2, t_1$, and $t_2$ such that $[x_1, x_2]
+\times [t_1, t_2] \subset D$. Therefore, let us consider a $(\Delta x, \Delta t, \lambda)$-discretization of $D$ and 
+rewrite Equation \eqref{chp-adv1d-sec-adv-eq3} in terms of this discretization. By replacing $t_1, t_2, x_1$, and $x_2$ with
+$t^{n}, t^{n+1}, x_{i-\frac{1}{2}}$, and $x_{i+\frac{1}{2}}$, respectively, in Equation \eqref{chp-adv1d-sec-adv-eq3}, we obtain:
+\begin{equation}
+    \label{chp-adv1d-sec-adv-eq4}
+	\begin{aligned}
+		{Q}_i(t^{n+1}) =  {Q}_i(t^{n}) -
+		\frac{1}{\Delta x}\bigg( \int_{t^{n}}^{t^{n+1}}
+        	{(uq)}(x_{i+\frac{1}{2}}, t) \,dt -
+		\int_{t^{n}}^{t^{n+1}}{(uq)}(x_{i-\frac{1}{2}}, t) \,dt \bigg), \\
+		\quad \forall i = 1, \ldots, N,
+		\quad \forall n = 0, \ldots, N_T-1.
+	\end{aligned}
+\end{equation}
+To achieve a more compact notation, we use the centered difference notation
+and then Equation \eqref{chp-adv1d-sec-adv-eq4} can be rewritten as:
+\begin{equation}
+    \label{chp-adv1d-sec-adv-eq6}
+    {Q}_i(t^{n+1}) =  {Q}_i(t^{n}) -
+	\frac{1}{\Delta x} \delta _x\bigg( \int_{t^{n}}^{t^{n+1}}
+        {(uq)}(x_{i}, t) \,dt \bigg),
+        \quad \forall i = 1, \ldots, N,
+        \quad \forall n = 0, \ldots, N_T-1.
+\end{equation}
+
+Now we can define a discretized version of Problem \ref{chp-adv1d-sec2-prob1} as Problem \ref{chp-adv1d-sec2-prob2}.
+\begin{prob}
+	\label{chp-adv1d-sec2-prob2}
+	Let us consider the framework of Problem \ref{chp-adv1d-sec2-prob1} and a $(\Delta x, \Delta t, \lambda)$-discretization of 
+	$\Omega \times [0,T]$. Since we are operating within the framework of Problem \ref{chp-adv1d-sec2-prob1}, the following relationship holds:
+	\begin{equation}
+		\label{1d-fvexact-scheme}
+		{Q}_i(t^{n+1}) = {Q}_i(t^{n}) - \lambda \delta_x\bigg( \frac{1}{\Delta t}\int_{t^{n}}^{t^{n+1}}{(uq)}(x_{i}, t) \,dt \bigg),
+		 \quad \forall i = 1, \ldots, N, \quad \forall n = 0, \ldots, N_T-1,
+	\end{equation}
+	where ${Q}_i(t) = \frac{1}{\Delta x}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x,t) \,dx$. 
+	Our objective now is to determine the values ${Q}_i(t^{n})$, $\forall i = 1, \ldots, N$, $\forall n = 0, \ldots, N_T-1$,
+	given the initial values ${Q}_i(0)$, $\forall i = 1, \ldots N$. 
+	In other words, we aim to find the average values of ${q}$ in each control volume $X_i$ at the specified time instances.
+\end{prob}
+It is important to note that no approximations have been made in problems \eqref{chp-adv1d-sec2-prob1} and \eqref{chp-adv1d-sec2-prob2}. 
+In Equation \eqref{1d-fvexact-scheme}, we divided and multiplied by $\Delta t$ to interpret
+$\frac{1}{\Delta t}\int_{t^{n}}^{t^{n+1}}({uq})(x_{i\pm \frac{1}{2}}, t) \,dt$ 
+as a time-averaged flux. This interpretation is useful for deriving finite-volume schemes.
+
+In Problem \ref{chp-adv1d-sec2-prob2}, we need to approximate the time-averaged flux at the cell edges $x_{i\pm\frac{1}{2}}$
+to derive a finite-volume scheme. This flux, in principle, requires knowledge of $q$ over the entire interval $[t^n, t^{n+1}]$. 
+To overcome this, we can express the temporal integral as a spatial integral at time $t^n$. 
+This approach avoids the need for information about $q$ throughout the entire interval $[t^n, t^{n+1}]$. 
+Furthermore, this spatial integral domain is closely related to the definition of the 
+departure point. 
+
+To introduce the definition of departure point, for each $s \in [t^n,t^{n+1}]$,
+we consider the following Cauchy problem backward in time:
+\begin{equation}
+	\label{chp-sec-flux:analysis-eq3}
+	\begin{cases}
+		\partial_t x^d_{i+\frac{1}{2}} (t,s) = u(x^d_{i+\frac{1}{2}}(t,s) ,t),\quad t\in[t^{n},s] \\
+		x^d_{i+\frac{1}{2}}(s,s) = x_{i+\frac{1}{2}}.
+	\end{cases}
+\end{equation}
+The point $x^d_{i+\frac{1}{2}}(t^n,s)$ is called departure point at time $t^n$
+of the point $x_{i+\frac{1}{2}}$ at time $s$.
+In Figure \ref{chp-adv1d-sec1-grid1d-dep} we illustrate the departure point idea.
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=1\linewidth]{1d_grid_departure}
+	\caption{Illustration of the departure point of the cell edges from time $t^{n+1}$ to $t^n$.\label{chp-adv1d-sec1-grid1d-dep}}
+\end{figure}
+Integrating Equation $\eqref{chp-sec-flux:analysis-eq3}$ over the interval
+$[t,s]$, we get:
+\begin{equation}
+	\label{chp-sec-flux:analysis-eq4}
+	x^d_{i+\frac{1}{2}} (t,s) = x_{i+\frac{1}{2}} - \int_{t}^{s}u(x^d_{i+\frac{1}{2}}(\theta,s),\theta)  \,d\theta.
+\end{equation}
+In the following Proposition, we show how the time-averaged flux is 
+related to a spatial integral over a interval depending on departure points.
+\begin{prop}
+	\label{chp-adv1d-sec-flux:prop1}
+	Assume the framework of Problem \ref{chp-adv1d-sec2-prob2}.
+	If $q$ and $u$ are $\mathcal{C}^1$ functions, then:
+	\begin{align}
+		\label{chp-adv1d-sec-flux:approx1}
+		\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds = 
+		\int^{x_{i+\frac{1}{2}}}_{x^d_{i+\frac{1}{2}}(t^n,t^{n+1})} q(x,t^n)\,dx
+	\end{align}
+\end{prop}
+\begin{proof}
+Using the Leibniz rule for integration (Theorem \ref{anexo-numint-lr} with 
+$f(s,\theta) = u\big(x^d_{i+\frac{1}{2}}(\theta,s)\big)$),
+in Equation \eqref{chp-sec-flux:analysis-eq4}, it follows that:
+	\begin{align}
+		\begin{split}
+			\label{dxds}
+			{\partial_s x_{i+\frac{1}{2}}^d} (t,s) &= - \bigg({u}(x_{i+\frac{1}{2}},s) + 
+			\int_{t}^{s} \frac{d{u}}{ds}\big( x_{i+\frac{1}{2}}^d(\theta,s),\theta\big) \,d\theta \bigg)\\
+			&=- {u}(x_{i+\frac{1}{2}},s) -
+			\int_{t}^{s} {\partial_s}{{u}}\big( x_{i+\frac{1}{2}}^d(\theta, s),\theta\big) 
+			{\partial_s  x_{i+\frac{1}{2}}^d}(\theta, s)\,d\theta.
+		\end{split}
+	\end{align}
+	Taking the derivative with respect to $t$ of Equation \eqref{dxds}, we have:
+	\begin{equation}
+			\label{dxds_2}
+			{\partial_t }{\partial_s  x_{i+\frac{1}{2}}^d}
+			(t,s) = {\partial_x}{{u}}\big(x_{i+\frac{1}{2}}^d(t, s), t\big) 
+			{\partial _s} x_{i+\frac{1}{2}}^d (t, s).
+	\end{equation}
+	Using standard ordinary differential equations techniques (ODE), 
+	we get that $ x_{i+\frac{1}{2}}^d$ that solves Equations \eqref{dxds} and \eqref{dxds_2}
+	is given by:
+	\begin{equation}
+			\label{xs_int}
+			{\partial_s  x_{i+\frac{1}{2}}^d}(t,s) = -
+			\exp{\bigg(\int_{t}^{s} {\partial_x}{{u}}\big( x_{i+\frac{1}{2}}^d(\theta,s),\theta\big)  \,d\theta \bigg)}
+			{u}(x_{i+\frac{1}{2}},s).
+	\end{equation}
+	Computing $q$ on the trajectory give by $x_{i+\frac{1}{2}}^d(t,s)$ and taking
+	its time derivative, we obtain:
+	\begin{align}
+		\label{dqdt}
+		\begin{split}
+			\frac{d}{dt}q\big( x_{i+\frac{1}{2}}^d(t,s),t\big) &= 
+			{\partial_t}q\big( x_{i+\frac{1}{2}}^d(t,s),t\big)+
+			({u}{\partial_x } 
+			q)\big(x_{i+\frac{1}{2}}^d(t,s),t\big) \\
+			&= -{\partial_x}{{u}}\big( x_{i+\frac{1}{2}}^d(t,s),t\big) q \big(x_{i+\frac{1}{2}}^d(t,s),t\big),
+		\end{split}
+	\end{align}
+	where we used that $q$ satisfies the linear advection equation on its differential \eqref{chp-adv1d-sec-adv-eq1} form
+   and that $x_{i+\frac{1}{2}}^d(t,s)$ solves Equation \eqref{chp-sec-flux:analysis-eq3}.
+	Using again standard ODE techniques, we get that $q$ that solves Equation \eqref{dqdt}
+	is given by:
+	\begin{equation}
+			\label{q_int}
+			 q\big( x_{i+\frac{1}{2}}^d(t,s),t\big) = 
+			\exp{\bigg(-\int_{t}^{s} {\partial_x}{{u}}\big( x_{i+\frac{1}{2}}^d(\theta,s),\theta\big)  \,d\theta \bigg)}
+			 q(x_{i+\frac{1}{2}},s).
+	\end{equation}
+	Notice that if ${u}$ does not depend on $x$, then $q$ is constant along the trajectory $ x_{i+\frac{1}{2}}^d(t,s)$.
+	
+	Let us consider the mapping $s\in[t^n,t^{n+1}] \to  x_{i+\frac{1}{2}}^d(t^n,s)$. 
+	Integrating $q$ over all departure points at time $t^n$ from $x_{i+\frac{1}{2}}$ at time $s$, we have
+	\begin{equation}
+		\label{depint_1}
+		\int^{ x_{i+\frac{1}{2}}^d(t^n,t^{n+1})}_{ x_{i+\frac{1}{2}}^d(t^n,t^{n}) = x_{i+\frac{1}{2}}}   
+		q(x,t^n)\,dx 
+		= \int_{t^n}^{t^{n+1}}  q\big( x_{i+\frac{1}{2}}^d(t^n,s),t^n\big){\partial_s}{ x_{i+\frac{1}{2}}^d} (t^n,s)\,ds,
+	\end{equation}
+	where we are just using the variable change integration formula.
+	Then, it follows from Equations  \eqref{xs_int}
+	and \eqref{q_int} with $t=t^n$ that:
+	\begin{equation}
+		\label{depint_2}
+			\int^{ x_{i+\frac{1}{2}}^d(t^n,t^{n+1})}_{x_{i+\frac{1}{2}}} q(x,t^n)\,dx 
+			= -\int_{t^n}^{t^{n+1}} ({u} q)(x_{i+\frac{1}{2}},s) \,ds, 
+	\end{equation}
+	which is the desired formula.
+\end{proof}
+With the aid of Proposition \ref{chp-adv1d-sec-flux:prop1}, we can rewrite Problem \ref{chp-adv1d-sec2-prob2}
+in terms of the departure point, avoiding the need for knowledge about $q$ over the
+entire interval $[t^n, t^{n+1}]$. This is described in Problem \ref{chp-adv1d-sec2-prob3}:
+\begin{prob}
+    \label{chp-adv1d-sec2-prob3}
+	Assume the framework of Problem \ref{chp-adv1d-sec2-prob1}
+    and a $(\Delta x, \Delta t, \lambda)$-discretization of $\Omega \times [0,T]$.
+	Since we are in the framework of Problem \ref{chp-adv1d-sec2-prob1}, it follows that:
+\begin{equation}
+	\label{1d-fvslexact-scheme}
+	\begin{split}
+{Q}_i(t^{n+1}) =  {Q}_i(t^{n}) -
+\lambda
+\bigg( \frac{1}{\Delta t}\int_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})}^{x_{i+\frac{1}{2}}}{q}(x, t^n) \,dx-
+\frac{1}{\Delta t} \int_{x_{i-\frac{1}{2}}^d(t^n,t^{n+1})}^{x_{i-\frac{1}{2}}}{q}(x, t^n) \,dx \bigg),\\
+\quad \forall i = 1, \ldots, N,
+\quad \forall n = 0, \ldots, N_T-1,
+	\end{split}
+\end{equation}
+	where ${Q}_i(t) = \frac{1}{\Delta x}
+	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x,t) \,dx$.
+	Our problem now consists of finding the values ${Q}_i(t^{n})$, 
+	$\forall i = 1, \ldots, N$, $\forall n = 0, \ldots, N_T-1$,
+	given the initial values ${Q}_i(0)$, $\forall i = 1, \ldots N$.
+	In other words, we would like to find the average values of ${q}$
+	in each control volume $X_i$ at the considered time instants.
+\end{prob}
+At each time step $t^n$, we compute the values of ${Q}_i(t^{n+1})$ based on ${Q}_i(t^{n})$ and the integrals 
+of $q(x, t^n)$ over specific intervals. These intervals are defined by the departure points 
+$X(t^n, t^{n+1}; x_{i+\frac{1}{2}})$ and $X(t^n, t^{n+1}; x_{i-\frac{1}{2}})$.
+To perform the computations, we need to determine the departure points from the edges of all control volumes
+and calculate the required integrals. This idea serves as the motivation for defining finite-volume 
+Semi-Lagrangian schemes. These schemes involve estimating the departure points and reconstructing the 
+function $q$ at time $t^n$ using its average values $Q_i(t^n)$, which enables us to compute the necessary integrals.
+
+\section{The finite-volume Semi-Lagrangian approach}
+\label{chp-adv1d-sec2-fvsl}
+Finally, we define the 1D FV-SL scheme problem as follows in Problem \ref{chp-adv1d-sec2-prob3}.
+\begin{prob}[1D FV-SL scheme]
+	\label{chp-adv1d-sec2-prob4}
+	Assume the framework defined in Problem \ref{chp-adv1d-sec2-prob3}.
+	The finite-volume Semi-Lagrangian approach of Problem \ref{chp-adv1d-sec2-prob3}
+	consists of finding a scheme of the form:
+	\begin{equation}
+		\label{1d-fv-scheme}
+		{Q}_{i}^{n+1} = {Q}_{i}^{n} -
+		\lambda({F}_{i+\frac{1}{2}}^{n} - {F}_{i-\frac{1}{2}}^{n}),
+		\quad \forall i = 1, \ldots, N,
+		\quad \forall n = 0, \ldots, N_T-1,
+	\end{equation}
+	where ${Q}^{n} \in \mathbb{P}^{N}_{\nu}$ is intended to be an approximation
+	of ${Q}(t^{n})\in \mathbb{P}^{N}_{\nu}$ in some sense. We define
+	${Q}_{i}^{0} = {Q}_i(0)$ or ${Q}_{i}^{0} = {q}^{0}_{i}$.
+	The terms ${F}_{i\pm\frac{1}{2}}^{n}$ are known as numerical flux and are given by
+	\begin{equation}
+		{F}_{i\pm\frac{1}{2}}^{n} =
+		\frac{1}{\Delta t}
+		\int_{\tilde{x}_{i\pm\frac{1}{2}}^n}^{x_{i\pm\frac{1}{2}}}\tilde{q}(x; Q^n) \,dx,
+	\end{equation}
+	where ${\tilde{x}_{i\pm\frac{1}{2}}}^n$ is an estimate of the departure point $x_{i-\frac{1}{2}}^d(t^n,t^{n+1})$,
+	and $\tilde{q}$ is a reconstruction function for $q$ built with the values $Q^n$.
+	Thus, ${F}_{i\pm\frac{1}{2}}^{n}$ approximates
+	$\frac{1}{\Delta t} \int_{x_{i\pm\frac{1}{2}}^d(t^n,t^{n+1})}^{x_{i\pm \frac{1}{2}}}{q}(x, t^n) \,dx$.
+\end{prob}
+For a 1D FV-SL the discrete total mass at the time-step $n$ is given by
+\begin{equation}
+	\label{1d-fv-mass}
+	M^n =  \Delta x \sum_{i=1}^N Q_i^n.
+\end{equation}
+Therefore, the discrete total mass is constant for a 1D-FV scheme,
+which follows from a straightforward computation:
+\begin{align*}
+	M^{n+1} =  \Delta x \sum_{i=1}^N Q_i^{n+1}
+					= M^{n} - \Delta t  \sum_{i=1}^N (F^n_{i+\frac{1}{2}}- F^n_{i-\frac{1}{2}})
+					= M^{n} - \Delta t (F^n_{N+\frac{1}{2}}- F^n_{\frac{1}{2}})
+					= M^{n},
+\end{align*}
+where we are using that $F^n_{N+\frac{1}{2}} = F^n_{\frac{1}{2}}$, since we are assuming periodic boundary
+conditions.
+
+We would like to highlight an important relationship between the average values of $q$ and
+its values at the cell centroids. In Problem \ref{chp-adv1d-sec2-prob4}, we mentioned that 
+the initial condition can be represented as $q_i^0$ instead of $Q_i(0)$.
+Moreover, when analyzing the convergence of a FV-SL scheme, it is useful
+to compare $Q_i^n$ with $q_i^n$ since computing $Q_i(t^n)$ requires evaluating an analytical
+integral, which can be challenging in certain cases. In Proposition \ref{prop-bound-centroid},
+we provide a simple proof that $q_i^n$ approximates $Q_i(t^n)$ with second-order error
+when $q$ is twice continuously differentiable.
+\begin{prop}
+	\label{prop-bound-centroid}
+	If $q \in \mathcal{C}^2_P(\Omega)$, then $Q_i(t^n)-q_i^n = C_1 \Delta x^2$, where 
+	$C_1 = \frac{1}{24}\frac{\partial^2 q}{\partial x^2} (\eta, t^n)$,  $\eta \in X_i$.
+\end{prop}
+\begin{proof}
+	Just apply Theorem \ref{prop-bound-midpoint1d} for the function $q(x,t^n)$.	
+\end{proof}
+Hence, 1D FV-SL schemes may be conceptualized as schemes that update the centroid values.
+The Problem of the convergence of 1D FV-SL schemes is addressed in Section \ref{convergence-1dfvsl}.
+Now we are going to address the problem of the departure point estimation and the reconstruction problem.
