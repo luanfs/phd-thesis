@@ -31,33 +31,6 @@ for Lagrange interpolation.
 
 \section{Numerical integration}
 \label{anexo-numint}
-\begin{thrm}[Leibniz integral rule]
-	\label{anexo-numint-lr}
-   If $f$...
-	\begin{equation*}
-	\frac{d}{ds}\int_{s_0}^{s}f(s,\theta) \,d\theta =
-   f\big(s, s\big)+
-	\int_{s_0}^{x}\partial_x f(s,\theta) \,d\theta
-	\end{equation*}
-\end{thrm}
-\begin{proof}
-Let us define
-\begin{equation*}
-F(s) = \int_{s_0}^{s}f(s,\theta) \,d\theta.
-\end{equation*}
-Then
-\begin{align*}
-\frac{F(s+h)-F(s)}{h} &= 
-\frac{1}{h} \int_{s_0}^{s+h}f(s+h,\theta) \,d\theta - 
-\frac{1}{h} \int_{s_0}^{s}f(s,\theta) \,d\theta \\
-&= \frac{1}{h} \bigg(
- \int_{s_0}^{s+h}f(s+h,\theta) \,d\theta 
--\int_{s}^{s+h}f(s+h,\theta) \,d\theta 
--\int_{s_0}^{s}f(s,\theta) \,d\theta
-+\int_{s}^{s+h}f(s+h,\theta) \,d\theta \bigg)
-\end{align*}
-\end{proof}
-
 
 The following mean value theorem for integrals is a very useful tool 
 when working with numerical integration errors.
@@ -74,6 +47,49 @@ when working with numerical integration errors.
 	See \citet[\pno~143]{courant:1999}.
 \end{proof}
 
+
+\begin{thrm}[Leibniz integral rule]
+	\label{anexo-numint-lr}
+   If $f \in \mathcal{C}^2$, then
+	\begin{equation*}
+	\frac{d}{ds}\int_{s_0}^{s}f(s,\theta) \,d\theta =
+   f\big(s, s\big)+
+	\int_{s_0}^{s}\partial_s f(s,\theta) \,d\theta.
+	\end{equation*}
+\end{thrm}
+\begin{proof}
+Let us define
+\begin{equation*}
+F(s) = \int_{s_0}^{s}f(s,\theta) \,d\theta,
+\end{equation*}
+and take a sequence $h_n$ of real numbers such that  \( h_n \overset{n \to \infty}{\longrightarrow} 0 \).
+Then
+\begin{align}
+\frac{F(s+h_n)-F(s)}{h_n} &= 
+\frac{1}{h_n} \int_{s_0}^{s+h_n}f(s+h_n,\theta) \,d\theta - 
+\frac{1}{h_n} \int_{s_0}^{s}f(s,\theta) \,d\theta \\ \label{lr-eq1}
+&= \frac{1}{h} \bigg(
+ \int_{s}^{s+h}f(s+h_n,\theta) \,d\theta 
++\int_{s_0}^{s}f(s+h_n,\theta) \,d\theta 
+-\int_{s_0}^{s}f(s,\theta) \,d\theta \bigg).
+\end{align}
+It follows from Theorem \ref{anexo-numint-mv} (with $g=1$) that there exists $\theta_n$ between $s$ and $s+h$ such that:
+\begin{align}\label{lr-eq2}
+\frac{1}{h_n} \int_{s_0}^{s+h_n}f(s+h_n,\theta) \,d\theta  =
+f(s+h_n,\theta_n) \overset{n \to \infty}{\longrightarrow} f(s,s),
+\end{align}
+since \( \theta_n \overset{n \to \infty}{\longrightarrow} s \).
+From the mean value theorem,  there exists $s_n$ between $s$ and $s+h_n$ such that:
+\begin{align}\label{lr-eq3}
+\int_{s_0}^{s} \bigg(\frac{f(s+h_n,\theta) -f(s,\theta)}{h}\bigg) \,d\theta =
+\int_{s_0}^{s} \partial_s f(s_n,\theta) \,d\theta 
+\overset{n \to \infty}{\longrightarrow}
+\int_{s_0}^{s} \partial_s f(s,\theta) \,d\theta,
+\end{align}
+where the last limit can be jusitified using the Lebesgue's dominated convergence theorem (see \citet[\pno~54]{folland:1999}) .
+Using Equations \eqref{lr-eq2} and \eqref{lr-eq3} in Equation \eqref{lr-eq1}, we get the desired identity since
+the sequence $h_n$ is any sequence that converges to 0.
+\end{proof}
 \subsection{Midpoint rule}
 When considering finite-volume schemes, it is useful to compare the average value on a  control volume 
 of a function with its value at the  control volume centroid. 
@@ -255,7 +271,7 @@ Now we can define consistency.
 	%exists a constant 
 	%$C$ that does not depend neither on $\Delta t$ nor on $\Delta x$, such that
 	\begin{equation*}
-		{\max_{1\leq n\leq N_T^{(k)}}}{\|\tau^n\|_{p,\Delta x^{(k)}}} = O(\Delta x^P).
+		{\max_{1\leq n\leq N_T^{(k)}}}{\|\tau^n\|_{p,\Delta x^{(k)}}} = \mathcal{O}(\Delta x^P).
 	\end{equation*}
 \end{definition}
 From Equation \eqref{consistency-1d-eq2}, it follows that we basically need to ensure that 
@@ -281,7 +297,7 @@ and we define the vector of errors by $E^n \in \mathbb{P}^{N}_{\nu}$ with entrie
 	%there exists a constant 
 	%$C$ that does not depend neither on $\Delta t$ nor on $\Delta x$, such that
 	\begin{equation*}
-		{\max_{1\leq n\leq N_T^{(k)}}}{\|E^n\|_{p,\Delta x^{(k)}}} = O(\Delta x^P).
+		{\max_{1\leq n\leq N_T^{(k)}}}{\|E^n\|_{p,\Delta x^{(k)}}} = \mathcal{O}(\Delta x^P).
 	\end{equation*}
 \end{definition}
 Subtracting Equation \eqref{1d-fv-scheme} from Equation \eqref{consistency-1d-eq1} we get
@@ -552,7 +568,7 @@ Using the midpoint rule for integration (Theorem \ref{prop-bound-midpoint2d}), t
 		\tau_{ij}^n 
 		&= \frac{1}{\Delta t}  \int_{t^{n}}^{t^{n+1}}
 		{\nabla \cdot (\boldsymbol{u}q)}(x_i, y_j, t)  \,dt - 
-		\mathbb{D}^n_{ij} + O(\Delta x^2) + O(\Delta y^2).
+		\mathbb{D}^n_{ij} + \mathcal{O}(\Delta x^2) + \mathcal{O}(\Delta y^2).
 	\end{split}
 \end{align}
 Therefore, in order to investigate the consistency, we may compare how well the discrete divergence approximates the divergence.
