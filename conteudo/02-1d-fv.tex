@@ -153,10 +153,10 @@ Next, we introduce the definitions of grid functions at cell centroids and edges
 \end{definition}
 The definition of a $\Delta x$-grid wind is based on the Arakawa grids \citep{arakawa:1977}.
 Considering functions $q, u: \Omega \times[0,T] \to \mathbb{R}$ and a $(\Delta x,\Delta t, \lambda)$-discretization
-of $\Omega \times[0,T]$, we introduce the grid functions $q^n \in \mathbb{R}^{N}_{\nu}$ and $u^n \in \mathbb{R}^{N+1}_{\nu}$
-where ${q}^n_{i} \approx {q}(x_i, t^{n})$ and $u^n_{i+\frac{1}{2}} = u(x_{i+\frac{1}{2}},t^n)$.
-The grid function $q^n$ approximate the discrete values of $q$ at cell centroids and $u^n$ represents the values of $u$ approximates edges, both
-for each time level $t^n$ (Figure \ref{chp-adv1d-sec1-grid1d-function}).
+of $\Omega \times[0,T]$, we introduce the grid functions $q^n \in \mathbb{R}^{N}_{\nu}$ and $u^n \in \mathbb{R}^{N+1}_{\nu}$. 
+Here, ${q}^n_{i} = {q}(x_i, t^{n})$ and $u^n_{i+\frac{1}{2}} = u(x_{i+\frac{1}{2}},t^n)$.
+These grid functions represent the discrete values of $q$ and $u$ at the cell centroids and edges, respectively,
+for each time level $t^n$  (Figure \ref{chp-adv1d-sec1-grid1d-function}).
 
 
 In this Chapter, our focus lies on periodic grid functions.
@@ -925,7 +925,7 @@ for a time-averaged wind $\tilde{u}_{i+\frac{1}{2}}^n$ as explained in Section \
 The numerical flux function ${F}^{n}_{i+\frac{1}{2}}$ is then suggested in Problem \ref{chp-adv1d-sec2-prob4}:
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux1}
-	{F}^{n}_{i+\frac{1}{2}}(Q^n,\tilde{u}^n)  = \frac{1}{\Delta t}
+	{F}^{n}_{i+\frac{1}{2}}[Q^n,\tilde{u}^n]  = \frac{1}{\Delta t}
 	\int_{x_{i+\frac{1}{2}}-\tilde{u}^n_{i+\frac{1}{2}}\Delta t}^{x_{i+\frac{1}{2}}}
 	\tilde{q}(x;Q^n) \,dx.
 \end{equation}
@@ -939,7 +939,7 @@ $\alpha_{i+\frac{1}{2}}^n \in [0,1[$,
 we can express the numerical flux as \citep{lin:1996, chen:2017}:
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux}
-	{F}_{i+\frac{1}{2}}^n(Q^n,\tilde{u}^n) =  \frac{1}{\Delta t}
+	{F}_{i+\frac{1}{2}}^n[Q^n,\tilde{u}^n] =  \frac{1}{\Delta t}
 	\begin{cases}
 	\Delta x\sum_{l=0}^{k-1} Q_{i-l} +  
     \int_{x_{i-k+\frac{1}{2}}-{\alpha}^n_{i+\frac{1}{2}}\Delta x}^{x_{i-k+\frac{1}{2}}}
@@ -957,13 +957,13 @@ we define the following averages of the Piecewise-Parabolic approximation, as de
 Equation \eqref{chp-adv1d-sec3-1-eq2} for $Q^{n}$ \citep{colella:1984}:
 \begin{equation}
 	\label{chp-sec-flux:fL_1}
-	F_{L,i+\frac{1}{2}}(Q^n,y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}-y}^{x_{i+\frac{1}{2}}}
+	F_{L,i+\frac{1}{2}}[Q^n,y] = \frac{1}{y} \int_{x_{i+\frac{1}{2}}-y}^{x_{i+\frac{1}{2}}}
 	\tilde{q}(x;Q^n)\,dx,
 \end{equation}
 and
 \begin{equation}
 	\label{chp-sec-flux:fR_1}
-	F_{R,i+\frac{1}{2}}(Q^n,y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}}^{x_{i+\frac{1}{2}+y}}
+	F_{R,i+\frac{1}{2}}[Q^n,y] = \frac{1}{y} \int_{x_{i+\frac{1}{2}}}^{x_{i+\frac{1}{2}+y}}
 	\tilde{q}(x;Q^n)\,dx.
 \end{equation}
 If $y \leq \Delta x$, then both of the above integral domains
@@ -972,7 +972,7 @@ it follows from a straightforward computation using
 Equation \eqref{chp-adv1d-sec-recon-ppm-eq1} that:
 \begin{equation}
 	\label{chp-sec-flux:fL_2}
-	F_{L,i+\frac{1}{2}}(Q^n,y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}-y}^{x_{i+\frac{1}{2}}}
+	F_{L,i+\frac{1}{2}}[Q^n,y] = \frac{1}{y} \int_{x_{i+\frac{1}{2}}-y}^{x_{i+\frac{1}{2}}}
 	q_{i}(x;Q^n)\,dx = 
 	q_{R,i} +\frac{(q_{6,i} - \Delta q_i)}{2\Delta x}y
 	- \frac{q_{6,i}}{3\Delta x^2}y^2,
@@ -980,7 +980,7 @@ Equation \eqref{chp-adv1d-sec-recon-ppm-eq1} that:
 and
 \begin{equation}
 	\label{chp-sec-flux:fR_2}
-	F_{R,i+\frac{1}{2}}(Q^n,y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}}^{x_{i+\frac{1}{2}}+y}
+	F_{R,i+\frac{1}{2}}[Q^n,y] = \frac{1}{y} \int_{x_{i+\frac{1}{2}}}^{x_{i+\frac{1}{2}}+y}
 	q_{i+1}(x;Q^n)\,dx = 
 	q_{L,i+1} +\frac{(q_{6,i+1} + \Delta q_{i+1})}{2\Delta x}y
 	- \frac{q_{6,i+1}}{3\Delta x^2}y^2.
@@ -988,23 +988,23 @@ and
 The numerical flux function for PPM is then defined by:
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux2}
-        \mathfrak{F}_{i+\frac{1}{2}}^{PPM}(Q^n,\tilde{u}^n) =
-    	\begin{cases} F_{L,i+\frac{1}{2}}(Q^n, {\alpha}_{i+\frac{1}{2}}^n\Delta x) & \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
-		      F_{R,i+\frac{1}{2}}(Q^n,-{\alpha}_{i+\frac{1}{2}}^n\Delta x) & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
+        \mathfrak{F}_{i+\frac{1}{2}}^{PPM}[Q^n,\tilde{u}^n] =
+    	\begin{cases} F_{L,i+\frac{1}{2}}[Q^n, {\alpha}_{i+\frac{1}{2}}^n\Delta x] & \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
+		      F_{R,i+\frac{1}{2}}[Q^n,-{\alpha}_{i+\frac{1}{2}}^n\Delta x] & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
     	\end{cases}
 \end{equation}
 and
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux3}
-         {F}_{i+\frac{1}{2}}^n(Q^n,\tilde{u}^n)  =  \frac{1}{\Delta t} \bigg(
+         {F}_{i+\frac{1}{2}}^n[Q^n,\tilde{u}^n]  =  \frac{1}{\Delta t} \bigg(
     	\Delta x\sum_{l=0}^{k-1} Q_{i-l} +  
-        \Delta x {\alpha}_{i+\frac{1}{2}}^n\mathfrak{F}_{i+\frac{1}{2}}^{PPM}(Q^n,\tilde{u}^n)\bigg).\\
+        \Delta x {\alpha}_{i+\frac{1}{2}}^n\mathfrak{F}_{i+\frac{1}{2}}^{PPM}[Q^n,\tilde{u}^n]\bigg).\\
 \end{equation}
 %where $\tilde{u}_{i+\frac{1}{2}}^n$ is the velocity used in the departure point estimation.
 In particular, if the CFL number is less than one, then:
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux4}
-        \mathfrak{F}_{i+\frac{1}{2}}^{PPM}(Q^n,\tilde{c}^n)  =  
+        \mathfrak{F}_{i+\frac{1}{2}}^{PPM}[Q^n,\tilde{c}^n]  =  
     	\begin{cases}
         q_{R,i} +
         \big(\frac{{q_{6,i} - \Delta q_i}}{2}\big){\tilde{c}_{{i+\frac{1}{2}}}^n}
@@ -1019,15 +1019,15 @@ In particular, if the CFL number is less than one, then:
 and
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux5}
-         {F}_{i+\frac{1}{2}}^{PPM}(Q^n,\tilde{c}^n) = 
-         {\tilde{u}}_{i+\frac{1}{2}}^n\mathfrak{F}_{i+\frac{1}{2}}^n(Q^n,\tilde{c}^n),\\
+         {F}_{i+\frac{1}{2}}^{n}[Q^n,\tilde{c}^n] = 
+         {\tilde{u}}_{i+\frac{1}{2}}^n\mathfrak{F}_{i+\frac{1}{2}}^{PPM}[Q^n,\tilde{c}^n],\\
 \end{equation}
 where we are expressing the flux in terms of the time-averaged CFL number $\tilde{c}^n$.
 Notice that this flux is upwind based, that is, it always computes the flux using the parabola in the upwind direction.
 Finally, for both \textbf{hord0} and \textbf{hord8} schemes, $F_{i+\frac{1}{2}}^n$ uses the stencil
 $\mathcal{S}_{i+\frac{1}{2}} = \{i-3,i-2,i-1,i,i+1,i+2,i+3\}$, and therefore we need $\nu=3$ layers of ghost cells.
 
-In FV3, the 1D flux is computed based on the pertubation values \citep{harris:2021} given by:
+In FV3, the 1D flux is computed based on the perturbation values \citep{harris:2021} given by:
 \begin{align}
 \label{chp-sec-flux:numerical-flux6}
 b_{L,i} = q_{L,i} - Q_i^n, \\
@@ -1037,7 +1037,7 @@ b_{R,i} = q_{R,i} - Q_i^n.
 Then, Equation \eqref{chp-sec-flux:numerical-flux4} becomes:
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux8}
-        \mathfrak{F}_{i+\frac{1}{2}}^{PPM}(Q^n,\tilde{c}^n)  =  
+        \mathfrak{F}_{i+\frac{1}{2}}^{PPM}[Q^n,\tilde{c}^n]  =  
     	\begin{cases}
         Q_{i}^n +
         (1-\tilde{c}_{{i+\frac{1}{2}}}^n)
@@ -1056,8 +1056,8 @@ Finally, the average value update is implemented in FV3 as
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux9}
 	Q_i^{n+1} = Q_i^{n} - 
-        \big(\tilde{c}_{i+\frac{1}{2}}^n\mathfrak{F}_{i+\frac{1}{2}}^{PPM}(Q^n,\tilde{c}^n) -
-        \tilde{c}_{i-\frac{1}{2}}^n\mathfrak{F}_{i-\frac{1}{2}}^{PPM}(Q^n,\tilde{c}^n)  \big),
+        \big(\tilde{c}_{i+\frac{1}{2}}^n\mathfrak{F}_{i+\frac{1}{2}}^{PPM}[Q^n,\tilde{c}^n] -
+        \tilde{c}_{i-\frac{1}{2}}^n\mathfrak{F}_{i-\frac{1}{2}}^{PPM}[Q^n,\tilde{c}^n]  \big),
 \end{equation}
 for $i=1, \cdots, N$.
 Thefore, at each time-step, we need to:
