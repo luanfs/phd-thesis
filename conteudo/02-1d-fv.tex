@@ -988,7 +988,7 @@ and
 The numerical flux function for PPM is then defined by:
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux2}
-        \mathfrak{F}_{i+\frac{1}{2}}^n(Q^n,\tilde{u}^n) =
+        \mathfrak{F}_{i+\frac{1}{2}}^{PPM}(Q^n,\tilde{u}^n) =
     	\begin{cases} F_{L,i+\frac{1}{2}}(Q^n, {\alpha}_{i+\frac{1}{2}}^n\Delta x) & \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
 		      F_{R,i+\frac{1}{2}}(Q^n,-{\alpha}_{i+\frac{1}{2}}^n\Delta x) & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
     	\end{cases}
@@ -998,13 +998,13 @@ and
 	\label{chp-sec-flux:numerical-flux3}
          {F}_{i+\frac{1}{2}}^n(Q^n,\tilde{u}^n)  =  \frac{1}{\Delta t} \bigg(
     	\Delta x\sum_{l=0}^{k-1} Q_{i-l} +  
-        \Delta x {\alpha}_{i+\frac{1}{2}}^n\mathfrak{F}_{i+\frac{1}{2}}^n(Q^n,\tilde{u}^n)\bigg).\\
+        \Delta x {\alpha}_{i+\frac{1}{2}}^n\mathfrak{F}_{i+\frac{1}{2}}^{PPM}(Q^n,\tilde{u}^n)\bigg).\\
 \end{equation}
 %where $\tilde{u}_{i+\frac{1}{2}}^n$ is the velocity used in the departure point estimation.
 In particular, if the CFL number is less than one, then:
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux4}
-        \mathfrak{F}_{i+\frac{1}{2}}^n(Q^n,\tilde{c}^n)  =  
+        \mathfrak{F}_{i+\frac{1}{2}}^{PPM}(Q^n,\tilde{c}^n)  =  
     	\begin{cases}
         q_{R,i} +
         \big(\frac{{q_{6,i} - \Delta q_i}}{2}\big){\tilde{c}_{{i+\frac{1}{2}}}^n}
@@ -1019,7 +1019,7 @@ In particular, if the CFL number is less than one, then:
 and
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux5}
-         {F}_{i+\frac{1}{2}}^n(Q^n,\tilde{c}^n) = 
+         {F}_{i+\frac{1}{2}}^{PPM}(Q^n,\tilde{c}^n) = 
          {\tilde{u}}_{i+\frac{1}{2}}^n\mathfrak{F}_{i+\frac{1}{2}}^n(Q^n,\tilde{c}^n),\\
 \end{equation}
 where we are expressing the flux in terms of the time-averaged CFL number $\tilde{c}^n$.
@@ -1037,7 +1037,7 @@ b_{R,i} = q_{R,i} - Q_i^n.
 Then, Equation \eqref{chp-sec-flux:numerical-flux4} becomes:
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux8}
-        \mathfrak{F}_{i+\frac{1}{2}}^n(Q^n,\tilde{c}^n)  =  
+        \mathfrak{F}_{i+\frac{1}{2}}^{PPM}(Q^n,\tilde{c}^n)  =  
     	\begin{cases}
         Q_{i}^n +
         (1-\tilde{c}_{{i+\frac{1}{2}}}^n)
@@ -1056,8 +1056,8 @@ Finally, the average value update is implemented in FV3 as
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux9}
 	Q_i^{n+1} = Q_i^{n} - 
-        \big(\tilde{c}_{i+\frac{1}{2}}^n\mathfrak{F}_{i+\frac{1}{2}}^n(Q^n,\tilde{c}^n) -
-        \tilde{c}_{i-\frac{1}{2}}^n\mathfrak{F}_{i-\frac{1}{2}}^n(Q^n,\tilde{c}^n)  \big),
+        \big(\tilde{c}_{i+\frac{1}{2}}^n\mathfrak{F}_{i+\frac{1}{2}}^{PPM}(Q^n,\tilde{c}^n) -
+        \tilde{c}_{i-\frac{1}{2}}^n\mathfrak{F}_{i-\frac{1}{2}}^{PPM}(Q^n,\tilde{c}^n)  \big),
 \end{equation}
 for $i=1, \cdots, N$.
 Thefore, at each time-step, we need to:
@@ -1066,7 +1066,7 @@ Thefore, at each time-step, we need to:
 \item Compute $q_{L,i}$ and  $q_{R,i}$ (for $i = 1, \cdots, N$) using hord0 or hord8;
 \item Evalute the pertubation values (for $i = 1, \cdots, N$) using Equations
 \eqref{chp-sec-flux:numerical-flux6} and \eqref{chp-sec-flux:numerical-flux7};
-\item Evaluate the fluxes  $\mathfrak{F}_{i+\frac{1}{2}}^n$ (for $i = 0, \cdots, N$) using Equation \eqref{chp-sec-flux:numerical-flux8};
+\item Evaluate the fluxes  $\mathfrak{F}_{i+\frac{1}{2}}^{PPM}$ (for $i = 0, \cdots, N$) using Equation \eqref{chp-sec-flux:numerical-flux8};
 \item Update the $Q^{n+1}$ using Equation \eqref{chp-sec-flux:numerical-flux9}.
 \end{enumerate}
 \section{Numerical experiments}
