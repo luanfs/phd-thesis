@@ -1,0 +1,33 @@
+\chapter{Two-dimensional finite-volume methods}
+\label{chp-2d-fv}
+In Chapter \ref{chp-1d-fv}, we addressed the problem of solving the one-dimensional
+linear advection equation using the finite-volume method based on PPM. In this chapter, our focus shifts to solving the two-dimensional 
+linear advection equation using the finite-volume method. This step is crucial in our work since, as we will explore in Chapter 
+\ref{chp-cs-fv}, solving the linear advection equation on the cubed-sphere relies on solving two-dimensional linear advection equations 
+at each cube face, with interpolation between adjacent panels.
+
+A natural approach to develop a finite-volume method for the two-dimensional linear advection equation would involve extending PPM to 
+two dimensions. Indeed, \citet{rancic:1992} proposed a piecewise bi-parabolic extension of PPM using a semi-Lagrangian temporal 
+discretization. 
+Further, this type of method can be extended to the cubed-sphere \citep{lauritzen:2010}.
+However, this method suffers from a significant drawback—its computationally expensive nature. As a popular alternative, 
+dimension-splitting methods are often used, which replace the two-dimensional problem with a sequence of one-dimensional problems. For 
+example, we can solve the two-dimensional linear advection equation by solving a series of one-dimensional linear advection equations 
+using the PPM from Chapter \ref{chp-1d-fv}. Moreover, in principle, we can employ any numerical method that solves the one-dimensional 
+linear advection equation.
+
+A comparison between two-dimensional and dimension-splitting semi-Lagrangian schemes on a plane was investigated by \citet{chen:2017}, 
+utilizing the PPM as the one-dimensional solver and distorted two-dimensional grids. Their main conclusion was that dimension-splitting 
+schemes are more sensitive to grid distortions, but they are computationally cheaper and more accurate than two-dimensional methods, 
+particularly when dealing with large CFL numbers.
+
+The primary objective of this chapter is to provide a comprehensive explanation of the dimension splitting method proposed by 
+\citet{lin:1996}. This method is currently utilized in the FV3 dynamical core and is applied to the two-dimensional linear advection 
+equation using the one-dimensional finite-volume schemes described in Chapter \ref{chp-1d-fv}.
+Similar to Chapter \ref{chp-1d-fv}, we start this chapter with a review of the integral form of the two-dimensional advection 
+equation in Section \ref{sec-adv2d}. In Section \ref{sec:fv-2d}, we establish the framework for general two-dimensional finite-volume 
+schemes. The dimension splitting method is presented in Section \ref{sec-dsplit}, and we showcase numerical experiments in Section 
+\ref{sec-ds-exp}.
+\section{Two-dimensional advection equation in integral form}
+\label{sec-adv2d}
+
