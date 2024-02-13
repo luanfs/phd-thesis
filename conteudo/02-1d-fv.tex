@@ -74,7 +74,7 @@ This chapter begins with a basic review of one-dimensional advection equation in
 in Section \ref{chp-adv1d-sec1}. In Section \ref{chp-adv1d-sec2-fvsl}, we establish the framework for general
 one-dimensional finite-volume Semi-Lagrangian schemes. Section \ref{chp-adv1d-sec-dp} presents
 methods for computing the departure point. The PPM reconstruction is described in Section \ref{chp-adv1d-sec-recon},
-while Subsection \ref{chp-adv1d-sec-mono} introduces different approaches to ensure the monotonicity of parabolas.
+while Subsection \ref{chp-adv1d-sec-hord8} introduces a different approache to ensure the monotonicity of parabolas.
 Section \ref{chp-adv1d-sec-flux} focuses on the description and investigation of the PPM flux computation.
 Section \ref{chp-adv1d-sec-numerical-exp}
 presents numerical results using the PPM scheme for the advection equation.
@@ -603,6 +603,7 @@ The departure point $\tilde{x}_{i+\frac{1}{2}}^n$ is said to be $p$-order accura
 \end{equation}
 
 \subsection{dp1 scheme}
+\label{chp-adv1d-sec-dp1}
 One possible way of estimating the time-averaged wind is by using:
 \begin{equation}
 	\label{chp-sec-dp-eq5}
@@ -659,6 +660,7 @@ x_{i+\frac{1}{2}} - \frac{\Delta t}{2}u\big(x_{i+\frac{1}{2}}^d(\theta_2,t^{n+1}
 \end{proof}
 
 \subsection{dp2 scheme}
+\label{chp-adv1d-sec-dp2}
 In this work, we shall
 consider a second-order Runge-Kutta method to compute the departure point, which we express in terms of
 $\tilde{u}^n_{i+\frac{1}{2}}$ using the following equations \citep{durran:2010}:
@@ -696,7 +698,7 @@ In this case, it useful to work with the time-averaged CFL number:
 	\end{cases}
 \end{equation}
 
-\section{Reconstruction}
+\section{Reconstruction: the Piecewise-Parabolic Method}
 \label{chp-adv1d-sec-recon}
 In this section, we will review the Piecewise-Parabolic Method (PPM).
 The analysis of its accuracy will be presented in Section \ref{chp-adv1d-sec-numerical-analysis-ppm}.
@@ -796,8 +798,8 @@ obtain a piecewise linear reconstruction, similar to \citet{vanleer:1977}.
 For polynomial reconstruction schemes, we refer to \citet{engwirda:2016} and the references therein.
 
 
-\subsection{The Piecewise-Parabolic Method}
-\label{chp-adv1d-sec-ppm}
+%\subsection{The Piecewise-Parabolic Method}
+%\label{chp-adv1d-sec-ppm}
 Hereafter, we are going the focus on the piecewise parabolic method from \citet{colella:1984} that uses $d=2$, 
 $\Phi_0(\xi)=1$, $\Phi_1(\xi)=\xi$, $\Phi_1(\xi)=(1-\xi)\xi$. 
 In order to follow the notation from \citet{colella:1984},
@@ -842,6 +844,10 @@ Hence, it is natural to seek for $q_{L, i}$ as an approximation of $q(x_{i-\frac
 and $q_{R, i}$ as an approximation of $q(x_{i+\frac{1}{2}})$.
 As we mentioned before in after introducing Equation \eqref{chp-adv1d-sec-recon-ppm-eq5}, this is achieved
 using finite-differences.
+
+\subsection{hord0}
+\label{chp-adv1d-sec-hord0}
+This Subsection is dedicated to present the unlimited approximation of $q(x_{i-\frac{1}{2}})$ presented in \citet{colella:1984}.
 An explicit expression for the approximation of $q(x_{i-\frac{1}{2}})$, denoted by $q_{i+\frac{1}{2}}$, is given by \citep{colella:1984}:
 \begin{equation}
 	\label{chp-adv1d-sec-recon-ppm-eq7}
@@ -860,24 +866,23 @@ We notice that Formula \eqref{chp-adv1d-sec-recon-ppm-eq8} may be rewritten more
 The Formula \eqref{chp-adv1d-sec-recon-ppm-eq9} is fourth-order accurate if
 $q$ is at least $\mathcal{C}^4$ \citep{colella:1984}. Indeed, we
 prove this later in Proposition \ref{prop:ppm-bound1}.
-An explicit expression for the values of $q_{R,i}$ and $q_{L,i}$ are given by:
+The expression for the values of $q_{R,i}$ and $q_{L,i}$ are given by:
 \begin{align}
 	\label{chp-adv1d-sec-recon-ppm-eq10}
-	q_{R,i} = q_{i+\frac{1}{2}} = \frac{7}{12} \bigg( Q_{i+1} + Q_{i} \bigg) - \frac{1}{12} \bigg(  Q_{i+2} +Q_{i-1}\bigg), \\
+	q_{R,i} = q_{i+\frac{1}{2}} \\
 	\label{chp-adv1d-sec-recon-ppm-eq11}
-	q_{L,i} = q_{i-\frac{1}{2}} = \frac{7}{12} \bigg( Q_{i} + Q_{i-1} \bigg) - \frac{1}{12} \bigg(  Q_{i+1} +Q_{i-2}\bigg).
+	q_{L,i} = q_{i-\frac{1}{2}}.
 \end{align}
 During this work, we refer to this PPM scheme as \textbf{hord0}.
 This name is justified because in FV3, the 1D advection solver input is named ``hord''.
 
-\subsection{Monotonization}
-\label{chp-adv1d-sec-mono}
-This section is dedicated to presenting possible ways of ensuring the creation of new 
+\subsection{hord8}
+\label{chp-adv1d-sec-hord8}
+This Subsection is dedicated to presenting a possible way of ensuring the creation of new 
 extrema values in the PPM reconstruction. We are going to present an alternative scheme from \citet{lin:2004},
 which was an attempt to reduce the diffusion of the original scheme \citet{colella:1984}
 and is currently employed in the FV3 dynamical core \citep{harris:2021}.
 
-\subsubsection{Limiter from \citet{lin:2004} - hord8}
 Similarly to \citet{colella:1984}, \citet{lin:2004} reduces numerical oscillations
 in the parabolas by defining the average slope as
 \begin{equation}
@@ -891,9 +896,11 @@ $\delta Q_{\min,i} = Q_i - \min(Q_{i+1}, Q_i, Q_{i-1})$
 $\delta Q_{\max,i} = \max(Q_{i+1}, Q_i, Q_{i-1}) - Q_i$.
 We then initially compute an analogous version of Equation \eqref{chp-adv1d-sec-recon-ppm-eq7} as:
 \begin{equation}
-	q_{i+\frac{1}{2}} = q_{L,i+\frac{1}{2}}  = q_{R,i+\frac{1}{2}} =
+	q_{i+\frac{1}{2}} = 
 	\frac{1}{2} \bigg( Q_{i+1} + Q_{i} \bigg) - \frac{1}{6} \bigg( \delta_m Q_{i+1} - \delta_m Q_{i}\bigg).
 \end{equation}
+The values $q_{R,i}$ and $q_{L,i}$ are then computed using Equations \eqref{chp-adv1d-sec-recon-ppm-eq10}
+and \eqref{chp-adv1d-sec-recon-ppm-eq11}, respectively.
 The monotonicity is achieved by the following scheme:
 \begin{align}
 	\label{chp-adv1d-sec-mono-eq5}
@@ -1039,9 +1046,10 @@ which is the formula implemented in FV3.
 \label{chp-adv1d-sec-numerical-exp}
 This section is dedicated to presenting the numerical results of the PPM and 
 its variations discussed here. We will consider the reconstruction
-schemes \textbf{hord0} and  \textbf{hord8} which were presented in Section
-\ref{chp-adv1d-sec-recon}, as well as the departure point schemes \textbf{dp1} and \textbf{dp2} described 
-in Section \ref{chp-adv1d-sec-dp}. The code used in this section can be found in Appendix \ref{anexo-code}.
+schemes \textbf{hord0} (Subsection \ref{chp-adv1d-sec-hord0}) and 
+\textbf{hord8} (Subsection \ref{chp-adv1d-sec-hord8}), as well as the departure point schemes
+\textbf{dp1} (Subsection \ref{chp-adv1d-sec-dp1}) and \textbf{dp2} (Subsection \ref{chp-adv1d-sec-dp2}).
+The code used in this section can be found in Appendix \ref{anexo-code}.
 
 For all the simulations presented here, we will consider the spatial domain $[0,L]$,
 and the time interval $[0,T]$,  where $L = 2 \pi R$, $R = 6.371 \times 10^{6}$ meters is the earth radius and
@@ -1164,7 +1172,7 @@ using a high-resolution ($N=768$), the hord8 scheme and the dp1 departure point 
 
 To investigate the error convergence, we employ $(\Delta x^{(k)}, \Delta t^{(k)}, \lambda)$-discretizations with $\Delta x^{(k)} = \frac{L}{N^{(k)}}$,
 $N^{(k)} = 48 \times 2^k$,
-$\Delta t^{(k)}=\frac{10000}{{2^{k}}}$, for $k = 0, \ldots, 4$.
+$\Delta t^{(k)}=\frac{10^4}{{2^{k}}}$, for $k = 0, \ldots, 4$.
 To measure the accuracy, we consider the relative error in the maximum norm as follows:
 \begin{equation*}
 	E_k = 
@@ -1214,11 +1222,11 @@ This experiment illustrates the impact of departure point calculation errors on 
 In this chapter, we provided a general overview of 1D FV-SL schemes for the advection equation.
 We discussed the three essential tasks involved in these schemes.
 The first task is the reconstruction of a function from its average values.
-We employed the PPM method introduced by \citet{colella:1984} (hord0) and its variant such as the one from \citet{lin:2004} (hord8).
+We employed the PPM method introduced by \citet{colella:1984} (hord0) and its monotonic variant such as the one from \citet{lin:2004} (hord8).
 The second task involves computing the departure point of the control volume edges. For this purpose, 
 we utilized the first-order departure point calculation  using a time-centered wind in an approach known as dp1.
 Additionally, we explored a second-order approach by employing a two-stages Runge-Kutta scheme
-to integrate the departure point ordinary differential equation (ODE).
+to integrate the departure point ODE.
 Lastly, the third task entails computing the flux, which involves integrating the 
 reconstructed function over a domain determined by the departure point.
 
