@@ -1,0 +1,8 @@
+\chapter{Cubed-sphere finite-volume methods}
+\label{chp-cs-fv}
+In this chapter, we demonstrate the application of the dimension splitting method,
+presented in Chapter \ref{chp-2d-fv}, to solve the advection equation on the cubed-sphere based on \citet{putman:2007}.
+One significant difference is that on the cubed-sphere, special attention must be given to the stencils near the cube edges.
+Additionally, when employing ghost cell layers, the flux at the cube edges is computed twice,
+requiring treatment to ensure a unique value in order to achieve mass conservation.
+
