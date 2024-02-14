@@ -524,6 +524,7 @@ However, as we will observe in this chapter, when applied to the linear advectio
 the average Lie splitting allows for a modification that eliminates a splitting error
 arising from considering a constant scalar field and non-divergent velocity \citep{lin:1996}.
 
+\subsection{The scheme of \citet{lin:1996}}
 To move towards the scheme from \citet{lin:1996}, let us consider Problem \ref{chp3-sec2-prob1} in its differential form (Equation \eqref{sec-adv2d:eq1}).
 We are going to consider $N+2\nu$ one-dimensional advection equations in the $x$-direction:
 \begin{equation*}
@@ -614,19 +615,18 @@ For both hord0 and hord8 schemes, we set $\nu=3$.
 We introduce the auxiliary grid functions $\mathbf{F}$ and $\mathbf{G}$, both belonging to $\mathbb{R}^{N\times M}_{\nu}$, given by:
 \begin{align*}
 \mathbf{F}_{ij}[{Q^n,\tilde{c}^{x,n}}] = 
-\frac{-1}{|\Omega_{ij}|}
+-\frac{1}{|\Omega_{ij}|}
 	  \big(\mathcal{A}_{i+\frac{1}{2},j}^{x} \mathfrak{F}_{i+\frac{1}{2},j}^{PPM,x}[Q^n_{\times,j},\tilde{c}^{x,n}]-
                \mathcal{A}_{i-\frac{1}{2},j}^{x} \mathfrak{F}_{i-\frac{1}{2},j}^{PPM,x}[Q^n_{\times,j},\tilde{c}^{x,n}] \big),
 \end{align*}
 for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and
 \begin{align*}
 \mathbf{G}_{ij}[{Q^n,\tilde{c}^{y,n}}] = 
-\frac{-1}{|\Omega_{ij}|}
+-\frac{1}{|\Omega_{ij}|}
 	  \big(\mathcal{A}_{i,j+\frac{1}{2}}^{y} \mathfrak{F}_{i,j+\frac{1}{2}}^{PPM,y}[Q^n_{i,\times},\tilde{c}^{y,n}]-
                \mathcal{A}_{i,j-\frac{1}{2}}^{y} \mathfrak{F}_{i,j-\frac{1}{2}}^{PPM,y}[Q^n_{i,\times},\tilde{c}^{y,n}] \big),
 \end{align*}
-for $i=-\nu+1, \ldots, N + \nu$  $j=1, \ldots, M$,
-which are the numerical flux update of the 1D-FV schemes in the $x$ and $y$ direction, respectively.
+for $i=-\nu+1, \ldots, N + \nu$  $j=1, \ldots, M$.
 We are using the notations $\Omega_{ij}= \Delta x \Delta y$ to represent the area of the control volume and
 \begin{align*}
 \label{ax-def}
@@ -634,9 +634,9 @@ We are using the notations $\Omega_{ij}= \Delta x \Delta y$ to represent the are
 %\label{ay-def}
 %\mathcal{A}_{i+\frac{1}{2},j}^{x} = {c}_{i+\frac{1}{2},j}^{x,n} \Delta x \Delta y.
 \end{align*}
-This notation shall be useful when we consider these schemes on the cubed-sphere in Chapter \ref{chp-2d-fv}.
-Hence, the operators $\mathbf{F}$ and $\mathbf{G}$ represent the numerical updates added
-to solve the advection equation in the $x$ and $y$ directions
+This notation shall be useful when we consider these schemes on the cubed-sphere in Chapter \ref{chp-cs-fv}.
+Hence, the operators $\mathbf{F}$ and $\mathbf{G}$ represent the numerical updates added to the average values 
+at time level $n$ to obtain their values at time level $n+1$ when solving the advection equation in the $x$ and $y$ directions, respectively.
 
 \begin{figure}[!htb]
 	\centering
@@ -719,3 +719,114 @@ $\boldsymbol{u}$ does not depend on $t$, then $\mathbf{F}$ and $\mathbf{G}$ are 
 	\mathbf{F}_{ij}[Q^n,\tilde{u}^n] = -\overline{q} \lambda {\delta_x} u(x_i,y_j),\\
 	\mathbf{G}_{ij}[Q^n,\tilde{v}^n] = -\overline{q} \lambda {\delta_y} v(x_i,y_j).
 \end{align*}
+
+
+%\newpage
+%\begin{figure}[!htb]
+%	\centering
+%	\begin{subfigure}{0.3\textwidth}
+%		\centering
+%		\includegraphics[width=1\linewidth]{adv2d_tc1_N48_hord0_iadv1_dp1_t0}
+%		\caption{IC\label{chp-adv2d-sec-exp-adv1-a}}
+%	\end{subfigure}
+%	\begin{subfigure}{0.3\textwidth}
+%		\centering
+%		\includegraphics[width=1\linewidth]{adv2d_tc1_N48_hord0_iadv1_dp1_t13}
+%		\caption{$t=2$ days.\label{chp-adv2d-sec-exp-adv1-b}}
+%	\end{subfigure}
+%	\begin{subfigure}{0.3\textwidth}
+%		\centering
+%		\includegraphics[width=1\linewidth]{adv2d_tc1_N48_hord8_iadv1_dp1_t13}
+%		\caption{$t=4$ days.\label{chp-adv2d-sec-exp-adv1-c}}
+%	\end{subfigure}
+	
+%	\caption{ok \label{chp-adv2d-sec-exp-adv1}}
+%\end{figure}
+
+%\begin{figure}[!htb]
+%	\centering
+%	\includegraphics[width=0.3\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t0}
+%	\caption{IC\label{chp-adv2d-sec-exp-adv2-ic}}
+%\end{figure}
+
+%\begin{figure}[!htb]
+%	\centering
+%	\begin{subfigure}{0.3\textwidth}
+%		\centering
+%		\includegraphics[width=1\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t2}
+%		\caption{$t=0$.\label{chp-adv2d-sec-exp-adv2-a}}
+%	\end{subfigure}
+%	\begin{subfigure}{0.3\textwidth}
+%		\centering
+%		\includegraphics[width=1\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t4}
+%		\caption{$t=2$ days.\label{chp-adv2d-sec-exp-adv2-b}}
+%	\end{subfigure}
+%	\begin{subfigure}{0.3\textwidth}
+%		\centering
+%		\includegraphics[width=1\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t6}
+%		\caption{$t=4$ days.\label{chp-adv2d-sec-exp-adv2-c}}
+%	\end{subfigure}
+%	
+%	\begin{subfigure}{0.3\textwidth}
+%		\centering
+%		\includegraphics[width=1\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t8}
+%		\caption{$t=6$ days.\label{chp-adv2d-sec-exp-adv2-d}}
+%	\end{subfigure}
+%	\begin{subfigure}{0.3\textwidth}
+%		\centering
+%		\includegraphics[width=1\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t10}
+%		\caption{$t=8$ days.\label{chp-adv2d-sec-exp-adv2-e}}
+%	\end{subfigure}
+%	\begin{subfigure}{0.3\textwidth}
+%		\centering
+%		\includegraphics[width=1\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t12}
+%		\caption{$t=10$ days.\label{chp-adv2d-sec-exp-adv2-f}}
+%	\end{subfigure}
+%	\caption{ok \label{chp-adv2d-sec-exp-adv2}}
+%\end{figure}
+
+%\begin{figure}[!htb]
+%	\centering
+%	\begin{subfigure}{0.3\textwidth}
+%		\centering
+%		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t2}
+%		\caption{$t=0$.\label{chp-adv2d-sec-exp-adv3-a}}
+%	\end{subfigure}
+%	\begin{subfigure}{0.3\textwidth}
+%		\centering
+%		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t4}
+%		\caption{$t=2$ days.\label{chp-adv2d-sec-exp-adv3-b}}
+%	\end{subfigure}
+%	\begin{subfigure}{0.3\textwidth}
+%		\centering
+%		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t6}
+%		\caption{$t=4$ days.\label{chp-adv2d-sec-exp-adv3-c}}
+%	\end{subfigure}
+	
+%	\begin{subfigure}{0.3\textwidth}
+%		\centering
+%		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t8}
+%		\caption{$t=6$ days.\label{chp-adv2d-sec-exp-adv3-d}}
+%	\end{subfigure}
+%	\begin{subfigure}{0.3\textwidth}
+%		\centering
+%		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t10}
+%		\caption{$t=8$ days.\label{chp-adv2d-sec-exp-adv3-e}}
+%	\end{subfigure}
+%	\begin{subfigure}{0.3\textwidth}
+%		\centering
+%		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t12}
+%		\caption{$t=10$ days.\label{chp-adv2d-sec-exp-adv3-f}}
+%	\end{subfigure}
+%	\caption{Linear advection experiment using the velocity from Equation \eqref{chp-adv1d-ic2},
+%		a CFL number equal to $0.92$, $N=M=768$, and the initial condition is given by 
+%		Equation \eqref{chp-adv1d-ic2} \eqref{chp-adv1d-sec-exp-adv2-a}.
+%		These figures show the advected profile at
+%		2 \eqref{chp-adv2d-sec-exp-adv3-a}, 
+%		4  \eqref{chp-adv2d-sec-exp-adv3-b},
+%		6  \eqref{chp-adv2d-sec-exp-adv3-c},
+%		8  \eqref{chp-adv2d-sec-exp-adv3-d},
+%		10  \eqref{chp-adv2d-sec-exp-adv3-e},
+%		and 12  \eqref{chp-adv2d-sec-exp-adv3-f} days.
+%		We are using the hord8 scheme with the DP1 departure point scheme. \label{chp-adv2d-sec-exp-adv3}}
+%\end{figure}
