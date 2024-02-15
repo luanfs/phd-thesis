@@ -503,11 +503,11 @@ For an analysis of stability for larger time-steps, we refer to \citet{lauritzen
 \end{figure}
 
 \section{Convergence, consistency and stability of 2D-FV schemes}
-\label{chp3-CCS}
+\label{chp-adv2d-CCS}
 The notions of convergence, consistency and stability for a 2D-FV schemes
 are straightforward from these notions for 1D-FV schemes
 (see Subsections \ref{chp-adv1d-sub-CC} and \ref{chp-adv1d-sub-stability}).
-Indeed, in the context of Problem \ref{chp3-sec2-prob3}, we define the operators
+Indeed, in the context of Problem \ref{chp-adv2d-sec2-prob3}, we define the operators
 $\mathcal{H}_{\Delta x ,\Delta y,n}: \mathbb{R}^{N \times M} \to \mathbb{R}^{N \times M}$ whose $(i,j)$ entry is given by:
 \begin{align*}
 	[\mathcal{H}_{\Delta x ,\Delta y,n}(Q)]_{ij} = Q_{ij} - \Delta t\mathbb{D}_{ij}^n
@@ -561,7 +561,7 @@ Notice that if $q,u, v \in \mathcal{C}^3$, we can rewrite the LTE as:
 	\end{split}
 \end{align*}
 Using the midpoint rule for integration (Theorem \ref{prop-bound-midpoint2d}), the mean value theorem for integrals
-(Theorem \ref{anexo-numint-mv}) and recalling the discrete divergence (Definition \ref{chp3-def-div}), we have:
+(Theorem \ref{anexo-numint-mv}) and recalling the discrete divergence (Definition \ref{chp-adv2d-def-div}), we have:
 \begin{align}
 	\begin{split}
 		\label{consistency-2d-eq}
