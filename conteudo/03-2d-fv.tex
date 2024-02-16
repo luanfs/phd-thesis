@@ -516,16 +516,17 @@ known as weighted sequential splitting methods in the literature.
 Furthermore, this scheme averaging process can be extended to achieve higher-order schemes \citep{jia:2011}.
 For an analysis of the accuracy of weighted sequential splitting methods, we recommend referring to \citet{csomos:2005}.
 
+
 It is worth noting that one of the most commonly used second-order splitting schemes in the literature is the Strang splitting
 \citep{strang:1968}.
 This scheme requires solving three sub-problems per time-step, with one of them at time $t_n + \frac{\Delta t}{2}$.
 In contrast, the average Lie-Trotter splitting requires solving four sub-problems per time-step.
 Consequently, the Strang splitting is computationally more efficient.
-However, as we will observe in this chapter, when applied to the linear advection equation, 
+However, as we will observe in this Chapter, when applied to the linear advection equation, 
 the average Lie-Trotter splitting allows for a modification that eliminates a splitting error
 arising from considering a constant scalar field and non-divergent velocity \citep{lin:1996}.
 
-\subsection{The scheme of \citet{lin:1996}}
+\subsection{Lie-Trotter splitting using PPM}
 To move towards the scheme from \citet{lin:1996}, let us consider Problem \ref{chp-adv2d-sec2-prob1} in its differential form (Equation \eqref{sec-adv2d:eq1}).
 We are going to consider $N+2\nu$ one-dimensional advection equations in the $x$-direction:
 \begin{equation*}
@@ -542,8 +543,8 @@ and the $N+2\nu$ one-dimensional advection equations in the $y$-direction
 for, $i=-\nu+1, \ldots, N+\nu$.
 
 We shall assume that these problems are solved using a 1D-FV scheme as in Problem \ref{chp-adv1d-sec2-prob4}
-with the PPM numerical flux functions ${F}_{i+\frac{1}{2},j}^{PPM,x}[Q^n_{\times,j},\tilde{c}^{x,n}]$ and
-${F}_{i,j+\frac{1}{2}}^{PPM,y}[Q^n_{i,\times},\tilde{c}^{y,n}]$, respectively,
+with the PPM numerical flux functions $\mathfrak{F}_{i+\frac{1}{2},j}^{PPM,x}[Q^n_{\times,j},\tilde{c}^{x,n}]$ and
+$\mathfrak{F}_{i,j+\frac{1}{2}}^{PPM,y}[Q^n_{i,\times},\tilde{c}^{y,n}]$, respectively,
 where $\tilde{c}^{x,n}_{i+\frac{1}{2},j}$ is the time-averaged CFL used in the departure point estimation in the $x$ direction
 and $\tilde{c}^{y,n}_{i,j+\frac{1}{2}}$ is the time-averaged CFL used in the departure point estimation in the $y$ direction,
 assuming that the CFL number is less than one (see Equation \eqref{chp-sec-flux:numerical-flux8}).
@@ -707,6 +708,8 @@ for $i=1, \ldots, N$, $j=1, \ldots, M$ (Figure \ref{lt-FGQy}) and thus we have t
     \frac{1}{2}\mathbf{F}\bigg[Q^n + \mathbf{G}[Q^n, \tilde{c}^{y,n}], \tilde{c}^{x,n}\bigg]+
     \frac{1}{2}\mathbf{G}\bigg[Q^n + \mathbf{F}[Q^n, \tilde{c}^{x,n}], \tilde{c}^{y,n}\bigg].
 \end{align*}
+
+\subsection{Elimination of splitting error for a constant scalar field and non-divergent wind}
 The numerical flux functions defined in Chapter \ref{chp-1d-fv} are indeed linear the 
 input $Q$ if there are no monotonic constrain, but we are going to consider this scheme
 even when there are monotonic constraints since it requires fewer operations.
@@ -739,6 +742,12 @@ However, if we compute the updated solution using Equation, we have that the err
 	   -\Delta t^2 \overline{q}\bigg( \frac{\delta_y v \delta_x u(x_i,y_j) + \delta_x u\delta_y v(x_i,y_j)}{2\Delta x \Delta y} \bigg).
 \end{align}
 
+
+\begin{align*}
+	Q^{n+1} = Q^n + \frac{1}{2}\mathbf{F}[Q^n,\tilde{c}^{x,n}] + \frac{1}{2}\mathbf{G}[Q^n,\tilde{c}^{y,n}] + 
+    \frac{1}{2}\mathbf{F}\bigg[Q^n + \mathbf{g}[Q^n, \tilde{c}^{y,n}], \tilde{c}^{x,n}\bigg]+
+    \frac{1}{2}\mathbf{G}\bigg[Q^n + \mathbf{f}[Q^n, \tilde{c}^{x,n}], \tilde{c}^{y,n}\bigg].
+\end{align*}
 In this work, we shall consider the following inner advective operator proposed by
 \citet{lin:2004} (hereafter, \textbf{L04}) and the one proposed by \citet{putman:2007} (hereafter, \textbf{PL}).
 The PL scheme is currently used in the FV3 dynamical core.
@@ -751,18 +760,20 @@ Therefore, these inner advective operators eliminate the splitting error for a c
 \begin{table}[!h]
 	\begin{tabular}{|c|l|l|}
 		\hline
-		Scheme & \multicolumn{1}{c|}{$\mathbf{f}_{ij}(Q^n, \tilde{u}^n)$} & \multicolumn{1}{c|}{$\mathbf{g}_{ij}(Q^n,\tilde{v}^n)$} \\ \hline
-		LT   & $\mathbf{F}_{ij}(Q^n,\tilde{u}^n)$ 
-		       & $\mathbf{G}_{ij}(Q^n,\tilde{v}^n)$ \\ \hline
+		Scheme & \multicolumn{1}{c|}{$\mathbf{f}_{ij}(Q^n, \tilde{c}^{x,n})$}
+		       & \multicolumn{1}{c|}{$\mathbf{g}_{ij}(Q^n, \tilde{c}^{y,n})$} \\ \hline
+		LT   & $\mathbf{F}_{ij}(Q^n,\tilde{c}^{x,n})$ 
+		       & $\mathbf{G}_{ij}(Q^n,\tilde{c}^{y,n})$ \\ \hline
 		PL   & $-Q_{ij}^n +
-		       \frac{Q_{ij}^n + \mathbf{F}_{ij}(Q^n,\tilde{u}^n)}{1 - \frac{\Delta t}{\Delta x}\big(\tilde{u}_{i+\frac{1}{2},j}^n - \tilde{u}_{i-\frac{1}{2},j}^n\big)}$
+		         \frac{Q_{ij}^n  + \mathbf{F}_{ij}(Q^n,\tilde{c}^{x,n})}
+			   {1 - \frac{1}{|\Omega_{ij}|}\big(\mathcal{A}_{i+\frac{1}{2},j}^{x} - \mathcal{A}_{i-\frac{1}{2},j}^{x}\big)}$
 			   & $-Q_{ij}^n +
-			   \frac{Q_{ij}^n + \mathbf{G}_{ij}(Q^n,\tilde{v}^n)}{1 - \frac{\Delta t}{\Delta y}\big(\tilde{v}_{i,j+\frac{1}{2}}^n - \tilde{v}_{i,j-\frac{1}{2}}^n\big)}$
+			 \frac{Q_{ij}^n  + \mathbf{G}_{ij}(Q^n,\tilde{c}^{y,n})}
+			   {1 - \frac{1}{|\Omega_{ij}|}\ \big(\mathcal{A}_{i,j+\frac{1}{2}}^{y} - \mathcal{A}_{i,j-\frac{1}{2}}^{y}\big)}$
 			   \\ \hline
 	\end{tabular}
 \caption{Expression of the inner advective operators considered in this work.
-AL stands for the average Lie-Trotter  scheme, while L04 and PL stands for the inner
-advective operators from \citet{lin:2004} and from \citet{putman:2007}, respectively.}
+LT stands for the average Lie-Trotter  scheme, while PL stands for the scheme from \citet{putman:2007}.}
 \label{chp-adv2d-tab1}
 \end{table}
 
@@ -852,7 +863,7 @@ For a first variable velocity testing, we consider two Gaussian hills given by:
 defined in $[-\frac{L}{2},\frac{L}{2}] \times [-\frac{L}{2},\frac{L}{2}]$, whose graph is shown in Figure \ref{chp-adv2d-sec-exp-adv2-ic}.
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=0.5\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t0}
+	\includegraphics[width=0.4\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t0}
 	\caption{IC\label{chp-adv2d-sec-exp-adv2-ic}}
 \end{figure}
 
@@ -929,13 +940,13 @@ $k = 0, \ldots, 4$, and the spatial discretization as described at the beginning
 resulting in a CFL number approximately equal to 0.79.
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=1\linewidth]{adv2d_tc3_linf_error}
+\includegraphics[width=0.7\linewidth]{adv2d_tc3_linf_error}
 \caption{$L_{\infty}$ error.\label{chp-adv2d-sec-exp-adv2-error-linf}}
 \end{figure}
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=1\linewidth]{adv2d_tc3_l1_error}
+\includegraphics[width=0.7\linewidth]{adv2d_tc3_l1_error}
 \caption{Similar to Figure \ref{chp-adv2d-sec-exp-adv2-error-linf} but considering the $L_1$ error.
 \label{chp-adv2d-sec-exp-adv2-error-l1}}
 \end{figure}
@@ -998,14 +1009,14 @@ but using the wind from Equation \eqref{chp-adv2d-vf2}.\label{chp-adv2d-sec-exp-
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=1\linewidth]{adv2d_tc4_linf_error}
+\includegraphics[width=0.7\linewidth]{adv2d_tc4_linf_error}
 \caption{Similar to Figure \ref{chp-adv2d-sec-exp-adv2-error-linf}
 but using the wind from Equation \eqref{chp-adv2d-vf2}.\label{chp-adv2d-sec-exp-adv3-error-linf}}
 \end{figure}
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=1\linewidth]{adv2d_tc4_l1_error}
+\includegraphics[width=0.7\linewidth]{adv2d_tc4_l1_error}
 \caption{Similar to Figure \ref{chp-adv2d-sec-exp-adv3-error-linf} but considering the $L_1$ error.
 \label{chp-adv2d-sec-exp-adv3-error-l1}}
 \end{figure}
