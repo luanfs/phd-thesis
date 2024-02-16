@@ -489,8 +489,8 @@ and
 Then we can approximate $q(t_0 + \Delta t)$ as $q^{21}(t^n + \Delta t)$ 
 with an error of $\mathcal{O}(\Delta t)$ if $A_1$ and $A_2$ do not commute. 
 Otherwise, this method is exact.
-This approach is known as Lie splitting. 
-It's worth noting that the Lie splitting can also be performed in reverse order when solving the sub-problems:
+This approach is known as Lie-Trotter splitting. 
+It's worth noting that the Lie-Trotter splitting can also be performed in reverse order when solving the sub-problems:
 \begin{align*}
 	\begin{cases}
 		\frac{dq^2}{dt}(t) &= A_2q(t), \quad t \in [t^n,t^{n+1}],\\
@@ -510,8 +510,8 @@ to approximate $q(t^{n+1})$ using a second-order ($\mathcal{O}(\Delta t^2)$) sym
 \begin{equation}
 	q^*(t^{n+1}) = \frac{q^{21}(t^{n+1}) + q^{12}(t^{n+1})}{2},
 \end{equation}
-This scheme is referred to as the average Lie splitting \citep{holden:2010}.
-The process of averaging two Lie splittings is a specific case of methods
+This scheme is referred to as the average Lie-Trotter splitting \citep{holden:2010}.
+The process of averaging two Lie-Trotter splittings is a specific case of methods
 known as weighted sequential splitting methods in the literature.
 Furthermore, this scheme averaging process can be extended to achieve higher-order schemes \citep{jia:2011}.
 For an analysis of the accuracy of weighted sequential splitting methods, we recommend referring to \citet{csomos:2005}.
@@ -519,10 +519,10 @@ For an analysis of the accuracy of weighted sequential splitting methods, we rec
 It is worth noting that one of the most commonly used second-order splitting schemes in the literature is the Strang splitting
 \citep{strang:1968}.
 This scheme requires solving three sub-problems per time-step, with one of them at time $t_n + \frac{\Delta t}{2}$.
-In contrast, the average Lie splitting requires solving four sub-problems per time-step.
+In contrast, the average Lie-Trotter splitting requires solving four sub-problems per time-step.
 Consequently, the Strang splitting is computationally more efficient.
 However, as we will observe in this chapter, when applied to the linear advection equation, 
-the average Lie splitting allows for a modification that eliminates a splitting error
+the average Lie-Trotter splitting allows for a modification that eliminates a splitting error
 arising from considering a constant scalar field and non-divergent velocity \citep{lin:1996}.
 
 \subsection{The scheme of \citet{lin:1996}}
@@ -654,7 +654,7 @@ at time level $n$ to obtain their values at time level $n+1$ when solving the ad
 	    \includegraphics[width=1\linewidth]{2d_grid_GFQ}
 		\caption{$Q^{yx,n}$ (black circles) after advecting $Q^{x,n}$ in $y$ direction. \label{lt-GFQx}}
     \end{subfigure}
-	\caption{Illustration of the Lie splitting applied in the $x$ direction (operator $\mathbf{F}$)
+	\caption{Illustration of the Lie-Trotter splitting applied in the $x$ direction (operator $\mathbf{F}$)
 	and then in the $y$ direction (operator $\mathbf{G}$). Interior cells are depicted using black lines,
 	 while ghost cells are depicted using gray lines. 
 	 All the winds shown are the ones used in the DP1 departure point scheme.
@@ -679,10 +679,10 @@ at time level $n$ to obtain their values at time level $n+1$ when solving the ad
 		\includegraphics[width=1\linewidth]{2d_grid_GFQ}
 		\caption{$Q^{xy,n}$ (black circles) after advecting $Q^{y,n}$ in $x$ direction. \label{lt-FGQy}}
 	\end{subfigure}
-	\caption{Similar to Figure \ref{ltxdir} but considering the Lie splitting in reverse order.}
+	\caption{Similar to Figure \ref{ltxdir} but considering the Lie-Trotter splitting in reverse order.}
 \end{figure}
 
-The Lie splitting is obtained by solving the advection in the $x$ direction
+The Lie-Trotter splitting is obtained by solving the advection in the $x$ direction
 \begin{align*}
 	{Q}^{x,n}_{ij} =  {Q}^{n}_{ij} + \mathbf{F}_{ij}[{Q^n}, \tilde{c}^{x,n}],
 \end{align*}
@@ -691,16 +691,16 @@ for $j=\nu+1, \ldots, M+\nu$, $i=1, \ldots, N$ (Figure \ref{lt-FQx}), and then w
 	{Q}^{yx,n}_{ij} = Q^{x,n}_{ij} + \mathbf{G}_{ij}[{Q}^{x,n},\tilde{c}^{y,n}],
 \end{align*}
 for $j=1, \ldots, M$,  $i=1, \ldots, N$  (Figure \ref{lt-GFQx}).
-To get the average Lie splitting we repeat the process in the reverse order by solving the advection equation
+To get the average Lie-Trotter splitting we repeat the process in the reverse order by solving the advection equation
 in the $y$ direction
 \begin{align*}
 	{Q}^{y,n}_{ij} =  {Q}^{n}_{ij} + \mathbf{G}_{ij}[{Q^n},\tilde{c}^{y,n}],
 \end{align*}
 for $i=-\nu+1, \ldots, N+\nu$, $j=1, \ldots, M$ (Figure \ref{lt-GQy}), and then we advect in the $x$-direction with initial data ${Q}^{y,n+1}$ 
 \begin{align*}
-	{Q}^{xy,n}_{ij} = Q^{y,n}_{ij} + \mathbf{F}[Q^{y,n},\tilde{c}^{x,n}],
+	{Q}^{xy,n}_{ij} = Q^{y,n}_{ij} + \mathbf{F}_{ij}[Q^{y,n},\tilde{c}^{x,n}],
 \end{align*}
-for $i=1, \ldots, N$, $j=1, \ldots, M$ (Figure \ref{lt-FGQy}) and thus we have the average Lie solution:
+for $i=1, \ldots, N$, $j=1, \ldots, M$ (Figure \ref{lt-FGQy}) and thus we have the average Lie-Trotter solution:
 \begin{align*}
 	Q^{n+1} &= \frac{(Q^{xy,n} + Q^{yx,n})}{2} \\
     &= Q^n + \frac{1}{2}\mathbf{F}[Q^n,\tilde{c}^{x,n}] + \frac{1}{2}\mathbf{G}[Q^n,\tilde{c}^{y,n}] + 
@@ -720,111 +720,40 @@ $\boldsymbol{u}$ does not depend on $t$, then $\mathbf{F}$ and $\mathbf{G}$ are 
 
 \begin{align*}
 \mathbf{G}_{ij}\big[\mathbf{F}[{\overline{q},\tilde{c}^{y,n}}],\tilde{c}^{x,n}\big] &= 
-   -\overline{q}\lambda \mathbf{G}_{ij}\big[ {\delta_i} \tilde{u}_{ij}^n,\tilde{c}^{x,n}\big] \\
-&=  \overline{q}\lambda^2 \bigg(
+   \overline{q}\lambda^2 \bigg(
    \tilde{v}_{i,j+\frac{1}{2}}^n\mathfrak{F}_{i,j+\frac{1}{2}}^{PPM,y}[ {\delta_i} \tilde{u}_{ij}^n,\tilde{c}^{y,n}] 
--  \tilde{v}_{i,j-\frac{1}{2}}^n\mathfrak{F}_{i,j-\frac{1}{2}}^{PPM,y}[ {\delta_i} \tilde{u}_{ij}^n,\tilde{c}^{y,n}]\bigg)
+-  \tilde{v}_{i,j-\frac{1}{2}}^n\mathfrak{F}_{i,j-\frac{1}{2}}^{PPM,y}[ {\delta_i} \tilde{u}_{ij}^n,\tilde{c}^{y,n}]\bigg),\\
+\mathbf{F}_{ij}\big[\mathbf{G}[{\overline{q},\tilde{c}^{x,n}}],\tilde{c}^{y,n}\big] &= 
+   \overline{q}\lambda^2 \bigg(
+   \tilde{u}_{i,j+\frac{1}{2}}^n\mathfrak{F}_{i,j+\frac{1}{2}}^{PPM,x}[ {\delta_j} \tilde{v}_{ij}^n,\tilde{c}^{x,n}] 
+-  \tilde{u}_{i,j-\frac{1}{2}}^n\mathfrak{F}_{i,j-\frac{1}{2}}^{PPM,x}[ {\delta_j} \tilde{v}_{ij}^n,\tilde{c}^{x,n}]\bigg).
 \end{align*}
 
-However, if we compute the updated solution using Equation \eqref{chp-adv2d-AL}, we have that the error is given by
+However, if we compute the updated solution using Equation, we have that the error is given by
 \begin{align}
 	\label{chp-adv2d-AL-error}
 	Q^{n+1}_{ij} - \overline{q} &= 
-	-\Delta t \bigg(\frac{\delta_x u(x_i,y_j)}{\Delta x} + 	\frac{\delta_y v(x_i,y_j)}{\Delta y} \bigg)
+	-\Delta t \bigg(\frac{\delta_i u_{ij}}{\Delta x} + \frac{\delta_j v_{ij}}{\Delta y} \bigg)
 	-\Delta t^2 \overline{q}\bigg( \frac{\delta_y v \delta_x u(x_i,y_j) + \delta_x u\delta_y v(x_i,y_j)}{2\Delta x \Delta y} \bigg) \\
-	&= \Delta t (O(\Delta x^2) + O(\Delta y^2))
+	&= \Delta t (\mathcal{O}(\Delta x^2) + \mathcal{O}(\Delta y^2))
 	   -\Delta t^2 \overline{q}\bigg( \frac{\delta_y v \delta_x u(x_i,y_j) + \delta_x u\delta_y v(x_i,y_j)}{2\Delta x \Delta y} \bigg).
 \end{align}
-
-\begin{equation}
-{x}_{i+\frac{1}{2},j}^d({t^n},{t^{n+1}}) = x_{i+\frac{1}{2}} - \tilde{u}^{n}_{i+\frac{1}{2},j}\Delta t,
-\end{equation}
-\begin{equation}
-\tilde{u}^{n}_{i+\frac{1}{2}}(y) = \frac{1}{\Delta t}
-\int_{t^n}^{t^{n+1}}u
-\big( x_{i+\frac{1}{2},j}^d(\theta,t^{n+1}\big),y,\theta) \,d\theta.
-\end{equation}
-\begin{equation}
-{y}_{i,j+\frac{1}{2}}^d({t^n},{t^{n+1}}) = y_{j+\frac{1}{2}} - \tilde{v}^{n}_{i,j+\frac{1}{2}}\Delta t,
-\end{equation}
-\begin{equation}
-\tilde{v}^{n}_{j+\frac{1}{2}}(x) = \frac{1}{\Delta t}
-\int_{t^n}^{t^{n+1}}v
-\big(x, y_{i,j+\frac{1}{2}}^d(\theta,t^{n+1}),\theta\big) \,d\theta.
-\end{equation}
-\begin{align*}
-\mathbf{F}_{i}^E[{q(x,y,t^n),\tilde{u}^{n}}](y) = 
--\lambda \frac{1}{\Delta t} 
-\bigg(\int^{x_{i+\frac{1}{2}}}_{x^d_{i+\frac{1}{2},j}(t^n,t^{n+1})} q(x,y,t^n)\,dx - 
-      \int^{x_{i-\frac{1}{2}}}_{x^d_{i-\frac{1}{2},j}(t^n,t^{n+1})} q(x,y,t^n)\,dx \bigg),
-\end{align*}
-
-\begin{align*}
-\mathbf{G}_{j}^E[{q(x,y,t^n),\tilde{v}^{n}}](x) = 
--\lambda \frac{1}{\Delta t} 
-\bigg(\int^{y_{j+\frac{1}{2}}}_{y^d_{i,j+\frac{1}{2}}(t^n,t^{n+1})} q(x,y,t^n)\,dy - 
-      \int^{y_{j-\frac{1}{2}}}_{y^d_{i,j-\frac{1}{2}}(t^n,t^{n+1})} q(x,y,t^n)\,dy \bigg),
-\end{align*}
-
-\begin{align*}
-\mathbf{F}_{i}^E[{\overline{q},\tilde{u}^{n}}](y) = 
--\lambda \overline{q}\delta_i\tilde{u}^{n}_{i}(y),
-\end{align*}
-
-\begin{align*}
-\mathbf{G}_{j}^E[{\overline{q},\tilde{v}^{n}}](x) = 
--\lambda \overline{q}\delta_j\tilde{v}^{n}_{j}(x),
-\end{align*}
-
-\begin{align*}
-&\mathbf{F}_{i}^E[{-\lambda \overline{q}\delta_j\tilde{v}^{n}_{j}(x),\tilde{u}^{n}}](y) =
--\lambda \overline{q}\mathbf{F}_{i}^E[{\delta_j\tilde{v}^{n}_{j}(x),\tilde{u}^{n}}](y)   \\
-&= -\lambda^2\overline{q} \frac{1}{\Delta t} 
-\bigg(\int^{x_{i+\frac{1}{2}}}_{x^d_{i+\frac{1}{2},j}(t^n,t^{n+1})} \delta_j\tilde{v}^{n}_{j}(x)\,dx - 
-      \int^{x_{i-\frac{1}{2}}}_{x^d_{i-\frac{1}{2},j}(t^n,t^{n+1})} \delta_j\tilde{v}^{n}_{j}(x)\,dx \bigg) \\
-&= \frac{-\overline{q}}{\Delta x^2} 
-\bigg(\int_{t^n}^{t^{n+1}}
- [\Psi \big( x_{i+\frac{1}{2}}, y_{i,j+\frac{1}{2}}^d(\theta,t^{n+1}),\theta\big)-
-  \Psi \big( x_{i-\frac{1}{2}}, y_{i,j+\frac{1}{2}}^d(\theta,t^{n+1}),\theta\big)]-
- [\Psi \big( x_{i+\frac{1}{2},j}^d, y_{i-\frac{1}{2},j}^d(\theta,t^{n+1}),,\theta\big)
- -\Psi \big( x_{i-\frac{1}{2},j}^d, y_{i-\frac{1}{2},j}^d(\theta,t^{n+1}),\theta\big)]
-\,d\theta -\bigg)
-\end{align*}
-
-\begin{align*}
-&\mathbf{G}_{j}^E[{-\lambda \overline{q}\delta_i\tilde{u}^{n}_{i}(y),\tilde{v}^{n}}](x) = 
- \mathbf{G}_{j}^E[{-\lambda \overline{q}\delta_i\tilde{u}^{n}_{i}(y),\tilde{v}^{n}}](x) \\ 
-&= -\lambda^2\overline{q} \frac{1}{\Delta t} 
-\bigg(\int^{y_{j+\frac{1}{2}}}_{y^d_{i,j+\frac{1}{2}}(t^n,t^{n+1})} \delta_i\tilde{u}^{n}_{i}(y)\,dy - 
-      \int^{y_{j-\frac{1}{2}}}_{y^d_{i,j-\frac{1}{2}}(t^n,t^{n+1})} \delta_i\tilde{u}^{n}_{i}(y)\,dy \bigg)\\
-&= \frac{\overline{q}}{\Delta x^2} 
-\bigg(\int_{t^n}^{t^{n+1}}
- [\Psi \big( x_{i+\frac{1}{2},j}^d(\theta,t^{n+1}),y_{j+\frac{1}{2}},\theta\big)-
- \Psi \big( x_{i+\frac{1}{2},j}^d(\theta,t^{n+1}),y_{j-\frac{1}{2}},\theta\big)]-
- [\Psi \big( x_{i-\frac{1}{2},j}^d(\theta,t^{n+1}),y_{i,j+\frac{1}{2}}^d,\theta\big)
- -\Psi \big( x_{i-\frac{1}{2},j}^d(\theta,t^{n+1}),y_{i,j-\frac{1}{2}}^d,\theta\big)]
-\,d\theta -\bigg)
-\end{align*}
 
 In this work, we shall consider the following inner advective operator proposed by
 \citet{lin:2004} (hereafter, \textbf{L04}) and the one proposed by \citet{putman:2007} (hereafter, \textbf{PL}).
 The PL scheme is currently used in the FV3 dynamical core.
-We also shall consider the average Lie splitting (hereafter, \textbf{AL}). 
+We also shall consider the average Lie-Trotter splitting (hereafter, \textbf{AL}). 
 All the expressions of each inner advective operator mentioned are shown in Table \ref{chp-adv2d-tab1}.
 It is easy to see that both operators {L04} and {PL} eliminate the term multiplied by
 $\Delta t^2$ that appeared in Equation \eqref{chp-adv2d-AL-error} when we apply these operators for a 
-constant grid function $Q^n$ and a non-divergent velocity field in Equation \eqref{chp-adv2d-AL2}.
+constant grid function $Q^n$ and a non-divergent velocity field in Equation \eqref{chp-adv2d-AL2-error}.
 Therefore, these inner advective operators eliminate the splitting error for a constant field and a non-divergent velocity field.
 \begin{table}[!h]
 	\begin{tabular}{|c|l|l|}
 		\hline
 		Scheme & \multicolumn{1}{c|}{$\mathbf{f}_{ij}(Q^n, \tilde{u}^n)$} & \multicolumn{1}{c|}{$\mathbf{g}_{ij}(Q^n,\tilde{v}^n)$} \\ \hline
-		AL   & $\mathbf{F}_{ij}(Q^n,\tilde{u}^n)$ 
+		LT   & $\mathbf{F}_{ij}(Q^n,\tilde{u}^n)$ 
 		       & $\mathbf{G}_{ij}(Q^n,\tilde{v}^n)$ \\ \hline
-		L04    & $\mathbf{F}_{ij}(Q^n,\tilde{u}^n) + Q_{ij}^n
-				 \frac{\Delta t}{\Delta x}(\tilde{u}_{i+\frac{1}{2},j}^n - \tilde{u}_{i-\frac{1}{2},j}^n)$ 
-		       & $\mathbf{G}_{ij}(Q^n, \tilde{v}^n) + Q_{ij}^n
-				 \frac{\Delta t}{\Delta y}(\tilde{v}_{i,j+\frac{1}{2}}^n - \tilde{v}_{i,j-\frac{1}{2}}^n)$ \\ \hline
 		PL   & $-Q_{ij}^n +
 		       \frac{Q_{ij}^n + \mathbf{F}_{ij}(Q^n,\tilde{u}^n)}{1 - \frac{\Delta t}{\Delta x}\big(\tilde{u}_{i+\frac{1}{2},j}^n - \tilde{u}_{i-\frac{1}{2},j}^n\big)}$
 			   & $-Q_{ij}^n +
@@ -832,7 +761,7 @@ Therefore, these inner advective operators eliminate the splitting error for a c
 			   \\ \hline
 	\end{tabular}
 \caption{Expression of the inner advective operators considered in this work.
-AL stands for the average Lie  scheme, while L04 and PL stands for the inner
+AL stands for the average Lie-Trotter  scheme, while L04 and PL stands for the inner
 advective operators from \citet{lin:2004} and from \citet{putman:2007}, respectively.}
 \label{chp-adv2d-tab1}
 \end{table}
@@ -903,7 +832,7 @@ The IC is a rectangular profile (refer to Figure \ref{chp-adv2d-sec-exp-adv1-a})
 We will employ a time step of 14400 seconds and set $N=M=48$, resulting in a CFL number approximately equal to 0.67.
 The exact solution of Problem \ref{chp-adv2d-sec2-prob1} in this scenario is $q_0((x,y)-\boldsymbol{u}t)$.
 Due to the constant velocity field, all splitting schemes introduced in Section \ref{sec-dsplit} are equivalent.
-Therefore, we only consider the PL splitting. Additionally, it is evident that the Lie splitting is exact in this case 
+Therefore, we only consider the PL splitting. Additionally, it is evident that the Lie-Trotter splitting is exact in this case 
 (see, for example, \cite[p.~202-203]{leveque:1990}), meaning no splitting error is introduced.
 For the 1D schemes, we utilize DP1 to compute the departure point, as this scheme is exact when the velocity is constant.
 
@@ -1118,10 +1047,10 @@ which replaces the solution of the 2D advection equation with the
 solution of multiple 1D advection equations, resulting in more cost-effective 2D-FV schemes. 
 For our simulations, we adopted the 1D FV-SL scheme based on PPM to solve the 1D equations.
 
-We modified the average of two Lie splittings, which is second-order accurate,
+We modified the average of two Lie-Trotter splittings, which is second-order accurate,
 to ensure the preservation of a constant scalar field with a divergence-free velocity.
 This modification addresses the limitation of the classical averaging
-Lie splitting and follows the methodology used in FV3.
+Lie-Trotter splitting and follows the methodology used in FV3.
 
 Based on the simulation with constant velocity, we concluded that all the splitting schemes
 are equivalent and do not introduce any splitting errors. In fact, the splittings are exact in this case.
@@ -1133,6 +1062,6 @@ We observed that all splitting schemes preserved monotonicity in all simulations
 The PL07 and L04 schemes yielded very similar results and introduced a first-order error,
 which was observed when using the RK2 scheme to compute the departure point.
 Surprisingly, the AL scheme achieved third-order accuracy, surpassing its expected second-order accuracy.
-This indicates that a more accurate departure point calculation benefits the AVLT splitting.
+This indicates that a more accurate departure point calculation benefits the LT splitting.
 However, when using a first-order departure point computation, the splitting schemes PL07 and L04 produced slightly smaller errors.
 
