@@ -50,11 +50,11 @@ $\mathbb{R}^{N\times (M+1)}_{\nu}:=\mathbb{R}^{(N+2\nu)\times (M+1+2\nu)}$.
 	\Omega_{ij} = [x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}]\times [y_{j-\frac{1}{2}}, y_{j+\frac{1}{2}}] =
     [a+(i-1)\Delta x,a+i\Delta x]\times [c+(j-1)\Delta x,c+j\Delta x],
     \end{equation*}
-	$\Delta x = x_{i+\frac{1}{2}}-x_{i-\frac{1}{2}}$, 	$\Delta y = y_{j+\frac{1}{2}}-y_{j-\frac{1}{2}}$.
+	$\Delta x = x_{i+\frac{1}{2}}-x_{i-\frac{1}{2}}$, $\Delta y = y_{j+\frac{1}{2}}-y_{j-\frac{1}{2}}$.
 	Each $\Omega_{ij}$ is called control volume or cell.
 	The cell centroids $(x_i,y_j)$ are defined by
     \begin{align*}
-       x_i = \frac{1}{2}(x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}}), y_j = \frac{1}{2}(y_{j+\frac{1}{2}} + y_{j-\frac{1}{2}}).
+       x_i = \frac{1}{2}(x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}}), \quad y_j = \frac{1}{2}(y_{j+\frac{1}{2}} + y_{j-\frac{1}{2}}).
     \end{align*}
 \end{definition}
 \begin{remark}
@@ -617,20 +617,21 @@ We introduce the auxiliary grid functions $\mathbf{F}$ and $\mathbf{G}$, both be
 \begin{align*}
 \mathbf{F}_{ij}[{Q^n,\tilde{c}^{x,n}}] = 
 -\frac{1}{|\Omega_{ij}|}
-	  \big(\mathcal{A}_{i+\frac{1}{2},j}^{x} \mathfrak{F}_{i+\frac{1}{2},j}^{PPM,x}[Q^n_{\times,j},\tilde{c}^{x,n}]-
-               \mathcal{A}_{i-\frac{1}{2},j}^{x} \mathfrak{F}_{i-\frac{1}{2},j}^{PPM,x}[Q^n_{\times,j},\tilde{c}^{x,n}] \big),
+	  \bigg(\mathcal{A}_{i+\frac{1}{2},j}^{x} \mathfrak{F}_{i+\frac{1}{2},j}^{PPM,x}[Q^n_{\times,j},\tilde{c}^{x,n}]-
+               \mathcal{A}_{i-\frac{1}{2},j}^{x} \mathfrak{F}_{i-\frac{1}{2},j}^{PPM,x}[Q^n_{\times,j},\tilde{c}^{x,n}] \bigg),
 \end{align*}
 for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and
 \begin{align*}
 \mathbf{G}_{ij}[{Q^n,\tilde{c}^{y,n}}] = 
 -\frac{1}{|\Omega_{ij}|}
-	  \big(\mathcal{A}_{i,j+\frac{1}{2}}^{y} \mathfrak{F}_{i,j+\frac{1}{2}}^{PPM,y}[Q^n_{i,\times},\tilde{c}^{y,n}]-
-               \mathcal{A}_{i,j-\frac{1}{2}}^{y} \mathfrak{F}_{i,j-\frac{1}{2}}^{PPM,y}[Q^n_{i,\times},\tilde{c}^{y,n}] \big),
+	  \bigg(\mathcal{A}_{i,j+\frac{1}{2}}^{y} \mathfrak{F}_{i,j+\frac{1}{2}}^{PPM,y}[Q^n_{i,\times},\tilde{c}^{y,n}]-
+                \mathcal{A}_{i,j-\frac{1}{2}}^{y} \mathfrak{F}_{i,j-\frac{1}{2}}^{PPM,y}[Q^n_{i,\times},\tilde{c}^{y,n}] \bigg),
 \end{align*}
 for $i=-\nu+1, \ldots, N + \nu$  $j=1, \ldots, M$.
 We are using the notations $\Omega_{ij}= \Delta x \Delta y$ to represent the area of the control volume and
 \begin{align*}
-\mathcal{A}_{i+\frac{1}{2},j}^{x} = {c}_{i+\frac{1}{2},j}^{x,n} \Delta x \Delta y,
+\mathcal{A}_{i+\frac{1}{2},j}^{x} = {c}_{i+\frac{1}{2},j}^{x,n} \Delta x \Delta y,\\
+\mathcal{A}_{i,j+\frac{1}{2}}^{y} = {c}_{i,j+\frac{1}{2}}^{y,n} \Delta x \Delta y.
 \end{align*}
 This notation shall be useful when we consider these schemes on the cubed-sphere in Chapter \ref{chp-cs-fv}.
 Hence, the operators $\mathbf{F}$ and $\mathbf{G}$ represent the numerical updates added to the average values 
@@ -713,9 +714,18 @@ Further, if we if assume that $q = \overline{q}$ is constant and $\nabla \cdot
 \boldsymbol{u} = 0$ then the solution remains constant and then, assuming also that
 $\boldsymbol{u}$ does not depend on $t$, then $\mathbf{F}$ and $\mathbf{G}$ are given by
 \begin{align*}
-	\mathbf{F}_{ij}[Q^n,\tilde{u}^n] = -\overline{q} \lambda {\delta_x} u(x_i,y_j),\\
-	\mathbf{G}_{ij}[Q^n,\tilde{v}^n] = -\overline{q} \lambda {\delta_y} v(x_i,y_j).
+	\mathbf{F}_{ij}[\overline{q},\tilde{c}^{x,n}] = -\overline{q} \lambda {\delta_i} \tilde{u}_{ij}^n,\\
+	\mathbf{G}_{ij}[\overline{q},\tilde{c}^{y,n}] = -\overline{q} \lambda {\delta_i} \tilde{v}_{ij}^n.
 \end{align*}
+
+\begin{align*}
+\mathbf{G}_{ij}\big[\mathbf{F}[{\overline{q},\tilde{c}^{y,n}}],\tilde{c}^{x,n}\big] &= 
+   -\overline{q}\lambda \mathbf{G}_{ij}\big[ {\delta_i} \tilde{u}_{ij}^n,\tilde{c}^{x,n}\big] \\
+&=  \overline{q}\lambda^2 \bigg(
+   \tilde{v}_{i,j+\frac{1}{2}}^n\mathfrak{F}_{i,j+\frac{1}{2}}^{PPM,y}[ {\delta_i} \tilde{u}_{ij}^n,\tilde{c}^{y,n}] 
+-  \tilde{v}_{i,j-\frac{1}{2}}^n\mathfrak{F}_{i,j-\frac{1}{2}}^{PPM,y}[ {\delta_i} \tilde{u}_{ij}^n,\tilde{c}^{y,n}]\bigg)
+\end{align*}
+
 However, if we compute the updated solution using Equation \eqref{chp-adv2d-AL}, we have that the error is given by
 \begin{align}
 	\label{chp-adv2d-AL-error}
@@ -725,6 +735,77 @@ However, if we compute the updated solution using Equation \eqref{chp-adv2d-AL},
 	&= \Delta t (O(\Delta x^2) + O(\Delta y^2))
 	   -\Delta t^2 \overline{q}\bigg( \frac{\delta_y v \delta_x u(x_i,y_j) + \delta_x u\delta_y v(x_i,y_j)}{2\Delta x \Delta y} \bigg).
 \end{align}
+
+\begin{equation}
+{x}_{i+\frac{1}{2},j}^d({t^n},{t^{n+1}}) = x_{i+\frac{1}{2}} - \tilde{u}^{n}_{i+\frac{1}{2},j}\Delta t,
+\end{equation}
+\begin{equation}
+\tilde{u}^{n}_{i+\frac{1}{2}}(y) = \frac{1}{\Delta t}
+\int_{t^n}^{t^{n+1}}u
+\big( x_{i+\frac{1}{2},j}^d(\theta,t^{n+1}\big),y,\theta) \,d\theta.
+\end{equation}
+\begin{equation}
+{y}_{i,j+\frac{1}{2}}^d({t^n},{t^{n+1}}) = y_{j+\frac{1}{2}} - \tilde{v}^{n}_{i,j+\frac{1}{2}}\Delta t,
+\end{equation}
+\begin{equation}
+\tilde{v}^{n}_{j+\frac{1}{2}}(x) = \frac{1}{\Delta t}
+\int_{t^n}^{t^{n+1}}v
+\big(x, y_{i,j+\frac{1}{2}}^d(\theta,t^{n+1}),\theta\big) \,d\theta.
+\end{equation}
+\begin{align*}
+\mathbf{F}_{i}^E[{q(x,y,t^n),\tilde{u}^{n}}](y) = 
+-\lambda \frac{1}{\Delta t} 
+\bigg(\int^{x_{i+\frac{1}{2}}}_{x^d_{i+\frac{1}{2},j}(t^n,t^{n+1})} q(x,y,t^n)\,dx - 
+      \int^{x_{i-\frac{1}{2}}}_{x^d_{i-\frac{1}{2},j}(t^n,t^{n+1})} q(x,y,t^n)\,dx \bigg),
+\end{align*}
+
+\begin{align*}
+\mathbf{G}_{j}^E[{q(x,y,t^n),\tilde{v}^{n}}](x) = 
+-\lambda \frac{1}{\Delta t} 
+\bigg(\int^{y_{j+\frac{1}{2}}}_{y^d_{i,j+\frac{1}{2}}(t^n,t^{n+1})} q(x,y,t^n)\,dy - 
+      \int^{y_{j-\frac{1}{2}}}_{y^d_{i,j-\frac{1}{2}}(t^n,t^{n+1})} q(x,y,t^n)\,dy \bigg),
+\end{align*}
+
+\begin{align*}
+\mathbf{F}_{i}^E[{\overline{q},\tilde{u}^{n}}](y) = 
+-\lambda \overline{q}\delta_i\tilde{u}^{n}_{i}(y),
+\end{align*}
+
+\begin{align*}
+\mathbf{G}_{j}^E[{\overline{q},\tilde{v}^{n}}](x) = 
+-\lambda \overline{q}\delta_j\tilde{v}^{n}_{j}(x),
+\end{align*}
+
+\begin{align*}
+&\mathbf{F}_{i}^E[{-\lambda \overline{q}\delta_j\tilde{v}^{n}_{j}(x),\tilde{u}^{n}}](y) =
+-\lambda \overline{q}\mathbf{F}_{i}^E[{\delta_j\tilde{v}^{n}_{j}(x),\tilde{u}^{n}}](y)   \\
+&= -\lambda^2\overline{q} \frac{1}{\Delta t} 
+\bigg(\int^{x_{i+\frac{1}{2}}}_{x^d_{i+\frac{1}{2},j}(t^n,t^{n+1})} \delta_j\tilde{v}^{n}_{j}(x)\,dx - 
+      \int^{x_{i-\frac{1}{2}}}_{x^d_{i-\frac{1}{2},j}(t^n,t^{n+1})} \delta_j\tilde{v}^{n}_{j}(x)\,dx \bigg) \\
+&= \frac{-\overline{q}}{\Delta x^2} 
+\bigg(\int_{t^n}^{t^{n+1}}
+ [\Psi \big( x_{i+\frac{1}{2}}, y_{i,j+\frac{1}{2}}^d(\theta,t^{n+1}),\theta\big)-
+  \Psi \big( x_{i-\frac{1}{2}}, y_{i,j+\frac{1}{2}}^d(\theta,t^{n+1}),\theta\big)]-
+ [\Psi \big( x_{i+\frac{1}{2},j}^d, y_{i-\frac{1}{2},j}^d(\theta,t^{n+1}),,\theta\big)
+ -\Psi \big( x_{i-\frac{1}{2},j}^d, y_{i-\frac{1}{2},j}^d(\theta,t^{n+1}),\theta\big)]
+\,d\theta -\bigg)
+\end{align*}
+
+\begin{align*}
+&\mathbf{G}_{j}^E[{-\lambda \overline{q}\delta_i\tilde{u}^{n}_{i}(y),\tilde{v}^{n}}](x) = 
+ \mathbf{G}_{j}^E[{-\lambda \overline{q}\delta_i\tilde{u}^{n}_{i}(y),\tilde{v}^{n}}](x) \\ 
+&= -\lambda^2\overline{q} \frac{1}{\Delta t} 
+\bigg(\int^{y_{j+\frac{1}{2}}}_{y^d_{i,j+\frac{1}{2}}(t^n,t^{n+1})} \delta_i\tilde{u}^{n}_{i}(y)\,dy - 
+      \int^{y_{j-\frac{1}{2}}}_{y^d_{i,j-\frac{1}{2}}(t^n,t^{n+1})} \delta_i\tilde{u}^{n}_{i}(y)\,dy \bigg)\\
+&= \frac{\overline{q}}{\Delta x^2} 
+\bigg(\int_{t^n}^{t^{n+1}}
+ [\Psi \big( x_{i+\frac{1}{2},j}^d(\theta,t^{n+1}),y_{j+\frac{1}{2}},\theta\big)-
+ \Psi \big( x_{i+\frac{1}{2},j}^d(\theta,t^{n+1}),y_{j-\frac{1}{2}},\theta\big)]-
+ [\Psi \big( x_{i-\frac{1}{2},j}^d(\theta,t^{n+1}),y_{i,j+\frac{1}{2}}^d,\theta\big)
+ -\Psi \big( x_{i-\frac{1}{2},j}^d(\theta,t^{n+1}),y_{i,j-\frac{1}{2}}^d,\theta\big)]
+\,d\theta -\bigg)
+\end{align*}
+
 In this work, we shall consider the following inner advective operator proposed by
 \citet{lin:2004} (hereafter, \textbf{L04}) and the one proposed by \citet{putman:2007} (hereafter, \textbf{PL}).
 The PL scheme is currently used in the FV3 dynamical core.
@@ -759,10 +840,12 @@ advective operators from \citet{lin:2004} and from \citet{putman:2007}, respecti
 \section{Numerical experiments}
 \label{sec-ds-exp}
 To assess the dimension-splitting schemes introduced previously, we are going to consider the linear advection 
-equation on the spatial domain $[0,L]\times[0,L]$ and in the time interval $[0,T]$, 
-with biperiodic boundary conditions, where $L = 2 \pi R$. Here, $R = 6.371 \times 10^6$ meters, 
+equation on the spatial domain $[-\frac{L}{2},\frac{L}{2}]\times[-\frac{L}{2},\frac{L}{2}]$ and in the time interval $[0,T]$, 
+with biperiodic boundary conditions, where $L = \frac{\pi}{2} R$. Here, $R = 6.371 \times 10^6$ meters, 
 representing the Earth's radius, and $T = 1036800$ seconds, equivalent to 12 days. 
-The spatial domain spans approximately 40000 kilometers in both directions
+The spatial domain spans approximately $10^4$ kilometers in both directions,
+which correspond to approximately the lengths of a cubed-sphere panel,
+as shall be seen in Chapter \ref{chp-cs-grids}.
 
 For the 1D schemes, we will consider the FV-SL schemes \textbf{hord0} (Subsection \ref{chp-adv1d-sec-hord0}) and
 \textbf{hord8} (Subsection \ref{chp-adv1d-sec-hord8}), 
@@ -788,7 +871,7 @@ The IC is a rectangular profile (refer to Figure \ref{chp-adv2d-sec-exp-adv1-a})
 	\label{chp-adv2d-ic1}
 	q_0(x,y) =  
 	\begin{cases}
-		1 & \text{if } (x,y) \in [0.4,0.6]\times [0.4,0.6],\\
+		1 & \text{if } (x,y) \in [-0.1L,0.1L]\times [-0.1L,0.1L],\\
 		0 & \text{otherwise}.
 	\end{cases}
 \end{equation}
@@ -796,28 +879,28 @@ The IC is a rectangular profile (refer to Figure \ref{chp-adv2d-sec-exp-adv1-a})
 	\centering
 	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{adv2d_tc1_N48_hord0_iadv1_dp1_t0}
+		\includegraphics[width=1\linewidth]{adv2d_tc1_N48_hord8_iadv1_dp1_t0}
 		\caption{IC\label{chp-adv2d-sec-exp-adv1-a}}
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{adv2d_tc1_N48_hord0_iadv1_dp1_t13}
+		\includegraphics[width=1\linewidth]{adv2d_tc1_N48_hord0_iadv1_dp1_t12}
 		\caption{PL-hord0\label{chp-adv2d-sec-exp-adv1-b}}
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{adv2d_tc1_N48_hord8_iadv1_dp1_t13}
+		\includegraphics[width=1\linewidth]{adv2d_tc1_N48_hord8_iadv1_dp1_t12}
 		\caption{PL-hord8.\label{chp-adv2d-sec-exp-adv1-c}}
 	\end{subfigure}	
 	\caption{Linear advection experiment using a constant velocity $\boldsymbol{u} = \left(\frac{L}{T},\frac{L}{T}\right)$, 
-	a CFL number set to $0.94$, and a grid resolution of $N=M=48$.
+	a CFL number set to $0.67$, and a grid resolution of $N=M=48$.
 	The initial condition is given by Equation \eqref{chp-adv2d-ic1}.
 	We run this test with the PL splitting combined with the schemes hord0 (b) and hord8 (c).
         The figures display the advected profile after 12 days (one time period).
         The initial condition is depicted in (a). \label{chp-adv2d-sec-exp-adv1}}
 \end{figure}
 
-We will employ a time step of 20000 seconds and set $N=M=48$, resulting in a CFL number approximately equal to 0.94.
+We will employ a time step of 14400 seconds and set $N=M=48$, resulting in a CFL number approximately equal to 0.67.
 The exact solution of Problem \ref{chp-adv2d-sec2-prob1} in this scenario is $q_0((x,y)-\boldsymbol{u}t)$.
 Due to the constant velocity field, all splitting schemes introduced in Section \ref{sec-dsplit} are equivalent.
 Therefore, we only consider the PL splitting. Additionally, it is evident that the Lie splitting is exact in this case 
@@ -833,11 +916,11 @@ For a first variable velocity testing, we consider two Gaussian hills given by:
 \begin{align}
 	\begin{split}
 	\label{chp-adv2d-ic2}
-	q_0(x,y) = &\exp\bigg(-10\cos^2 \bigg(\pi \bigg(\frac{x}{L}-0.1\bigg)\bigg)\bigg) \exp\bigg(-10\cos^2 \bigg(\pi \frac{y}{L}\bigg) \bigg)+ \\
-	           &\exp\bigg(-10\cos^2 \bigg(\pi \bigg(\frac{x}{L}+0.1\bigg)\bigg)\bigg) \exp\bigg(-10\cos^2 \bigg(\pi \frac{y}{L}\bigg) \bigg),
+	q_0(x,y) = &\exp\bigg(-10\sin^2 \bigg(\pi \bigg(\frac{x}{L}-0.1\bigg)\bigg)\bigg) \exp\bigg(-10\sin^2 \bigg(\pi \frac{y}{L}\bigg) \bigg)+ \\
+	           &\exp\bigg(-10\sin^2 \bigg(\pi \bigg(\frac{x}{L}+0.1\bigg)\bigg)\bigg) \exp\bigg(-10\sin^2 \bigg(\pi \frac{y}{L}\bigg) \bigg),
 	\end{split}
 \end{align}
-defined in $[0,L] \times [0,L]$, whose graph is shown in Figure \ref{chp-adv2d-sec-exp-adv2-ic}.
+defined in $[-\frac{L}{2},\frac{L}{2}] \times [-\frac{L}{2},\frac{L}{2}]$, whose graph is shown in Figure \ref{chp-adv2d-sec-exp-adv2-ic}.
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=0.5\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t0}
@@ -849,8 +932,8 @@ proposed by \citet{chen:2017}. The velocity is given by:
 \begin{equation}
 	\label{chp-adv2d-vf1}
 	\begin{cases}
-		u(x,y,t) &= c\frac{L}{T}  \sin^2(\alpha_1)\sin\big(\frac{\pi y}{L}\big)\cos\big(\frac{\pi y}{L}\big)  \cos\big(\frac{\pi t}{T}\big) - \frac{L}{T},\\
-		v(x,y,t) &= -2c\frac{L}{T}\sin(\alpha_1)  \cos(\alpha_1)\sin^2\big(\frac{\pi y}{L}\big)\cos\big(\frac{\pi t}{T}\big),
+		u(x,y,t) &= -c\frac{L}{T} \sin^2(\alpha_1)\sin\big(\frac{\pi y}{L}\big)\cos\big(\frac{\pi y}{L}\big)  \cos\big(\frac{\pi t}{T}\big) + \frac{L}{T},\\
+		v(x,y,t) &= -2c\frac{L}{T}\sin(\alpha_1)  \cos(\alpha_1)\cos^2\big(\frac{\pi y}{L}\big)\cos\big(\frac{\pi t}{T}\big),
 	\end{cases}
 \end{equation}
 where $\alpha_1 = 2\pi\big(\frac{x}{L}-\frac{t}{T}\big)$, $c = 10$.
@@ -858,7 +941,7 @@ where $\alpha_1 = 2\pi\big(\frac{x}{L}-\frac{t}{T}\big)$, $c = 10$.
 However, we will employ biperiodic boundary conditions to simplify the problem.
 This velocity field is divergence-free, and deforms the initial condition.
 After $T$ time units (12 days in our case), the scalar field returns to its initial position and shape, allowing us to compute the error.
-Notice that in Equation \eqref{chp-adv2d-vf1}, we have added a constant wind $-\frac{L}{T}$ in the component
+Notice that in Equation \eqref{chp-adv2d-vf1}, we have added a constant wind $\frac{L}{T}$ in the component
 $u$ to prevent error cancellation, as discussed by \citet{nair:2010}.
 \begin{figure}[!htb]
 	\centering
@@ -934,8 +1017,8 @@ For a second variable velocity testing, we consider two Gaussian hills given by 
 \begin{equation}
 	\label{chp-adv2d-vf2}
 	\begin{cases}
-		u(x,y,t) &= \frac{L}{T} \sin^2\big(\frac{\pi x}{L}\big) \sin\big(\frac{2\pi y}{L}\big) \cos\big(\frac{\pi t}{T}\big), \\
-		v(x,y,t) &= \frac{L}{T} \sin^2\big(\frac{\pi y}{L}\big) \sin\big(\frac{2\pi x}{L}\big) \cos\big(\frac{\pi t}{T}\big).
+		u(x,y,t) &= -\frac{L}{T} \cos^2\big(\frac{\pi x}{L}\big) \sin\big(\frac{2\pi y}{L}\big) \cos\big(\frac{\pi t}{T}\big), \\
+		v(x,y,t) &= -\frac{L}{T} \cos^2\big(\frac{\pi y}{L}\big) \sin\big(\frac{2\pi x}{L}\big) \cos\big(\frac{\pi t}{T}\big).
 	\end{cases}
 \end{equation}
 This test is based on the planar test from \citet{nair:2010}, but we adapt it to make the wind divergent.
