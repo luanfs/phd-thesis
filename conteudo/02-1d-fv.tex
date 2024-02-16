@@ -1078,9 +1078,11 @@ schemes \textbf{hord0} (Subsection \ref{chp-adv1d-sec-hord0}) and
 \textbf{DP1} (Subsection \ref{chp-adv1d-sec-DP1}) and \textbf{DP2} (Subsection \ref{chp-adv1d-sec-DP2}).
 The code used in this section can be found in Appendix \ref{anexo-code}.
 
-For all the simulations presented here, we will consider the spatial domain $[0,L]$,
-and the time interval $[0,T]$,  where $L = 2 \pi R$, $R = 6.371 \times 10^{6}$ meters is the Earth's radius and
-$T = 1036800$ seconds, equivalent to 12 days. The spatial domain has approximately 40000 kilometers.
+For all the simulations presented here, we will consider the spatial domain $[-\frac{L}{2},\frac{L}{2}]$,
+and the time interval $[0,T]$,  where $L = \frac{\pi}{2} R$, $R = 6.371 \times 10^{6}$ meters is the Earth's radius and
+$T = 1036800$ seconds, equivalent to 12 days.
+The spatial domain spans approximately $10^4$ kilometers, which corresponds to approximately the length of a cubed-sphere panel,
+as shall be seen in Chapter \ref{chp-cs-grids}.
 The relative change at time step $n$ in the mass is computed as:
 \begin{equation*}
 	\frac{|M^n-M^0|}{|M_0|},
@@ -1103,14 +1105,14 @@ a discontinuous IC given by:
 	\label{chp-adv1d-ic1}
 		q_0(x) =  
   \begin{cases}
-		1 & \text{if } x \in [0.4L,0.6L],\\
+		1 & \text{if } x \in [-0.1L,0.1L],\\
 		0 & \text{otherwise}.
   \end{cases}
 \end{equation}
 for the linear advection equation with constant velocity, which we adopt as $u=\frac{L}{T}$.
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=0.6\linewidth]{adv1d_tc1_N48_hord8_DP1_t13}
+	\includegraphics[width=0.6\linewidth]{adv1d_tc1_N48_hord0_DP1_t12}
 	\caption{Linear advection experiment using the IC given by Equation \eqref{chp-adv1d-ic1} (black curve) with constant velocity.
 		These figures show the advected profile after 12 days (one time period).
 		Reconstruction schemes employed: hord0 (blue curve) and hord8 (orange curve).\label{chp-adv1d-sec-exp-adv1}}
@@ -1118,7 +1120,7 @@ for the linear advection equation with constant velocity, which we adopt as $u=\
 
 It is easy to check that the exact solution of Problem \ref{chp-adv1d-sec2-prob1} is given
 by $q_0(x-ut)$ and that the solution returns to its initial position after 12 days.
-We will employ a time step of 20000 seconds and set $N=48$, resulting in a CFL number approximately equal to 0.94.
+We will employ a time step of 14400 seconds and set $N=48$, resulting in a CFL number approximately equal to 0.67.
 The departure schemes \textbf{DP1} and \textbf{DP2} compute the departure point exactly in this case, so we will only use the \textbf{DP1} scheme.
 
 In Figure \ref{chp-adv1d-sec-exp-adv1}, we present the obtained results.
@@ -1134,13 +1136,13 @@ This cases is useful to assess the departure point schemes, which shall not be e
 We are going to consider the velocity
 \begin{equation}
 	\label{chp-adv1d-vel2}
-	u(x,t) = u_0\cos{\bigg(\frac{\pi t}{T}\bigg)}\sin^2\bigg(\pi \bigg(\frac{x}{L}-\frac{t}{T}\bigg)\bigg) + u_1.
+	u(x,t) = u_0\cos{\bigg(\frac{\pi t}{T}\bigg)}\cos^2\bigg(\pi \bigg(\frac{x}{L}-\frac{t}{T}\bigg)\bigg) + u_1.
 \end{equation}
 We adopt the parameters $T = 12$ days and  $u_0 = u_1 = \frac{L}{T}$.
 Following the approach in \citet{trefethen:2000}, we initialize the periodic Gaussian profile defined as:
 \begin{equation}
 	\label{chp-adv1d-ic2}
-	q(x) = \exp\bigg(-10\cos^2{\bigg(\frac{\pi x}{L}\bigg)}\bigg),\quad x \in [0,L].
+	q(x) = \exp\bigg(-10\sin^2{\bigg(\frac{\pi x}{L}\bigg)}\bigg),\quad x \in \bigg[-\frac{L}{2},\frac{L}{2}\bigg].
 \end{equation}
 The velocity function given by Equation \eqref{chp-adv1d-vel2} is based
 on the deformational flow test case in \citet{nair:2010},
@@ -1190,7 +1192,7 @@ using a high-resolution ($N=768$), the hord8 scheme and the DP1 departure point 
 		\caption{$t=12$ days.\label{chp-adv1d-sec-exp-adv2-g}}
 	\end{subfigure}
 	\caption{Linear advection experiment using the velocity from Equation \eqref{chp-adv1d-ic2},
-		a CFL number equal to $0.92$, $N=768$ cells, and the IC is given by 
+		a CFL number equal to $0.67$, $N=768$ cells, and the IC is given by 
 		Equation \eqref{chp-adv1d-ic2} \eqref{chp-adv1d-sec-exp-adv2-a}.
 		These figures show the advected profile at
 		2 \eqref{chp-adv1d-sec-exp-adv2-b}, 
@@ -1226,7 +1228,7 @@ using a high-resolution ($N=768$), the hord8 scheme and the DP1 departure point 
 
 To investigate the error convergence, we employ $(\Delta x^{(k)}, \Delta t^{(k)}, \lambda)$-discretizations with $\Delta x^{(k)} = \frac{L}{N^{(k)}}$,
 $N^{(k)} = 48 \times 2^k$,
-$\Delta t^{(k)}=\frac{10^4}{{2^{k}}}$, for $k = 0, \ldots, 4$.
+$\Delta t^{(k)}=\frac{7200}{{2^{k}}}$, for $k = 0, \ldots, 4$.
 To measure the accuracy, we consider the relative error in the maximum norm as follows:
 \begin{equation*}
 	E_k = 
