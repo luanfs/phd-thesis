@@ -553,8 +553,9 @@ The time-averaged CFL numbers are computed using the schemes
 (Subsection \ref{chp-adv1d-sec-DP2}), applied separately in the $x$ and $y$ directions.
 
 The values $q_{L,ij}^x$, $q_{R,ij}^x$, $q_{L,ij}^y$, and $q_{R,ij}^y$,
-which approximate the values of $q$ at C-grid wind positions, are computed
-using one of the schemes \textbf{hord0} and \textbf{hord8} as described
+which approximate values of $q$, namely 
+$q_{i-\frac{1}{2},j}$, $q_{i+\frac{1}{2},j}$, $q_{i,j-\frac{1}{2}}$, $q_{i,j+\frac{1}{2}}$, respectively,
+are computed using one of the schemes \textbf{hord0} and \textbf{hord8} as described
 in Sections \ref{chp-adv1d-sec-hord0} and \ref{chp-adv1d-sec-hord8}, again
 applied separately in the $x$ and $y$ directions.
 These approximations are expected to be
@@ -702,61 +703,100 @@ for $i=-\nu+1, \ldots, N+\nu$, $j=1, \ldots, M$ (Figure \ref{lt-GQy}), and then 
 	{Q}^{xy,n}_{ij} = Q^{y,n}_{ij} + \mathbf{F}_{ij}[Q^{y,n},\tilde{c}^{x,n}],
 \end{align*}
 for $i=1, \ldots, N$, $j=1, \ldots, M$ (Figure \ref{lt-FGQy}) and thus we have the average Lie-Trotter solution:
-\begin{align*}
-	Q^{n+1} &= \frac{(Q^{xy,n} + Q^{yx,n})}{2} \\
-    &= Q^n + \frac{1}{2}\mathbf{F}[Q^n,\tilde{c}^{x,n}] + \frac{1}{2}\mathbf{G}[Q^n,\tilde{c}^{y,n}] + 
-    \frac{1}{2}\mathbf{F}\bigg[Q^n + \mathbf{G}[Q^n, \tilde{c}^{y,n}], \tilde{c}^{x,n}\bigg]+
+\begin{align}
+\label{chp-adv2d-LT}
+    Q^{n+1} = \frac{(Q^{xy,n} + Q^{yx,n})}{2} 
+    = Q^n &+ \frac{1}{2}\mathbf{F}[Q^n,\tilde{c}^{x,n}] + \frac{1}{2}\mathbf{G}[Q^n,\tilde{c}^{y,n}] \nonumber \\
+    &+\frac{1}{2}\mathbf{F}\bigg[Q^n + \mathbf{G}[Q^n, \tilde{c}^{y,n}], \tilde{c}^{x,n}\bigg]+
     \frac{1}{2}\mathbf{G}\bigg[Q^n + \mathbf{F}[Q^n, \tilde{c}^{x,n}], \tilde{c}^{y,n}\bigg].
-\end{align*}
-
+\end{align}
+This scheme shall be referred to in this work as the average Lie-Trotter (\textbf{LT}) scheme. 
+Finally, we point out that this scheme could be built using any other 1D numerical flux function, 
+but we focus on PPM since this is what is used in FV3.
 \subsection{Elimination of splitting error for a constant scalar field and non-divergent wind}
-The numerical flux functions defined in Chapter \ref{chp-1d-fv} are indeed linear the 
-input $Q$ if there are no monotonic constrain, but we are going to consider this scheme
-even when there are monotonic constraints since it requires fewer operations.
-Further, if we if assume that $q = \overline{q}$ is constant and $\nabla \cdot 
-\boldsymbol{u} = 0$ then the solution remains constant and then, assuming also that
-$\boldsymbol{u}$ does not depend on $t$, then $\mathbf{F}$ and $\mathbf{G}$ are given by
+Let us, for an instant, assume that $\mathbf{F}$ and $\mathbf{G}$ are linear in their first input. This implies that Equation \eqref{chp-adv2d-LT} may be rewritten as:
+\begin{align}
+\label{chp-adv2d-LT-linear}
+    Q^{n+1} = Q^n 
+    &+ \mathbf{F}[Q^n,\tilde{c}^{x,n}] + \mathbf{G}[Q^n,\tilde{c}^{y,n}] \nonumber \\
+    &+\frac{1}{2}\mathbf{F}\bigg[\mathbf{G}[Q^n, \tilde{c}^{y,n}], \tilde{c}^{x,n}\bigg]+
+      \frac{1}{2}\mathbf{G}\bigg[\mathbf{F}[Q^n, \tilde{c}^{x,n}], \tilde{c}^{y,n}\bigg].
+\end{align}
+The numerical flux functions defined in Chapter \ref{chp-1d-fv} are indeed linear in the input $Q$ if there are no monotonic constraints,
+that is, when we use hord0,
+implying that $\mathbf{F}$ and $\mathbf{G}$ are both linear in this case.
+%citet{lin:1996} suggests using Equation \eqref{chp-adv2d-LT-linear}
+%instead of \eqref{chp-adv2d-LT} to save computational operations, but the current implementation of FV3 does not follow this approach.
+We are going to consider Equation \eqref{chp-adv2d-LT-linear}
+even when there are monotonic constraints, to analyse the scheme when $\boldsymbol{u}$ is non-divergent ($\nabla \cdot 
+\boldsymbol{u} = 0$) and the
+scalar field is equal to a constant $\overline{q}$.
+Then the solution remains constant. 
+Since the wind is non-divergent, it follows from the Helmholtz decomposition theorem 
+that there exists a stream function $\psi \in \mathcal{C}^2$ such that
 \begin{align*}
-	\mathbf{F}_{ij}[\overline{q},\tilde{c}^{x,n}] = -\overline{q} \lambda {\delta_i} \tilde{u}_{ij}^n,\\
-	\mathbf{G}_{ij}[\overline{q},\tilde{c}^{y,n}] = -\overline{q} \lambda {\delta_i} \tilde{v}_{ij}^n.
+    u(x,y,t) &= -\partial_y \psi(x,y,t),\\
+    v(x,y,t) &= \partial_x \psi(x,y,t).
 \end{align*}
-
+Then, we may compute the wind using centered-finite differences 
+\begin{align*}
+    u_{i+\frac{1}{2},j}^{n}&=
+    -\bigg(\frac{\psi_{i+\frac{1}{2},j+\frac{1}{2}}^{n}-\psi_{i+\frac{1}{2},j-\frac{1}{2}}^{n}}{\Delta y}\bigg),\\
+    v_{i,j+\frac{1}{2}}^{n} &= 
+    \frac{\psi_{i+\frac{1}{2},j+\frac{1}{2}}^{n}-\psi_{i-\frac{1}{2},j+\frac{1}{2}}^{n}}{\Delta x},\\
+\end{align*}
+and thus the following discrete divergence free condition holds
+\begin{align*}
+  \frac{\delta_i u_{ij}^n}{\Delta x} + \frac{\delta_j v_{ij}^n}{\Delta y} = 0.
+\end{align*}
+Now, using the fact that the scalar field is supposed to be constant, we have:
+\begin{align*}
+\mathbf{F}_{ij}[\overline{q},\tilde{c}^{x,n}] &= -\overline{q} \lambda \delta_i \tilde{u}_{ij}^n,\\
+\mathbf{G}_{ij}[\overline{q},\tilde{c}^{y,n}] &= -\overline{q} \lambda \delta_j \tilde{v}_{ij}^n,
+\end{align*}
+recalling that $\lambda = \frac{\Delta t}{\Delta x} = \frac{\Delta t}{\Delta y}$.
+Applying $\mathbf{G}$ and $\mathbf{F}$ again, we have:
 \begin{align*}
 \mathbf{G}_{ij}\big[\mathbf{F}[{\overline{q},\tilde{c}^{y,n}}],\tilde{c}^{x,n}\big] &= 
    \overline{q}\lambda^2 \bigg(
    \tilde{v}_{i,j+\frac{1}{2}}^n\mathfrak{F}_{i,j+\frac{1}{2}}^{PPM,y}[ {\delta_i} \tilde{u}_{ij}^n,\tilde{c}^{y,n}] 
--  \tilde{v}_{i,j-\frac{1}{2}}^n\mathfrak{F}_{i,j-\frac{1}{2}}^{PPM,y}[ {\delta_i} \tilde{u}_{ij}^n,\tilde{c}^{y,n}]\bigg),\\
+-  \tilde{v}_{i,j-\frac{1}{2}}^n\mathfrak{F}_{i,j-\frac{1}{2}}^{PPM,y}[ {\delta_i} \tilde{u}_{ij}^n,\tilde{c}^{y,n}]\bigg)\\
+&=  \overline{q}\lambda^2\delta_i \big( \tilde{v}_{ij}^n\mathfrak{F}_{ij}^{PPM,y}[ {\delta_i} \tilde{u}_{ij}^n,\tilde{c}^{y,n}] \big),
+\end{align*}
+\begin{align*}
 \mathbf{F}_{ij}\big[\mathbf{G}[{\overline{q},\tilde{c}^{x,n}}],\tilde{c}^{y,n}\big] &= 
    \overline{q}\lambda^2 \bigg(
    \tilde{u}_{i,j+\frac{1}{2}}^n\mathfrak{F}_{i,j+\frac{1}{2}}^{PPM,x}[ {\delta_j} \tilde{v}_{ij}^n,\tilde{c}^{x,n}] 
--  \tilde{u}_{i,j-\frac{1}{2}}^n\mathfrak{F}_{i,j-\frac{1}{2}}^{PPM,x}[ {\delta_j} \tilde{v}_{ij}^n,\tilde{c}^{x,n}]\bigg).
+-  \tilde{u}_{i,j-\frac{1}{2}}^n\mathfrak{F}_{i,j-\frac{1}{2}}^{PPM,x}[ {\delta_j} \tilde{v}_{ij}^n,\tilde{c}^{x,n}] \bigg)\\
+&=  \overline{q}\lambda^2\delta_j \big( \tilde{u}_{ij}^n\mathfrak{F}_{ij}^{PPM,x}[ {\delta_j} \tilde{v}_{ij}^n,\tilde{c}^{x,n}] \big).
 \end{align*}
-
-However, if we compute the updated solution using Equation, we have that the error is given by
+However, if we compute the updated solution using Equation \eqref{chp-adv2d-LT-linear} we have that the error is given by
 \begin{align}
-	\label{chp-adv2d-AL-error}
+	\label{chp-adv2d-LT-error}
 	Q^{n+1}_{ij} - \overline{q} &= 
-	-\Delta t \bigg(\frac{\delta_i u_{ij}}{\Delta x} + \frac{\delta_j v_{ij}}{\Delta y} \bigg)
-	-\Delta t^2 \overline{q}\bigg( \frac{\delta_y v \delta_x u(x_i,y_j) + \delta_x u\delta_y v(x_i,y_j)}{2\Delta x \Delta y} \bigg) \\
-	&= \Delta t (\mathcal{O}(\Delta x^2) + \mathcal{O}(\Delta y^2))
-	   -\Delta t^2 \overline{q}\bigg( \frac{\delta_y v \delta_x u(x_i,y_j) + \delta_x u\delta_y v(x_i,y_j)}{2\Delta x \Delta y} \bigg).
+	-\Delta t \bigg(\frac{\delta_i \tilde{u}_{ij}}{\Delta x} + \frac{\delta_j \tilde{v}_{ij}}{\Delta y} \bigg)
+	-\frac{\overline{q}}{2}\lambda^2
+	\bigg(
+	\delta_j \big( \tilde{u}_{ij}^n\mathfrak{F}_{ij}^{PPM,x}[ {\delta_j} \tilde{v}_{ij}^n,\tilde{c}^{x,n}] \big)+
+        \delta_i \big( \tilde{v}_{ij}^n\mathfrak{F}_{ij}^{PPM,y}[ {\delta_i} \tilde{u}_{ij}^n,\tilde{c}^{y,n}] \big)\bigg) \nonumber\\
+	&=
+	-\frac{\overline{q}}{2}\lambda^2
+	\bigg(
+	\delta_j \big( \tilde{u}_{ij}^n\mathfrak{F}_{ij}^{PPM,x}[ {\delta_j} \tilde{v}_{ij}^n,\tilde{c}^{x,n}] \big)+
+        \delta_i \big( \tilde{v}_{ij}^n\mathfrak{F}_{ij}^{PPM,y}[ {\delta_i} \tilde{u}_{ij}^n,\tilde{c}^{y,n}] \big)\bigg).
 \end{align}
-
-
-\begin{align*}
-	Q^{n+1} = Q^n + \frac{1}{2}\mathbf{F}[Q^n,\tilde{c}^{x,n}] + \frac{1}{2}\mathbf{G}[Q^n,\tilde{c}^{y,n}] + 
-    \frac{1}{2}\mathbf{F}\bigg[Q^n + \mathbf{g}[Q^n, \tilde{c}^{y,n}], \tilde{c}^{x,n}\bigg]+
-    \frac{1}{2}\mathbf{G}\bigg[Q^n + \mathbf{f}[Q^n, \tilde{c}^{x,n}], \tilde{c}^{y,n}\bigg].
-\end{align*}
-In this work, we shall consider the following inner advective operator proposed by
-\citet{lin:2004} (hereafter, \textbf{L04}) and the one proposed by \citet{putman:2007} (hereafter, \textbf{PL}).
-The PL scheme is currently used in the FV3 dynamical core.
-We also shall consider the average Lie-Trotter splitting (hereafter, \textbf{AL}). 
-All the expressions of each inner advective operator mentioned are shown in Table \ref{chp-adv2d-tab1}.
-It is easy to see that both operators {L04} and {PL} eliminate the term multiplied by
-$\Delta t^2$ that appeared in Equation \eqref{chp-adv2d-AL-error} when we apply these operators for a 
-constant grid function $Q^n$ and a non-divergent velocity field in Equation \eqref{chp-adv2d-AL2-error}.
-Therefore, these inner advective operators eliminate the splitting error for a constant field and a non-divergent velocity field.
+To eliminate this error, \citet{lin:1996} proposed modifying the Equation \eqref{chp-adv2d-LT} to
+\begin{align}
+\label{chp-adv2d-PL}
+Q^{n+1} = Q^n &+ \frac{1}{2}\mathbf{F}[Q^n,\tilde{c}^{x,n}] + \frac{1}{2}\mathbf{G}[Q^n,\tilde{c}^{y,n}]\nonumber \\
+&+\frac{1}{2}\mathbf{F}\bigg[Q^n + \mathbf{g}[Q^n, \tilde{c}^{y,n}], \tilde{c}^{x,n}\bigg]+
+\frac{1}{2}\mathbf{G}\bigg[Q^n + \mathbf{f}[Q^n, \tilde{c}^{x,n}], \tilde{c}^{y,n}\bigg],
+\end{align}
+where $\mathbf{f}$ and $\mathbf{g}$ are called inner advective operators.
+In this work, we shall consider the inner advective operator proposed by \citet{putman:2007} (hereafter referred to as \textbf{PL}).
+The PL scheme is currently used in the FV3 dynamical core. Also, notice that the LT scheme is equivalent to the PL scheme but uses 
+$\mathbf{f}=\mathbf{F}$ and $\mathbf{g}=\mathbf{G}$.
+All the expressions for each inner advective operator mentioned are shown in Table \ref{chp-adv2d-tab1}.
 \begin{table}[!h]
 	\begin{tabular}{|c|l|l|}
 		\hline
@@ -777,9 +817,16 @@ LT stands for the average Lie-Trotter  scheme, while PL stands for the scheme fr
 \label{chp-adv2d-tab1}
 \end{table}
 
+It is easy to see that the PL operator eliminates the term multiplied by $\lambda^2$ that appeared in Equation \eqref{chp-adv2d-LT-error}
+when we apply these operators to a constant grid function $Q^n$ and a non-divergent velocity field in Equation \eqref{chp-adv2d-LT-error}.
+Therefore, these inner advective operators eliminate the splitting error for a constant field and a non-divergent velocity field, making this scheme exact in this case.
+We point out that although the LT scheme has an error in Equation \ref{chp-adv2d-LT-error}, it is a second-order error,
+since this scheme is generally second-order accurate \citep{holden:2010}, provided that the 1D flux is second-order, 
+which shall be the case if we use the dp2 scheme as discussed in Chapter \ref{chp-1d-fv}.
+
 \section{Numerical experiments}
 \label{sec-ds-exp}
-To assess the dimension-splitting schemes introduced previously, we are going to consider the linear advection 
+To assess the dimension-splitting schemes LT and PL introduced previously, we are going to consider the linear advection 
 equation on the spatial domain $[-\frac{L}{2},\frac{L}{2}]\times[-\frac{L}{2},\frac{L}{2}]$ and in the time interval $[0,T]$, 
 with biperiodic boundary conditions, where $L = \frac{\pi}{2} R$. Here, $R = 6.371 \times 10^6$ meters, 
 representing the Earth's radius, and $T = 1036800$ seconds, equivalent to 12 days. 
@@ -863,7 +910,7 @@ For a first variable velocity testing, we consider two Gaussian hills given by:
 defined in $[-\frac{L}{2},\frac{L}{2}] \times [-\frac{L}{2},\frac{L}{2}]$, whose graph is shown in Figure \ref{chp-adv2d-sec-exp-adv2-ic}.
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=0.4\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t0}
+	\includegraphics[width=0.5\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t0}
 	\caption{IC\label{chp-adv2d-sec-exp-adv2-ic}}
 \end{figure}
 
@@ -883,41 +930,48 @@ This velocity field is divergence-free, and deforms the initial condition.
 After $T$ time units (12 days in our case), the scalar field returns to its initial position and shape, allowing us to compute the error.
 Notice that in Equation \eqref{chp-adv2d-vf1}, we have added a constant wind $\frac{L}{T}$ in the component
 $u$ to prevent error cancellation, as discussed by \citet{nair:2010}.
+
+Figure \ref{chp-adv2d-sec-exp-adv2} illustrates the results obtained using two Gaussian hills and the velocity field 
+from Equation \eqref{chp-adv2d-vf1}.
+We employed a high-resolution grid with $N=768$, along with the PL-DP1-hord8 scheme,
+to demonstrate the behavior of the test.
+The Figure shows the deformation of the scalar field over time, eventually returning to its initial position.
+
 \begin{figure}[!htb]
 	\centering
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.25\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t2}
 		\caption{$t=2$.\label{chp-adv2d-sec-exp-adv2-a}}
 	\end{subfigure}
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.25\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t4}
 		\caption{$t=4$ days.\label{chp-adv2d-sec-exp-adv2-b}}
 	\end{subfigure}
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.25\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t6}
 		\caption{$t=6$ days.\label{chp-adv2d-sec-exp-adv2-c}}
 	\end{subfigure}
 	
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.25\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t8}
 		\caption{$t=8$ days.\label{chp-adv2d-sec-exp-adv2-d}}
 	\end{subfigure}
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.25\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t10}
 		\caption{$t=10$ days.\label{chp-adv2d-sec-exp-adv2-e}}
 	\end{subfigure}
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.25\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t12}
 		\caption{$t=12$ days.\label{chp-adv2d-sec-exp-adv2-f}}
 	\end{subfigure}
 	\caption{Linear advection experiment using the velocity from Equation \eqref{chp-adv2d-vf1},
-		a CFL number equal to $0.92$, $N=768$ cells, and the IC is given by 
+		a CFL number equal to $0.79$, $N=768$ cells, and the IC is given by 
 		Equation \eqref{chp-adv2d-ic2}
 		These figures show the advected profile at
 		2 \eqref{chp-adv2d-sec-exp-adv2-a}, 
@@ -929,27 +983,31 @@ $u$ to prevent error cancellation, as discussed by \citet{nair:2010}.
 		We are using the PL-DP1-hord8 scheme. \label{chp-adv2d-sec-exp-adv2}}
 \end{figure}
 
-Figure \ref{chp-adv2d-sec-exp-adv2} illustrates the results obtained using two Gaussian hills and the velocity field 
-from Equation \eqref{chp-adv2d-vf1}.
-We employed a high-resolution grid with $N=768$, along with the PL-DP1-hord8 scheme,
-to demonstrate the behavior of the test.
-The Figure shows the deformation of the scalar field over time, eventually returning to its initial position.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=0.67\linewidth]{adv2d_tc3_linf_error}
+\caption{$L_{\infty}$ error for the two Gaussian hills (Equation \ref{chp-adv2d-ic2})
+with the velocity from Equation \eqref{chp-adv2d-vf1}.
+Schemes using hord0 are on the left, and hord8 are on the right.
+The PL scheme with DP1 is in green, and with DP2 is in red. 
+The LT scheme with DP1 is in blue, and with DP2 is in yellow.
+\label{chp-adv2d-sec-exp-adv2-error-linf}}
+\end{figure}
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=0.67\linewidth]{adv2d_tc3_l1_error}
+\caption{Similar to Figure \ref{chp-adv2d-sec-exp-adv2-error-linf} but considering the $L_1$ error.
+\label{chp-adv2d-sec-exp-adv2-error-l1}}
+\end{figure}
+
 
 To investigate the error convergence, we employ time steps $\Delta t^{(k)}=\frac{5400}{2^{k}}$ for 
 $k = 0, \ldots, 4$, and the spatial discretization as described at the beginning of Section \ref{sec-ds-exp},
 resulting in a CFL number approximately equal to 0.79.
-\begin{figure}[!htb]
-\centering
-\includegraphics[width=0.7\linewidth]{adv2d_tc3_linf_error}
-\caption{$L_{\infty}$ error.\label{chp-adv2d-sec-exp-adv2-error-linf}}
-\end{figure}
 
-\begin{figure}[!htb]
-\centering
-\includegraphics[width=0.7\linewidth]{adv2d_tc3_l1_error}
-\caption{Similar to Figure \ref{chp-adv2d-sec-exp-adv2-error-linf} but considering the $L_1$ error.
-\label{chp-adv2d-sec-exp-adv2-error-l1}}
-\end{figure}
+
+Write about the error....
 
 \subsection{Flow deformation with divergent wind}
 For a second variable velocity testing, we consider two Gaussian hills given by Equation 
@@ -965,39 +1023,40 @@ This test is based on the planar test from \citet{nair:2010}, but we adapt it to
 Figure \ref{chp-adv2d-sec-exp-adv3} illustrates the results obtained using two Gaussian hills and the velocity field 
 from Equation \eqref{chp-adv2d-vf2}, similarly to Figure  \ref{chp-adv2d-sec-exp-adv2}.
 Again, the IC returns to its initial position after 12 days, allowing us to compute the error.
+
 We employ time steps $\Delta t^{(k)}=\frac{14400}{2^{k}}$ for 
 $k = 0, \ldots, 4$, to analyse the error convergence, 
 along with the spatial discretization as described at the beginning of Section \ref{sec-ds-exp},
-resulting in a CFL number approximately equal to 0.66.
+resulting in a CFL number approximately equal to 0.67.
 \begin{figure}[!htb]
 	\centering
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.25\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t2}
 		\caption{$t=2$.\label{chp-adv2d-sec-exp-adv3-a}}
 	\end{subfigure}
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.25\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t4}
 		\caption{$t=4$ days.\label{chp-adv2d-sec-exp-adv3-b}}
 	\end{subfigure}
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.25\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t6}
 		\caption{$t=6$ days.\label{chp-adv2d-sec-exp-adv3-c}}
 	\end{subfigure}
 	
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.25\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t8}
 		\caption{$t=8$ days.\label{chp-adv2d-sec-exp-adv3-d}}
 	\end{subfigure}
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.25\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t10}
 		\caption{$t=10$ days.\label{chp-adv2d-sec-exp-adv3-e}}
 	\end{subfigure}
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.25\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t12}
 		\caption{$t=12$ days.\label{chp-adv2d-sec-exp-adv3-f}}
@@ -1009,17 +1068,19 @@ but using the wind from Equation \eqref{chp-adv2d-vf2}.\label{chp-adv2d-sec-exp-
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=0.7\linewidth]{adv2d_tc4_linf_error}
+\includegraphics[width=0.67\linewidth]{adv2d_tc4_linf_error}
 \caption{Similar to Figure \ref{chp-adv2d-sec-exp-adv2-error-linf}
 but using the wind from Equation \eqref{chp-adv2d-vf2}.\label{chp-adv2d-sec-exp-adv3-error-linf}}
 \end{figure}
 
 \begin{figure}[!htb]
 \centering
-\includegraphics[width=0.7\linewidth]{adv2d_tc4_l1_error}
+\includegraphics[width=0.67\linewidth]{adv2d_tc4_l1_error}
 \caption{Similar to Figure \ref{chp-adv2d-sec-exp-adv3-error-linf} but considering the $L_1$ error.
 \label{chp-adv2d-sec-exp-adv3-error-l1}}
 \end{figure}
+
+Write about the error....
 
 %\begin{figure}[!htb]
 %	\centering
