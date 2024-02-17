@@ -1001,13 +1001,15 @@ The LT scheme with DP1 is in blue, and with DP2 is in yellow.
 \label{chp-adv2d-sec-exp-adv2-error-l1}}
 \end{figure}
 
-
 To investigate the error convergence, we employ time steps $\Delta t^{(k)}=\frac{5400}{2^{k}}$ for 
 $k = 0, \ldots, 4$, and the spatial discretization as described at the beginning of Section \ref{sec-ds-exp},
 resulting in a CFL number approximately equal to 0.79.
 
-
-Write about the error....
+We can observe from Figure \ref{chp-adv2d-sec-exp-adv2-error-linf} that for hord0, PL-DP1 and LT-DP2 have smaller
+error and higher convergence order than PL-DP2 and LT-DP1.
+However, when considering the hord8 scheme, all the schemes have the same error in $L_{\infty}$ norm.
+The errors in $L_{1}$ norm (Figure \ref{chp-adv2d-sec-exp-adv2-error-l1}) exhibit a similar behavior; the only difference is 
+that PL-DP1 and LT-DP2 have smaller errors than PL-DP2 and LT-DP1, along with higher convergence order.
 
 \subsection{Flow deformation with divergent wind}
 For a second variable velocity testing, we consider two Gaussian hills given by Equation 
@@ -1080,8 +1082,12 @@ but using the wind from Equation \eqref{chp-adv2d-vf2}.\label{chp-adv2d-sec-exp-
 \label{chp-adv2d-sec-exp-adv3-error-l1}}
 \end{figure}
 
-Write about the error....
-
+We can observe from Figure \ref{chp-adv2d-sec-exp-adv3-error-linf} that for hord0, PL-DP1 has the bigger error,
+while LT-DP2 has the smaller error and the highest convergence rate.
+However, when considering the hord8 scheme, all the schemes have almost the same error in $L_{\infty}$ norm.
+Regarding the error in $L_{1}$ norm (Figure \ref{chp-adv2d-sec-exp-adv3-error-l1}), we can see that for hord8,
+LT-DP2 achieves second-order accuracy, while PL-DP1 achieves only first order.
+Finally, the schemes PL-DP2 and LT-DP1 have the same errors for both hord0 and hord8, in both $L_{\infty}$ and $L_{1}$ norms.
 %\begin{figure}[!htb]
 %	\centering
 %	\begin{subfigure}{0.3\textwidth}
@@ -1114,26 +1120,31 @@ Write about the error....
 
 
 \section{Concluding remarks}
-In this chapter, we introduced the dimension-splitting method, 
+In this Chapter, we introduced the dimension-splitting method, 
 which replaces the solution of the 2D advection equation with the
 solution of multiple 1D advection equations, resulting in more cost-effective 2D-FV schemes. 
 For our simulations, we adopted the 1D FV-SL scheme based on PPM to solve the 1D equations.
 
-We modified the average of two Lie-Trotter splittings, which is second-order accurate,
-to ensure the preservation of a constant scalar field with a divergence-free velocity.
-This modification addresses the limitation of the classical averaging
-Lie-Trotter splitting and follows the methodology used in FV3.
+We modified the average of two Lie-Trotter splittings, which is second-order accurate, 
+to ensure the preservation of a constant scalar field with a divergence-free velocity,
+following the works of \citet{lin:1996} and \citet{putman:2007}.
+This modification addresses the limitation of the classical averaging Lie-Trotter splitting and follows the methodology used in FV3.
 
 Based on the simulation with constant velocity, we concluded that all the splitting schemes
 are equivalent and do not introduce any splitting errors. In fact, the splittings are exact in this case.
 We observed that all the conclusions from the 1D simulations hold true in the 2D case as well,
 with mass conservation and monotonicity being preserved when using the monotonic limiters in the 1D subproblems.
 
-In the simulation with variable velocity, we conducted a flow deformation test case.
-We observed that all splitting schemes preserved monotonicity in all simulations.
-The PL07 and L04 schemes yielded very similar results and introduced a first-order error,
-which was observed when using the RK2 scheme to compute the departure point.
-Surprisingly, the AL scheme achieved third-order accuracy, surpassing its expected second-order accuracy.
-This indicates that a more accurate departure point calculation benefits the LT splitting.
-However, when using a first-order departure point computation, the splitting schemes PL07 and L04 produced slightly smaller errors.
+In the simulation with variable velocity, we conducted two flow deformation test cases.
+For the divergence-free test, the schemes PL-DP1 and LT-DP2 showed similar behavior and performed better
+than PL-DP2 and LT-DP1 in all error metrics analyzed here.
+However, for the velocity with non-zero divergence, we observed that the scheme PL-DP1 achieved only
+first-order accuracy and had larger errors than PL-DP2 and LT-DP1.
+This limitation is because the PL-DP1 method is designed to be accurate for divergence-free winds.
+This test highlights this limitation because we have divergence.
+The scheme LT-DP2 showed better error performance, achieving second-order accuracy regardless of the non-divergence-free condition in the wind.
+LT-DP2 also showed second-order accuracy in the $L_1$ norm when we employed the monotonic 1D flux, while PL-DP1 achieved first order.
 
+In summary, the scheme PL-DP1, which is currently used in FV3 as the 2D advection solver, 
+showed second-order accuracy for divergence-free winds, with LT-DP2 exhibiting similar behavior. 
+However, for non-divergent free winds, LT-DP2 demonstrated second-order accuracy, while PL-DP1 achieved only first order.
