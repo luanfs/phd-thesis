@@ -691,9 +691,9 @@ In this case, it useful to work with the time-averaged CFL number:
 \begin{equation}
 	\tilde{c}^n_{i+\frac{1}{2}} =
 	\begin{cases}
-		\big(1-c_{i+\frac{1}{2}}^n \big)c^{n+\frac{1}{2}}_{i+\frac{1}{2}} +
-      c_{i+\frac{1}{2}}^n c^{n+\frac{1}{2}}_{i-\frac{1}{2}} & \text{if } {c}^n_{i+\frac{1}{2}}\geq 0,\\
-		c_{i+\frac{1}{2}}^n c^{n+\frac{1}{2}}_{i+\frac{3}{2}} + \big(1-c_{i+\frac{1}{2}}^n\big)
+		\bigg(1-\frac{c_{i+\frac{1}{2}}^n}{2} \bigg)c^{n+\frac{1}{2}}_{i+\frac{1}{2}} +
+     \frac{c_{i+\frac{1}{2}}^n}{2} c^{n+\frac{1}{2}}_{i-\frac{1}{2}} & \text{if } {c}^n_{i+\frac{1}{2}}\geq 0,\\
+		\frac{c_{i+\frac{1}{2}}^n}{2} c^{n+\frac{1}{2}}_{i+\frac{3}{2}} + \bigg(1-\frac{c_{i+\frac{1}{2}}^n}{2}\bigg)
         c^{n+\frac{1}{2}}_{i+\frac{1}{2}} & \text{if } {c}^n_{i+\frac{1}{2}} < 0.\
 	\end{cases}
 \end{equation}
