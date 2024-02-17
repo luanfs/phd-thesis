@@ -746,9 +746,13 @@ Then, we may compute the wind using centered-finite differences
     \frac{\psi_{i+\frac{1}{2},j+\frac{1}{2}}^{n}-\psi_{i-\frac{1}{2},j+\frac{1}{2}}^{n}}{\Delta x},\\
 \end{align*}
 and thus the following discrete divergence free condition holds
-\begin{align*}
+\begin{align}
+\label{discrete-divfree}
   \frac{\delta_i u_{ij}^n}{\Delta x} + \frac{\delta_j v_{ij}^n}{\Delta y} = 0.
-\end{align*}
+\end{align}
+Notice that this identity holds for the time-averaged winds if we assume that
+that $\tilde{u}^n$ and  $\tilde{v}^n$ are computed using DP1.
+If we use DP2, this identity is no longer valid.
 Now, using the fact that the scalar field is supposed to be constant, we have:
 \begin{align*}
 \mathbf{F}_{ij}[\overline{q},\tilde{c}^{x,n}] &= -\overline{q} \lambda \delta_i \tilde{u}_{ij}^n,\\
@@ -774,7 +778,7 @@ However, if we compute the updated solution using Equation \eqref{chp-adv2d-LT-l
 \begin{align}
 	\label{chp-adv2d-LT-error}
 	Q^{n+1}_{ij} - \overline{q} &= 
-	-\Delta t \bigg(\frac{\delta_i \tilde{u}_{ij}}{\Delta x} + \frac{\delta_j \tilde{v}_{ij}}{\Delta y} \bigg)
+	-\Delta t \bigg(\frac{\delta_i \tilde{u}_{ij}^n}{\Delta x} + \frac{\delta_j \tilde{v}_{ij}^n}{\Delta y} \bigg)
 	-\frac{\overline{q}}{2}\lambda^2
 	\bigg(
 	\delta_j \big( \tilde{u}_{ij}^n\mathfrak{F}_{ij}^{PPM,x}[ {\delta_j} \tilde{v}_{ij}^n,\tilde{c}^{x,n}] \big)+
@@ -783,7 +787,7 @@ However, if we compute the updated solution using Equation \eqref{chp-adv2d-LT-l
 	-\frac{\overline{q}}{2}\lambda^2
 	\bigg(
 	\delta_j \big( \tilde{u}_{ij}^n\mathfrak{F}_{ij}^{PPM,x}[ {\delta_j} \tilde{v}_{ij}^n,\tilde{c}^{x,n}] \big)+
-        \delta_i \big( \tilde{v}_{ij}^n\mathfrak{F}_{ij}^{PPM,y}[ {\delta_i} \tilde{u}_{ij}^n,\tilde{c}^{y,n}] \big)\bigg).
+        \delta_i \big( \tilde{v}_{ij}^n\mathfrak{F}_{ij}^{PPM,y}[ {\delta_i} \tilde{u}_{ij}^n,\tilde{c}^{y,n}] \big)\bigg),
 \end{align}
 To eliminate this error, \citet{lin:1996} proposed modifying the Equation \eqref{chp-adv2d-LT} to
 \begin{align}
@@ -816,13 +820,16 @@ All the expressions for each inner advective operator mentioned are shown in Tab
 LT stands for the average Lie-Trotter  scheme, while PL stands for the scheme from \citet{putman:2007}.}
 \label{chp-adv2d-tab1}
 \end{table}
-
 It is easy to see that the PL operator eliminates the term multiplied by $\lambda^2$ that appeared in Equation \eqref{chp-adv2d-LT-error}
 when we apply these operators to a constant grid function $Q^n$ and a non-divergent velocity field in Equation \eqref{chp-adv2d-LT-error}.
-Therefore, these inner advective operators eliminate the splitting error for a constant field and a non-divergent velocity field, making this scheme exact in this case.
+Therefore, these inner advective operators eliminate the splitting error for a constant field and a non-divergent velocity field, making this scheme exact in this case
+if we use DP1 to compute the departure points.
+If we use DP2 with PL splitting, Equation \eqref{chp-adv2d-LT-error} will introduce a first-order error since the discrete divergence-free condition (Equation \eqref{discrete-divfree})
+for the time-averaged winds of DP2 does not hold in this case.
+We shall see this in the numerical experiments (Section \ref{sec-ds-exp}).
 We point out that although the LT scheme has an error in Equation \ref{chp-adv2d-LT-error}, it is a second-order error,
 since this scheme is generally second-order accurate \citep{holden:2010}, provided that the 1D flux is second-order, 
-which shall be the case if we use the dp2 scheme as discussed in Chapter \ref{chp-1d-fv}.
+which shall be the case if we use the DP2 scheme as discussed in Chapter \ref{chp-1d-fv}.
 
 \section{Numerical experiments}
 \label{sec-ds-exp}
