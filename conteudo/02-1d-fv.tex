@@ -20,7 +20,7 @@
 \newtheorem{definition}{Definition}[chapter]
 
 
-The aim of this chapter is to provide a detailed description of one-dimensional (1D) 
+The aim of this Chapter is to provide a detailed description of one-dimensional (1D) 
 finite-volume (FV) schemes within a Semi-Lagrangian (SL) framework, specifically applied to 
 the 1D advection equation.
 These schemes are also known as flux-form Semi-Lagrangian schemes, and they allow for time steps beyond the 
@@ -70,7 +70,7 @@ to Godunov's order barrier theorem \citep{wesseling:2001}, limit the order of co
 Therefore, a higher-order scheme needs to strike a well-balanced trade-off between increasing computational 
 cost and potential benefits.
 
-This chapter begins with a basic review of one-dimensional advection equation in the integral form
+This Chapter begins with a basic review of one-dimensional advection equation in the integral form
 in Section \ref{chp-adv1d-sec1}. In Section \ref{chp-adv1d-sec2-fvsl}, we establish the framework for general
 one-dimensional finite-volume Semi-Lagrangian schemes. Section \ref{chp-adv1d-sec-dp} presents
 methods for computing the departure point. The PPM reconstruction is described in Section \ref{chp-adv1d-sec-recon},
@@ -89,7 +89,7 @@ The application of PPM to solve two-dimensional problems will be addressed in Ch
 Before introducing the FV-SL schemes, let us establish some notation by introducing
 the concepts of a $\Delta x$-grid, a $\Delta t$-temporal grid, and the
 $(\Delta x, \Delta t, \lambda)$-discretization, as well as the concept of grid function/winds.
-In this chapter, we will use the notation $\Omega=[a,b]$ to represent the interval under consideration,
+In this Chapter, we will use the notation $\Omega=[a,b]$ to represent the interval under consideration,
 and $\nu$ to represent a non-negative integer indicating the number of ghost cell layers in each boundary.
 We also use the notations $\mathbb{R}^{N}_{\nu}:=\mathbb{R}^{N+2\nu}$ and
 $\mathbb{R}^{N+1}_{\nu}:=\mathbb{R}^{N+1+2\nu}$.
@@ -231,7 +231,7 @@ In summary, $\mathcal{S}_P(\Omega)$ represents the space of periodic functions, 
 represents the space of $k$-times periodically differentiable functions over the interval $\Omega$ subject to periodic boundary conditions.
 
 \subsection{The 1D advection equation}
-In this section, we will derive the integral form of the 1D advection equation with periodic boundary conditions over the interval $\Omega$.
+In this Section, we will derive the integral form of the 1D advection equation with periodic boundary conditions over the interval $\Omega$.
 What is going to be presented here follows \citet{leveque:1990,leveque:2002} closely.
 The advection equation with periodic boundary conditions in its differential form is given by:
 \begin{equation}
@@ -615,7 +615,7 @@ In this case, the time-averaged CFL is given by:
 	\label{chp-sec-dp-eq5b}
 	\tilde{c}^n_{i+\frac{1}{2}} = c^{n+\frac{1}{2}}_{i+\frac{1}{2}},
 \end{equation}
-For simplicity, in this chapter, we shall assume that the wind is known for all time instants needed.
+For simplicity, in this Chapter, we shall assume that the wind is known for all time instants needed.
 This scheme will be referred to as \textbf{DP1}.
 In FV3, the wind is at time level $n+\frac{1}{2}$ is obtained by solving the horizontal dynamics on a C-grid as an intermediate step \citep{lin:1997,lin:2004}.
 Our objective now is to determine the value of $p$ in Equation \eqref{chp-sec-dp-eq4}
@@ -700,7 +700,7 @@ In this case, it useful to work with the time-averaged CFL number:
 
 \section{Reconstruction: the Piecewise-Parabolic Method}
 \label{chp-adv1d-sec-recon}
-In this section, we will review the Piecewise-Parabolic Method (PPM).
+In this Section, we will review the Piecewise-Parabolic Method (PPM).
 The analysis of its accuracy will be presented in Section \ref{chp-adv1d-sec-numerical-analysis-ppm}.
 PPM was originally proposed by \citet{colella:1984} for gas dynamic simulations, and its applicability
 to atmospheric simulations has been demonstrated by \citet{carpenter:1990}.
@@ -915,7 +915,7 @@ At last, we point out that many other PPM reconstruction schemes are available i
 
 \section{Flux}
 \label{chp-adv1d-sec-flux}
-Let's consider the framework outlined in Problem \ref{chp-adv1d-sec2-prob4}.
+Let us consider the framework outlined in Problem \ref{chp-adv1d-sec2-prob4}.
 Assuming that $Q^{n} \in \mathbb{P}^{N}_{\nu}$ is known, our objective is to compute the values $Q^{n+1}$.
 To accomplish this, we utilize a scheme similar to the one presented in Problem \ref{chp-adv1d-sec2-prob4},
 taking into account the presence of a reconstruction function $\tilde{q}(x;Q^n)$ as discussed in Section
@@ -1071,12 +1071,12 @@ Thefore, at each time-step, we need to:
 \end{enumerate}
 \section{Numerical experiments}
 \label{chp-adv1d-sec-numerical-exp}
-This section is dedicated to presenting the numerical results of the PPM and 
+This Section is dedicated to presenting the numerical results of the PPM and 
 its variations discussed here. We will consider the reconstruction
 schemes \textbf{hord0} (Subsection \ref{chp-adv1d-sec-hord0}) and 
 \textbf{hord8} (Subsection \ref{chp-adv1d-sec-hord8}), as well as the departure point schemes
 \textbf{DP1} (Subsection \ref{chp-adv1d-sec-DP1}) and \textbf{DP2} (Subsection \ref{chp-adv1d-sec-DP2}).
-The code used in this section can be found in Appendix \ref{anexo-code}.
+The code used in this Section can be found in Appendix \ref{anexo-code}.
 
 For all the simulations presented here, we will consider the spatial domain $[-\frac{L}{2},\frac{L}{2}]$,
 and the time interval $[0,T]$,  where $L = \frac{\pi}{2} R$, $R = 6.371 \times 10^{6}$ meters is the Earth's radius and
@@ -1252,7 +1252,7 @@ This experiment illustrates the impact of departure point calculation errors on 
 
 \section{Concluding remarks}
 \label{chp-adv1d-sec-conclusion}
-In this chapter, we provided a general overview of 1D FV-SL schemes for the advection equation.
+In this Chapter, we provided a general overview of 1D FV-SL schemes for the advection equation.
 We discussed the three essential tasks involved in these schemes.
 The first task is the reconstruction of a function from its average values.
 We employed the PPM method introduced by \citet{colella:1984} (hord0) and its monotonic variant such as the one from \citet{lin:2004} (hord8).
