@@ -1,9 +1,87 @@
 \chapter{Cubed-sphere grids}
 \label{chp-cs-grids}
+So far, we have described the dimension-splitting technique in Chapter \ref{chp-2d-fv} for solving the advection equation on the plane.
+Our current goal is to apply these schemes to solve the advection equation on the sphere.
+Consequently, we need to introduce a grid over the sphere.
+In order to facilitate the extension of dimension-splitting techniques onto the sphere, we require a logical Cartesian coordinate system, at least locally.
 
-The cubed-sphere grid was originally proposed by \citet{sadourny:1972} and was 
+We point out that dimension-splitting schemes could be formulated in unstruced grids (see for instance \citet{herzfeld:2023}).
+A good reason to use a locally Cartesian grid is to avoid problems, such as the lack of convergence of the divergence operator among others,
+that may arise in some grid cells within those grids \citep{peixoto:2013, peixoto:2016, weller:2012}.
+Also, a logical Cartesian coordinate system eases the process of higher-order interpolation,
+which can be more complicated on a spherical unstructured grid, requiring tangent plane approximations \citep{peixoto:2014,skamarock:2011}.
+
+The scheme proposed by \citet{lin:1996} was originally implemented on latitude-longitude grids,
+and the FV dynamical core was elucidated in \citet{lin:2004}.
+The latitude-longitude grids exhibit convergence of meridians at the poles, 
+necessitating the utilization of the Semi-Lagrangian formulation of PPM for larger CFL numbers,
+as discussed in Section \ref{chp-adv1d-sec-flux}, 
+to overcome the CFL restriction imposed by the poles.
+However, this approach needs the processes in a parallel domain decomposition of the latitude-longitude grid to utilize more
+data at the poles, resulting in non-parallel efficiency.
+Therefore, \citet{putman:2007} proposed considering the cubed-sphere (CS, hereafter) instead.
+The CS grid is more uniform, thus not exhibiting a strong CFL condition anywhere.
+This eliminates the need for the Semi-Lagrangian formulation of PPM, which is better to parallel efficiency, and led to the development of the FV3 core.
+
+
+The CS grid was originally proposed by \citet{sadourny:1972} and was 
 reinvestigated by \citet{ronchi:1996} and \citet{rancic:1996}. 
 As is usual for Planotic grids, we start with a Platonic solid, in this case, a cube, 
 which is circumscribed in a sphere. We then project its faces onto the sphere.
-The original cubed-sphere, called the equidistant cubed-sphere, was proposed by 
+The original CS, called the equidistant CS, was proposed by 
 \citet{sadourny:1972} but resulted in a non-uniform grid. 
+To address this issue, a solution was proposed by introducing angular coordinates, 
+leading to a quasi-uniform grid known as the equiangular CS.
+The cubed sphere consists of six panels, each one having a local Cartesian coordinate 
+system. 
+As we pointed out before, this makes it easier to extend methods from the plane to the sphere. 
+In fact, \citet{putman:2007} extends the dimension splitting technique from 
+\citet{lin:1996}, as presented in Chapter \ref{chp-2d-fv}, to the CS.
+
+There are essentially two major challenges when working with the CS grid:
+\begin{enumerate}
+\item
+The non-orthogonal grid system: This challenge is primarily related to the appearance of
+metric terms in the equations. It adds computational cost and often requires conversions
+between contravariant and covariant components of a velocity field.
+\item
+The discontinuity of the coordinate system at the cube edges: This is perhaps the most 
+problematic challenge. Computing stencils along the cube edges becomes challenging due to 
+the discontinuous nature of the coordinate system.
+\end{enumerate}
+One possible approach to compute stencils at the edges is to extend the local coordinate 
+of each panel to its neighboring panels, adding ghost cells in the halo region. In the 
+case of the equiangular CS, ghost cell values lie on the same geodesics 
+containing the data from the neighboring panels. This allows for the use of one-dimensional
+high-order Lagrange interpolation to compute the stencils at the edges. 
+This approach has been extensively used in the literature \citep{croisille:2013, 
+katta:2015, katta:2015b, chen:2021} and was initially introduced by \citet{ronchi:1996}.
+This approach is referred to as \textbf{duo-grid}, as named by \citet{chen:2021}.
+Alternatively, \citet{putman:2007} uses extrapolation for the PPM reconstruction values near the cube edges.
+Another approach that avoids the need for interpolation or extrapolation near the edges is 
+the conformal CS developed by \citet{rancic:1996}. While this grid leads to an 
+orthogonal and continuous coordinate system near the edges, it generates grid singularities
+near the cube corners, similar to the pole problem. 
+An improved and more uniform conformal grid, called the Uniform Jacobian cubed sphere, was 
+later proposed by \citet{rancic:2017}.
+Each approach is likely to generate grid imprinting, and one of the goals of this work is 
+to investigate the amount of grid imprinting produced by each method.
+
+This chapter aims to review and investigated the geometrical properties
+of the CS. Besides that, we also aim to investigate the process
+of interpolating/extrapolating near the cube edges.
+We start with a basic review of the CS mappings in Section \ref{cs-mappings},
+while Section \ref{cs-halodata} investigates how we can apply 1D Lagrange interpolation using the adjacent panels
+data to obtain values of a scalar/vector field on ghost cells, as well different edge
+treatments when computing stencils near to the cube edges.
+Final thoughts are presented in Section \ref{cs-conc}.
+
+
+\section{Cubed-sphere mappings}
+\label{cs-mappings}
+
+\section{Edges treatment}
+\label{cs-halodata}
+
+\section{Concluding remarks}
+\label{cs-conc}
