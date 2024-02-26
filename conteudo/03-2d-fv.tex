@@ -632,8 +632,8 @@ for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and
 for $i=-\nu+1, \ldots, N + \nu$  $j=1, \ldots, M$.
 We are using the notations $\Omega_{ij}= \Delta x \Delta y$ to represent the area of the control volume and
 \begin{align*}
-\mathcal{A}_{i+\frac{1}{2},j}^{x} = {c}_{i+\frac{1}{2},j}^{x,n} \Delta x \Delta y,\\
-\mathcal{A}_{i,j+\frac{1}{2}}^{y} = {c}_{i,j+\frac{1}{2}}^{y,n} \Delta x \Delta y.
+\mathcal{A}_{i+\frac{1}{2},j}^{x} = \tilde{c}_{i+\frac{1}{2},j}^{x,n} \Delta x \Delta y,\\
+\mathcal{A}_{i,j+\frac{1}{2}}^{y} = \tilde{c}_{i,j+\frac{1}{2}}^{y,n} \Delta x \Delta y.
 \end{align*}
 This notation shall be useful when we consider these schemes on the cubed-sphere in Chapter \ref{chp-cs-fv}.
 Hence, the operators $\mathbf{F}$ and $\mathbf{G}$ represent the numerical updates added to the average values 
@@ -866,7 +866,7 @@ The IC is a rectangular profile (refer to Figure \ref{chp-adv2d-sec-exp-adv1-a})
 	q_0(x,y) =  
 	\begin{cases}
 		1 & \text{if } (x,y) \in [-0.1L,0.1L]\times [-0.1L,0.1L],\\
-		0 & \text{otherwise}.
+		0.1 & \text{otherwise}.
 	\end{cases}
 \end{equation}
 \begin{figure}[!htb]
@@ -910,7 +910,7 @@ For a first variable velocity testing, we consider two Gaussian hills given by:
 \begin{align}
 	\begin{split}
 	\label{chp-adv2d-ic2}
-	q_0(x,y) = &\exp\bigg(-10\sin^2 \bigg(\pi \bigg(\frac{x}{L}-0.1\bigg)\bigg)\bigg) \exp\bigg(-10\sin^2 \bigg(\pi \frac{y}{L}\bigg) \bigg)+ \\
+	q_0(x,y) = 0.1 + 0.9&\exp\bigg(-10\sin^2 \bigg(\pi \bigg(\frac{x}{L}-0.1\bigg)\bigg)\bigg) \exp\bigg(-10\sin^2 \bigg(\pi \frac{y}{L}\bigg) \bigg)+ \\
 	           &\exp\bigg(-10\sin^2 \bigg(\pi \bigg(\frac{x}{L}+0.1\bigg)\bigg)\bigg) \exp\bigg(-10\sin^2 \bigg(\pi \frac{y}{L}\bigg) \bigg),
 	\end{split}
 \end{align}
