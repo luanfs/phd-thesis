@@ -1085,7 +1085,7 @@ The spatial domain spans approximately $10^4$ kilometers, which corresponds to a
 as shall be seen in Chapter \ref{chp-cs-grids}.
 The relative change at time step $n$ in the mass is computed as:
 \begin{equation*}
-	\frac{|M^n-M^0|}{|M_0|},
+	\frac{|M^n-M^0|}{|M0|},
 \end{equation*}
 where $M^n$ is given by Equation \eqref{1d-fv-mass}.
 For all the simulations, the
@@ -1106,13 +1106,13 @@ a discontinuous IC given by:
 		q_0(x) =  
   \begin{cases}
 		1 & \text{if } x \in [-0.1L,0.1L],\\
-		0 & \text{otherwise}.
+		0.1 & \text{otherwise}.
   \end{cases}
 \end{equation}
 for the linear advection equation with constant velocity, which we adopt as $u=\frac{L}{T}$.
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=0.6\linewidth]{adv1d_tc1_N48_hord0_DP1_t12}
+	\includegraphics[width=0.6\linewidth]{adv1d_tc1_N48_hord8_DP1_t12}
 	\caption{Linear advection experiment using the IC given by Equation \eqref{chp-adv1d-ic1} (black curve) with constant velocity.
 		These figures show the advected profile after 12 days (one time period).
 		Reconstruction schemes employed: hord0 (blue curve) and hord8 (orange curve).\label{chp-adv1d-sec-exp-adv1}}
@@ -1142,7 +1142,7 @@ We adopt the parameters $T = 12$ days and  $u_0 = u_1 = \frac{L}{T}$.
 Following the approach in \citet{trefethen:2000}, we initialize the periodic Gaussian profile defined as:
 \begin{equation}
 	\label{chp-adv1d-ic2}
-	q(x) = \exp\bigg(-10\sin^2{\bigg(\frac{\pi x}{L}\bigg)}\bigg),\quad x \in \bigg[-\frac{L}{2},\frac{L}{2}\bigg].
+	q(x) = 0.1 + 0.9\exp\bigg(-10\sin^2{\bigg(\frac{\pi x}{L}\bigg)}\bigg),\quad x \in \bigg[-\frac{L}{2},\frac{L}{2}\bigg].
 \end{equation}
 The velocity function given by Equation \eqref{chp-adv1d-vel2} is based
 on the deformational flow test case in \citet{nair:2010},
