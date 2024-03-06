@@ -76,12 +76,12 @@ data to obtain values of a scalar/vector field on ghost cells, as well different
 treatments when computing stencils near to the cube edges.
 Final thoughts are presented in Section \ref{cs-conc}.
 
-
+\newpage
 \section{Cubed-sphere mappings}
 \label{cs-mappings}
 \subsection{Mapping between the cube and sphere}
 \label{equidistant-cs}
-We start this Chapter by introducing the mapping between the cube and the sphere.
+We start this section by introducing the mapping between the cube and the sphere, which will divide the sphere into 6 quadrilaterals, also called panels, and allow us to tessellate the sphere into smaller quadrilaterals for panels.
 Given $R>0$, we denote the sphere of radius $R$ 
 centered at the origin of  $\mathbb{R}^3$ as:
 \begin{equation*}
@@ -110,32 +110,31 @@ where:
 	\Psi_{6}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(y, x, -1).
 \end{equation*}
 
+
+The set of 6 maps $\{\Psi_{p}, p = 1, \ldots, 6\}$ allow us to cover the sphere (Figure \ref{chp-cs-equidistant}).
+Here $p$ denotes a panel, and they are defined and orientated as Figure \ref{chp-cs-panels}
+shows. Then, we can represent a point on the sphere using the cubed-sphere coordinates
+$(x,y,p)$.
 \begin{figure}[!htb]
 	\centering
-	\begin{subfigure}{0.45\textwidth}
-	\includegraphics[width=0.8\linewidth]{gnomonic_equidistant_cs_10_sphere}
-	\caption{Gridlines of the cube to the sphere mapping}
+	\begin{subfigure}{0.42\textwidth}
+		\includegraphics[width=0.8\linewidth]{gnomonic_equidistant_cs_10_sphere}
+		\caption{Gridlines of the cube to the sphere mapping}
 	\end{subfigure}
-	\begin{subfigure}{0.45\textwidth}
-	\centering
-	\includegraphics[width=0.8\linewidth]{g1}
-	\caption{Cube and sphere mapping for $Z=0$.}
+	\begin{subfigure}{0.42\textwidth}
+		\centering
+		\includegraphics[width=0.8\linewidth]{g1}
+		\caption{Cube and sphere mapping for $Z=0$.}
 	\end{subfigure}
-	\caption{(a) Illustration of the resulting cube-to-sphere mapping and (b) illustration of the cube-to-sphere projection.\label{chp-cs-cubesphere}}
+	\caption{(a) Illustration of the resulting cube-to-sphere mapping and (b) illustration of the cube-to-sphere projection.\label{chp-cs-equidistant}}
 \end{figure}
-
+\newpage
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=0.4\linewidth]{chp4_panels}
 	\caption{Cubed-sphere panels definition and orientation.
     Figure taken from \citet{jung:2019}.\label{chp-cs-panels}}
 \end{figure}
-
-
-The set of 6 maps $\{\Psi_{p}, p = 1, \ldots, 6\}$ allow us to cover the sphere \ref{chp-cs-cubesphere}
-Here $p$ denotes a panel, and they are defined and orientated as Figure \ref{chp-cs-panels}
-shows. Then, we can represent a point on the sphere using the cubed-sphere coordinates
-$(x,y,p)$.
 
 The derivative of the maps $\Psi_p$ are given by:
 \begin{equation*}
@@ -233,7 +232,7 @@ The Jacobian of the metric tensor $G_{\Psi}(x,y)$, denoted by $\sqrt{g_{\Psi}}$ 
         \sqrt{g_{\Psi}}(x,y) :=
 	\sqrt{|\det{G_{\Psi}(x,y)}|} = \frac{R^2}{(1+x^2+y^2)^{3/2}}.
 \end{equation*}
-Now let us assume that we have a function $f:[-\alpha,\alpha] \to [-1,1]$, for some positive $\alpha>0$,
+Now let us assume that we have a function $\beta:[-\alpha,\alpha] \to [-1,1]$, for some positive $\alpha>0$,
 supposed to be bijective and $\mathcal{C}^1$ with inverse $\mathcal{C}^1$ as well.
 Let us consider $\Phi_p: [-\alpha,\alpha]\times [-\alpha,\alpha] \to \mathbb{S}^2_R$,
 given by $\Phi_p(x,y) := \Psi_p\big(\beta(x),\beta(y)\big)$.
@@ -247,7 +246,7 @@ We also have that tangent vector basis $\{\boldsymbol{\partial_x \Phi},  \boldsy
 	\boldsymbol{\partial_x \Phi}(x,y,p) = \beta'(x) \cdot \boldsymbol{\partial_x \Phi}\big(\beta(x),\beta(y),p\big),\\
 	\boldsymbol{\partial_y \Phi}(x,y,p) = \beta'(y) \cdot \boldsymbol{\partial_y \Phi}\big(\beta(x),\beta(y),p\big).
 \end{align*}
-The metric tensor of $\Phi$ is defined as Equation \eqref{chp-cs-eqdistant-Psi-metric-tensor}
+The metric tensor of $\Phi$ is defined as $G_{\Psi}$ in Equation \eqref{chp-cs-eqdistant-Psi-metric-tensor}:
 \begin{equation*}
 	\label{chp-cs-eqdistant-Phi-metric-tensor}
 	G_{\Phi}(x,y) = 
@@ -261,8 +260,65 @@ The metric tensor of $\Phi$ is defined as Equation \eqref{chp-cs-eqdistant-Psi-m
 Finally, the metric term $\sqrt{g}_{\Phi}:= \sqrt{\det{G_{\Phi}}}$ is expressed in terms of $\sqrt{g}_{\Psi}$ as
 \begin{align*}
     \sqrt{g}_{\Phi}(x,y) &= \beta'(x)\beta'(y)\sqrt{g}_{\Psi}\big(\beta(x),\beta(y)\big)\\
-    &= \beta'(x)\beta'(y)\frac{R^2}{\big(1+\beta(x)^2+\beta(y)^2\big)^{3/2}}
+    &= \beta'(x)\beta'(y)\frac{R^2}{\big(1+\beta(x)^2+\beta(y)^2\big)^{3/2}}.
 \end{align*}
+Now that we have established between the cube and sphere, we may introduce the cubed-sphere grids proposed in the literature.
+
+\subsection{Equidistant cubed-sphere}
+\label{cs-equidistant}
+The first cubed-sphere grid was proposed by \citet{sadourny:1972}. This grid is obtained by using
+$\beta(x) = x$, $\alpha=1$ in the $\Phi_p$ mapping described in Section \ref{equidistant-cs}.
+This grid partitions the cube face into equally spaced points
+and projects them onto the sphere, as illustrated in Figure
+\ref{chp-cs-equidistant}, hence the name equidistant.
+We shall denote this grid by \textbf{g1} since the parameter
+\textit{gridtype} in FV3 is set equal to 1 to use this grid.
+
+\subsection{Equiangular cubed-sphere}
+\label{cs-equiangular}
+Another cubed-sphere mapping is the equiangular mapping, 
+introduced by \citet{ronchi:1996}, which leads to a more uniform grid.
+This grid is obtained by considering the mapping $\Phi_p$ described in Section \ref{equidistant-cs}
+with $\beta(x) = \tan{x}$ and $\alpha=\frac{\pi}{4}$.
+In this case, $\beta(x)$ represents the angular coordinates, and the cube-sphere is obtained by partitioning the angle between
+grid points equally, as illustrated in Figure \ref{chp-cs-equiangular}, hence the name equiangular.
+This grid is denoted by \textbf{g2}, for the same reason of the notation \textbf{g1}.
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.42\textwidth}
+		\includegraphics[width=0.8\linewidth]{gnomonic_equiangular_cs_10_sphere}
+		\caption{Gridlines of the cube to the sphere equiangular mapping}
+	\end{subfigure}
+	\begin{subfigure}{0.42\textwidth}
+		\centering
+		\includegraphics[width=0.8\linewidth]{g2}
+		\caption{Cube and sphere equiangular mapping for $Z=0$.}
+	\end{subfigure}
+	\caption{(a) Illustration of the resulting cube-to-sphere mapping and (b) illustration of the cube-to-sphere projection using the equiangular mapping.\label{chp-cs-equiangular}}
+\end{figure}
+
+\subsection{Equiedge cubed-sphere}
+\label{cs-equiedge}
+An equiangular cubed-sphere modification 
+\citet{chen:2021} by using $\beta(x) = \sqrt{2}\tan{x}$ and
+$\alpha=\arcsin{\big(\frac{1}{\sqrt{3}}\big)}$.
+Figure \ref{chp-cs-equiedge} illustrates the equiedge mapping.
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.42\textwidth}
+		\includegraphics[width=0.8\linewidth]{gnomonic_equiedge_cs_10_sphere}
+		\caption{Gridlines of the cube to the sphere equiedge mapping}
+	\end{subfigure}
+	\begin{subfigure}{0.42\textwidth}
+		\centering
+		\includegraphics[width=0.8\linewidth]{g0}
+		\caption{Cube and sphere equiedge mapping for $Z=0$.}
+	\end{subfigure}
+	\caption{(a) Illustration of the resulting cube-to-sphere mapping and (b) illustration of the cube-to-sphere projection using the equiedge mapping.\label{chp-cs-equiedge}}
+\end{figure}
+
+This grid is denoted by \textbf{g0}, for the same reason of the notation \textbf{g1}.
+
 \section{Edges treatment}
 \label{cs-halodata}
 
