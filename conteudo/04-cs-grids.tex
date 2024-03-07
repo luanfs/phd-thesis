@@ -23,7 +23,6 @@ Therefore, \citet{putman:2007} proposed considering the cubed-sphere (CS, hereaf
 The CS grid is more uniform, thus not exhibiting a strong CFL condition anywhere.
 This eliminates the need for the Semi-Lagrangian formulation of PPM, which is better to parallel efficiency, and led to the development of the FV3 core.
 
-
 The CS grid was originally proposed by \citet{sadourny:1972} and was 
 reinvestigated by \citet{ronchi:1996} and \citet{rancic:1996}. 
 As is usual for Planotic grids, we start with a Platonic solid, in this case, a cube, 
@@ -67,13 +66,11 @@ later proposed by \citet{rancic:2017}.
 Each approach is likely to generate grid imprinting, and one of the goals of this work is 
 to investigate the amount of grid imprinting produced by each method.
 
-This Chapter aims to review and investigated the geometrical properties
-of the CS. Besides that, we also aim to investigate the process
-of interpolating/extrapolating near the cube edges.
-We start with a basic review of the CS mappings in Section \ref{cs-mappings},
-while Section \ref{cs-halodata} investigates how we can apply 1D Lagrange interpolation using the adjacent panels
-data to obtain values of a scalar/vector field on ghost cells, as well different edge
-treatments when computing stencils near to the cube edges.
+This Chapter aims to review and investigate the geometrical properties of the CS.
+We start with a basic review of the CS mappings in Section \ref{cs-mappings}.
+In Section \ref{sec-cs-grids}, we introduce the CS grids and investigate its geometrical properties.
+Section \ref{cs-halodata} investigates how we can apply 1D Lagrange interpolation using the adjacent panels
+data to obtain values of a scalar/vector field on ghost cells.
 Final thoughts are presented in Section \ref{cs-conc}.
 
 \newpage
@@ -89,29 +86,29 @@ centered at the origin of  $\mathbb{R}^3$ as:
 \end{equation*}
 We consider a parameter %$a = \frac{R}{\sqrt{3}}$ representing the half-length of the cube,and
 the family of maps
-$\Psi_{p}: [-1,1] \times [-1,1] \to \mathbb{S}^2_R$, $p=1, \ldots, 6$,
+$\boldsymbol{\Psi}_{p}: [-1,1] \times [-1,1] \to \mathbb{S}^2_R$, $p=1, \ldots, 6$,
 where:
 \begin{equation*}
-	\Psi_{1}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(1, x, y), 
+	\boldsymbol{\Psi}_{1}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(1, x, y), 
 \end{equation*}
 \begin{equation*}
-	\Psi_{2}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(-x, 1, y), 
+	\boldsymbol{\Psi}_{2}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(-x, 1, y), 
 \end{equation*}
 \begin{equation*}
-	\Psi_{3}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(-1, -x, y), 
+	\boldsymbol{\Psi}_{3}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(-1, -x, y), 
 \end{equation*}
 \begin{equation*}
-	\Psi_{4}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(x, -1, y), 
+	\boldsymbol{\Psi}_{4}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(x, -1, y), 
 \end{equation*}
 \begin{equation*}
-	\Psi_{5}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(-y, x, 1), 
+	\boldsymbol{\Psi}_{5}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(-y, x, 1), 
 \end{equation*}
 \begin{equation*}
-	\Psi_{6}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(y, x, -1).
+	\boldsymbol{\Psi}_{6}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(y, x, -1).
 \end{equation*}
 
 
-The set of 6 maps $\{\Psi_{p}, p = 1, \ldots, 6\}$ allow us to cover the sphere (Figure \ref{chp-cs-equidistant}).
+The set of 6 maps $\{\boldsymbol{\Psi}_{p}, p = 1, \ldots, 6\}$ allow us to cover the sphere (Figure \ref{chp-cs-equidistant}).
 Here $p$ denotes a panel, and they are defined and orientated as Figure \ref{chp-cs-panels}
 shows. Then, we can represent a point on the sphere using the cubed-sphere coordinates
 $(x,y,p)$.
@@ -136,9 +133,9 @@ $(x,y,p)$.
     Figure taken from \citet{jung:2019}.\label{chp-cs-panels}}
 \end{figure}
 
-The derivative of the maps $\Psi_p$ are given by:
+The derivative of the maps $\boldsymbol{\Psi}_p$ are given by:
 \begin{equation*}
-	d\Psi_{1}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}
+	d\boldsymbol{\Psi}_{1}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}
 	\begin{bmatrix}
 		-x & -y \\
 	 	 1+y^2  & -xy \\
@@ -146,7 +143,7 @@ The derivative of the maps $\Psi_p$ are given by:
 	\end{bmatrix},
 \end{equation*}
 \begin{equation*}
-	d\Psi_{2}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}
+	d\boldsymbol{\Psi}_{2}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}
 	\begin{bmatrix}
 		-(1+y^2) & xy \\
 		 -x &  -y \\
@@ -154,7 +151,7 @@ The derivative of the maps $\Psi_p$ are given by:
 	\end{bmatrix},
 \end{equation*}
 \begin{equation*}
-	d\Psi_{3}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}
+	d\boldsymbol{\Psi}_{3}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}
 	\begin{bmatrix}
 		 x &  y \\
 		-(1+y^2) & xy \\
@@ -162,7 +159,7 @@ The derivative of the maps $\Psi_p$ are given by:
 	\end{bmatrix},
 \end{equation*}
 \begin{equation*}
-	d\Psi_{4}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}	
+	d\boldsymbol{\Psi}_{4}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}	
 	\begin{bmatrix}
 		 1+y^2 &  -xy \\
 		 x & y \\
@@ -170,7 +167,7 @@ The derivative of the maps $\Psi_p$ are given by:
 	\end{bmatrix},
 \end{equation*}
 \begin{equation*}
-	d\Psi_{5}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}	
+	d\boldsymbol{\Psi}_{5}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}	
 	\begin{bmatrix}
 		 xy  & -(1+x^2) \\
 	 	 1+y^2  &  -xy \\
@@ -178,7 +175,7 @@ The derivative of the maps $\Psi_p$ are given by:
 	\end{bmatrix},
 \end{equation*}
 \begin{equation*}
-	d\Psi_{6}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}
+	d\boldsymbol{\Psi}_{6}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}
 	\begin{bmatrix}
 		 -xy  &  1+x^2 \\
 		 1+y^2  &  -xy \\
@@ -186,14 +183,14 @@ The derivative of the maps $\Psi_p$ are given by:
 	\end{bmatrix}.
 \end{equation*}
 With the aid of the derivative, we may define a basis of tangent vectors 
-$\{\boldsymbol{\partial_x \Psi},  \boldsymbol{\partial_y \Psi}\}$ on each point on the sphere by:
+$\{{\partial_x \boldsymbol{\Psi}},  {\partial_y \boldsymbol{\Psi}}\}$ on each point on the sphere by:
 \begin{equation*}
-	\boldsymbol{\partial_x \Psi}(x,y,p) = d\Psi_{p}(x,y) \cdot
+	{\partial_x \boldsymbol{\boldsymbol{\Psi}}}(x,y,p) = d\boldsymbol{\boldsymbol{\Psi}}_{p}(x,y) \cdot
 	\begin{bmatrix}
 		 1 \\
 		 0
 	\end{bmatrix}, \quad
-	\boldsymbol{\partial_y \Psi}(x,y,p) = d\Psi_{p}(x,y) \cdot
+	{\partial_y \boldsymbol{\boldsymbol{\Psi}}}(x,y,p) = d\boldsymbol{\boldsymbol{\Psi}}_{p}(x,y) \cdot
 	\begin{bmatrix}
 		 0 \\
 		 1
@@ -202,8 +199,8 @@ $\{\boldsymbol{\partial_x \Psi},  \boldsymbol{\partial_y \Psi}\}$ on each point 
 Notice that the matrix
 \begin{equation*}
 	\label{chp-cs-eqdistant-Psitensor}
-	G_{\Psi}(x,y) := 
-	[d\Psi_{p}(x,y)]^Td\Psi_{p}(x,y)
+	G_{\boldsymbol{\Psi}}(x,y) := 
+	[d\boldsymbol{\Psi}_{p}(x,y)]^Td\boldsymbol{\Psi}_{p}(x,y)
 	= \frac{R^2}{(1 + x^2 + y^2)^2}
 	\begin{bmatrix}
 		  1+ x^2 &  -xy \\
@@ -215,46 +212,50 @@ This matrix is known as metric tensor.
 It is easy to see that:
 \begin{equation}
 	\label{chp-cs-eqdistant-Psi-metric-tensor}
-	G_{\Psi}(x,y) = 
+	G_{\boldsymbol{\Psi}}(x,y) = 
 	\begin{bmatrix}
-		\langle  \boldsymbol{\partial_x \Psi}, \boldsymbol{\partial_x \Psi} \rangle & 
-		\langle  \boldsymbol{\partial_x \Psi}, \boldsymbol{\partial_y \Psi} \rangle \\
-		\langle  \boldsymbol{\partial_x \Psi}, \boldsymbol{\partial_y \Psi} \rangle  &
-		\langle  \boldsymbol{\partial_y \Psi}, \boldsymbol{\partial_y \Psi} \rangle 
+		\langle  {\partial_x \boldsymbol{\Psi}_p}, {\partial_x  \boldsymbol{\Psi}_p} \rangle & 
+		\langle  {\partial_x \boldsymbol{\Psi}_p}, {\partial_y  \boldsymbol{\Psi}_p} \rangle \\
+		\langle  {\partial_x  \boldsymbol{\Psi}_p}, {\partial_y  \boldsymbol{\Psi}_p} \rangle  &
+		\langle  {\partial_y  \boldsymbol{\Psi}_p}, {\partial_y  \boldsymbol{\Psi}_p} \rangle 
 	\end{bmatrix},
 \end{equation}
 where $\langle \cdot, \cdot \rangle$ denotes 
 the standard inner product of $\mathbb{R}^3$,
 and that $G_{\Psi}(x,y)$ is positive-definite, 
 $\forall (x,y) \in [-1,1]\times[-1,1]$.
-The Jacobian of the metric tensor $G_{\Psi}(x,y)$, denoted by $\sqrt{g_{\Psi}}$ and called metric term, is then given by:
+The Jacobian of the metric tensor $G_{\boldsymbol{\Psi}}(x,y)$, denoted by $\sqrt{g_{\boldsymbol{\Psi}}}$ and called metric term, is then given by:
 \begin{equation*}
-        \sqrt{g_{\Psi}}(x,y) :=
-	\sqrt{|\det{G_{\Psi}(x,y)}|} = \frac{R^2}{(1+x^2+y^2)^{3/2}}.
+        \sqrt{g_{\boldsymbol{\Psi}}}(x,y) :=
+	\sqrt{|\det{G_{\boldsymbol{\Psi}}(x,y)}|} = \frac{R^2}{(1+x^2+y^2)^{3/2}}.
 \end{equation*}
 Now let us assume that we have a function $\beta:[-\alpha,\alpha] \to [-1,1]$, for some positive $\alpha>0$,
 supposed to be bijective and $\mathcal{C}^1$ with inverse $\mathcal{C}^1$ as well.
-Let us consider $\Phi_p: [-\alpha,\alpha]\times [-\alpha,\alpha] \to \mathbb{S}^2_R$,
-given by $\Phi_p(x,y) := \Psi_p\big(\beta(x),\beta(y)\big)$.
+That is, $\beta$ is a change of coordinates.
+Let us consider $ \boldsymbol{\Phi}_p: [-\alpha,\alpha]\times [-\alpha,\alpha] \to \mathbb{S}^2_R$,
+given by 
+\begin{equation*}
+	\boldsymbol{\Phi}_p(x,y) := \boldsymbol{\Psi}_p\big(\beta(x),\beta(y)\big).
+\end{equation*}
 It follows from the chain rule that:
 \begin{equation*}
-        d\Phi_p(x,y) = d\Psi_p\big(\beta(x),\beta(y)\big)\cdot\text{diag}\big(\beta'(x),\beta'(y)\big),
+        d \boldsymbol{\Phi}_p(x,y) = d \boldsymbol{\Psi}_p\big(\beta(x),\beta(y)\big)\cdot\text{diag}\big(\beta'(x),\beta'(y)\big),
 \end{equation*}
 where $\text{diag}(\beta'(x),\beta'(y))$ is a diagonal $2\times 2$ matrix with diagonal entries given by $\beta'(x)$ and $\beta'(y)$.
-We also have that tangent vector basis $\{\boldsymbol{\partial_x \Phi},  \boldsymbol{\partial_y \Phi}\}$ satisfying
+We also have that tangent vector basis $\{{\partial_x  \boldsymbol{\Phi}_p},  {\partial_y  \boldsymbol{\Phi}_p}\}$ satisfying
 \begin{align*}
-	\boldsymbol{\partial_x \Phi}(x,y,p) = \beta'(x) \cdot \boldsymbol{\partial_x \Phi}\big(\beta(x),\beta(y),p\big),\\
-	\boldsymbol{\partial_y \Phi}(x,y,p) = \beta'(y) \cdot \boldsymbol{\partial_y \Phi}\big(\beta(x),\beta(y),p\big).
+	{\partial_x  \boldsymbol{\Phi}_p}(x,y) = \beta'(x) \cdot {\partial_x  \boldsymbol{\Psi}_p}\big(\beta(x),\beta(y)\big),\\
+	{\partial_y  \boldsymbol{\Phi}_p}(x,y) = \beta'(y) \cdot {\partial_y  \boldsymbol{\Psi}_p}\big(\beta(x),\beta(y)\big).
 \end{align*}
-The metric tensor of $\Phi$ is defined as $G_{\Psi}$ in Equation \eqref{chp-cs-eqdistant-Psi-metric-tensor}:
+The metric tensor of $\boldsymbol{\Phi}_p$ is defined as $G_{\Psi}$ in Equation \eqref{chp-cs-eqdistant-Psi-metric-tensor}:
 \begin{equation*}
 	\label{chp-cs-eqdistant-Phi-metric-tensor}
 	G(x,y) = 
 	\begin{bmatrix}
-		\langle  \boldsymbol{\partial_x \Phi}, \boldsymbol{\partial_x \Phi} \rangle & 
-		\langle  \boldsymbol{\partial_x \Phi}, \boldsymbol{\partial_y \Phi} \rangle \\
-		\langle  \boldsymbol{\partial_x \Phi}, \boldsymbol{\partial_y \Phi} \rangle  &
-		\langle  \boldsymbol{\partial_y \Phi}, \boldsymbol{\partial_y \Phi} \rangle 
+		\langle  {\partial_x  \boldsymbol{\Phi}_p}, {\partial_x \boldsymbol{\Phi}_p} \rangle & 
+		\langle  {\partial_x  \boldsymbol{\Phi}_p}, {\partial_y \boldsymbol{\Phi}_p} \rangle \\
+		\langle  {\partial_x  \boldsymbol{\Phi}_p}, {\partial_y \boldsymbol{\Phi}_p} \rangle  &
+		\langle  {\partial_y  \boldsymbol{\Phi}_p}, {\partial_y \boldsymbol{\Phi}_p} \rangle 
 	\end{bmatrix}.
 \end{equation*}
 Finally, the metric term $\sqrt{g}:= \sqrt{\det{G}}$ is expressed in terms of $\sqrt{g}_{\Psi}$ as
@@ -262,23 +263,28 @@ Finally, the metric term $\sqrt{g}:= \sqrt{\det{G}}$ is expressed in terms of $\
     \sqrt{g}(x,y) &= \beta'(x)\beta'(y)\sqrt{g}_{\Psi}\big(\beta(x),\beta(y)\big)\\
     &= \beta'(x)\beta'(y)\frac{R^2}{\big(1+\beta(x)^2+\beta(y)^2\big)^{3/2}}.
 \end{align*}
-Now that we have established between the cube and sphere, we may introduce the cubed-sphere grids proposed in the literature.
+
+\newpage
+\section{Cubed-sphere grids}
+\label{sec-cs-grids}
+Now that we have established between the mapping between the cube and sphere with coordinate changes,
+we may introduce the cubed-sphere grids proposed in the literature.
 
 \subsection{Equidistant cubed-sphere}
 \label{cs-equidistant}
 The first cubed-sphere grid was proposed by \citet{sadourny:1972}. This grid is obtained by using
-$\beta(x) = x$, $\alpha=1$ in the $\Phi_p$ mapping described in Section \ref{equidistant-cs}.
+$\beta(x) = x$, $\alpha=1$ in the $\boldsymbol{\Phi}_p$ mapping described in Section \ref{equidistant-cs}.
 This grid partitions the cube face into equally spaced points
 and projects them onto the sphere, as illustrated in Figure
 \ref{chp-cs-equidistant}, hence the name equidistant.
 We shall denote this grid by \textbf{g1} since the parameter
-\textit{gridtype} in FV3 is set equal to 1 to use this grid.
+\textbf{grid\_type} in FV3 is set equal to 1 to use this grid.
 
 \subsection{Equiangular cubed-sphere}
 \label{cs-equiangular}
 Another cubed-sphere mapping is the equiangular mapping, 
 introduced by \citet{ronchi:1996}, which leads to a more uniform grid.
-This grid is obtained by considering the mapping $\Phi_p$ described in Section \ref{equidistant-cs}
+This grid is obtained by considering the mapping $\boldsymbol{\Phi}_p$ described in Section \ref{equidistant-cs}
 with $\beta(x) = \tan{x}$ and $\alpha=\frac{\pi}{4}$.
 In this case, $\beta(x)$ represents the angular coordinates, and the cube-sphere is obtained by partitioning the angle between
 grid points equally, as illustrated in Figure \ref{chp-cs-equiangular}, hence the name equiangular.
@@ -297,27 +303,28 @@ This grid is denoted by \textbf{g2}, for the same reason of the notation \textbf
 	\caption{(a) Illustration of the resulting cube-to-sphere mapping and (b) illustration of the cube-to-sphere projection using the equiangular mapping.\label{chp-cs-equiangular}}
 \end{figure}
 
-\subsection{Equiedge cubed-sphere}
+\subsection{Equi-edge cubed-sphere}
 \label{cs-equiedge}
 An equiangular cubed-sphere modification 
 \citet{chen:2021} by using $\beta(x) = \sqrt{2}\tan{x}$ and
 $\alpha=\arcsin{\big(\frac{1}{\sqrt{3}}\big)}$.
-Figure \ref{chp-cs-equiedge} illustrates the equiedge mapping.
+Figure \ref{chp-cs-equiedge} illustrates the equi-edge mapping.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.42\textwidth}
 		\includegraphics[width=0.8\linewidth]{gnomonic_equiedge_cs_10_sphere}
-		\caption{Gridlines of the cube to the sphere equiedge mapping}
+		\caption{Gridlines of the cube to the sphere equi-edge mapping}
 	\end{subfigure}
 	\begin{subfigure}{0.42\textwidth}
 		\centering
 		\includegraphics[width=0.8\linewidth]{g0}
-		\caption{Cube and sphere equiedge mapping for $Z=0$.}
+		\caption{Cube and sphere equi-edge mapping for $Z=0$.}
 	\end{subfigure}
-	\caption{(a) Illustration of the resulting cube-to-sphere mapping and (b) illustration of the cube-to-sphere projection using the equiedge mapping.\label{chp-cs-equiedge}}
+	\caption{(a) Illustration of the resulting cube-to-sphere mapping and (b) illustration of the cube-to-sphere projection using the equi-edge mapping.\label{chp-cs-equiedge}}
 \end{figure}
-The idea behind lies in partitioning the edges of the spherical cube equally, and then generating the other cells,
-hence the name equiedge.
+
+The idea behind the equi-edge cubed-sphere lies in partitioning the edges of the spherical cube equally,
+and then generating the other cells, hence the name equi-edge.
 This grid is denoted by \textbf{g0}, for the same reason of the notation \textbf{g1}.
 Also, this grid leads to more uniform cells after applying the grid stretching option of FV3 \citep{harris:2016, chen:2021}.
 
@@ -338,24 +345,37 @@ The cubed-sphere grid refers to the collection of control volumes
 $(\Omega_{ijp})_{i,j=-\nu+1,\ldots,N+\nu}^{p=1,\ldots,6}$. 
 In Figures \ref{chp-cs-equidistant}, \ref{chp-cs-equiangular} and \ref{chp-cs-equiedge} examples of the cubed-sphere grids are depicted,
 excluding the ghost cells.
-These grids are generated using the equidistant, equiangular and equiedge mappings for $N=10$.
+These grids are generated using the equidistant, equiangular and equi-edge mappings for $N=10$.
 
 We will denote the area of $\Omega_{ijp}$ by $|\Omega_{ij}|$.
 Notice that the area does not depend on the panel due to the grid symmetry.
 We also define the diameter of a cell as $2\sqrt{\frac{|\Omega_{ij}|}{\pi}}$, which corresponds to the diameter of a circle with area $|\Omega_{ij}|$.
+The control volume area given by:
+\begin{equation}
+	\label{chp4-area}
+	|\Omega_{ij}| = \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}{\sqrt{g}(x,y)} \,dx \,dy = 
+	\sqrt{g}(x_i,y_j) \Delta x \Delta y + \mathcal{O}(\Delta x^2),
+\end{equation}
+where the last equality follows from Proposition \ref{prop-bound-centroid-2d}.
+
+In tables \ref{g0-dx-table}, \ref{g1-dx-table}, and \ref{g2-dx-table},
+we display the diameters of the grids g0, g1, and g2 for $N=48\times 2^k$, 
+where $k = 0,\ldots, 4$. These values of $N$ are considered in this work.
+Similarly, in tables \ref{g0-dx-table}, \ref{g1-dx-table}, and \ref{g2-dx-table}, we display the areas.
+
 
 \begin{table}[htbp]
     \centering
-    \caption{Mean diameter, minimum diameter, and maximum diameter for different values of $N$ considering the equiedge grid (g0).\label{g0-dx-table}}
+    \caption{Mean diameter, minimum diameter, and maximum diameter for different values of $N$ considering the equi-edge grid (g0).\label{g0-dx-table}}
     \begin{tabular}{cccccc}
         \toprule
         $N$ & Mean Length (km) & Min Length (km) & Max Length (km) & $\frac{\text{Max}}{\text{Min}}$ \\
         \midrule
-        48 & 218.8099 & 175.2215 & 266.1879 & 1.5192 \\
-        96 & 108.5933 & 86.6886 & 131.7271 & 1.5195 \\
-        192 & 54.0963 & 43.1173 & 65.5228 & 1.5196 \\
-        384 & 26.9983 & 21.5024 & 32.6764 & 1.5197 \\
-        768 & 13.4868 & 10.7372 & 16.3170 & 1.5197 \\
+        48 & 218 & 175 & 266 & 1.5192 \\
+        96 & 108 & 86 & 131 & 1.5195 \\
+        192 & 54 & 43 & 65 & 1.5196 \\
+        384 & 26 & 21 & 32 & 1.5197 \\
+        768 & 13 & 10 & 16 & 1.5197 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -367,11 +387,11 @@ We also define the diameter of a cell as $2\sqrt{\frac{|\Omega_{ij}|}{\pi}}$, wh
         \toprule
         $N$ & Mean Length (km) & Min Length (km) & Max Length (km) & $\frac{\text{Max}}{\text{Min}}$ \\
         \midrule
-        48 & 215.2132 & 134.2046 & 305.7128 & 2.2780 \\
-        96 & 107.0361 & 66.3960 & 151.3249 & 2.2791 \\
-        192 & 53.3767 & 33.0242 & 75.2757 & 2.2794 \\
-        384 & 26.6532 & 16.4690 & 37.5408 & 2.2795 \\
-        768 & 13.3178 & 8.2238 & 18.7461 & 2.2795 \\
+        48 & 215 & 134 & 305 & 2.2780 \\
+        96 & 107 & 66 & 151 & 2.2791 \\
+        192 & 53 & 33 & 75 & 2.2794 \\
+        384 & 26 & 16 & 37 & 2.2795 \\
+        768 & 13 & 8 & 18 & 2.2795 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -383,30 +403,40 @@ We also define the diameter of a cell as $2\sqrt{\frac{|\Omega_{ij}|}{\pi}}$, wh
         \toprule
         $N$ & Mean Length (km) & Min Length (km) & Max Length (km) & $\frac{\text{Max}}{\text{Min}}$ \\
         \midrule
-        48 & 220.5051 & 202.0487 & 240.2358 & 1.1890 \\
-        96 & 109.2509 & 99.9583 & 118.8660 & 1.1892 \\
-        192 & 54.3786 & 49.7172 & 59.1234 & 1.1892 \\
-        384 & 27.1281 & 24.7936 & 29.4847 & 1.1892 \\
-        768 & 13.5488 & 12.3806 & 14.7231 & 1.1892 \\
+        48 & 220 & 202 & 240 & 1.1890 \\
+        96 & 109 & 99 & 118  & 1.1892 \\
+        192 & 54 & 49 & 59  & 1.1892 \\
+        384 & 27 & 24 & 29  & 1.1892 \\
+        768 & 13 & 12 & 14  & 1.1892 \\
         \bottomrule
     \end{tabular}
 \end{table}
 
+We can observe that in terms of areas and diameters of the cells, grid g1 is the least uniform,
+while g2 is the most uniform grid.
+Grid g0 is more uniform than g1, but the maximum/minimum ratio of the areas is almost 2.3. 
+Despite this, g0 is operational in some applications of FV3 \citep{harris:2021,chen:2021}, such as, for instance, 
+the Next Generation Global Prediction System (NGGPS) \citep{zhou:2019}, 
+because this grid is expected to produce less grid imprinting due to its greater uniformity near the cubed edges.
+Therefore, in this thesis, we shall constrain our attention only to grids g0 and g2, since g2 is ideally more uniform and g0 is currently used in FV3.
+
+\newpage
 \begin{table}[htbp]
     \centering
-    \caption{Mean area, minimum area, and maximum area for different values of $N$ considering the equiedge grid (g0).\label{g0-da-table}}
+    \caption{Mean area, minimum area, and maximum area for different values of $N$ considering the equi-edge grid (g0).\label{g0-da-table}}
     \begin{tabular}{cccccc}
         \toprule
         $N$ & Mean Area (km$^2$) & Min Area (km$^2$) & Max Area (km$^2$) & $\frac{\text{Max}}{\text{Min}}$ \\
         \midrule
-        48 & 38033.0342 & 24113.7560 & 55650.1616 & 2.3078 \\
-        96 & 9364.8432 & 5902.1925 & 13628.2415 & 2.3090 \\
-        192 & 2323.6050 & 1460.1378 & 3371.9038 & 2.3093 \\
-        384 & 578.7202 & 363.1308 & 838.6059 & 2.3094 \\
-        768 & 144.4087 & 90.5461 & 209.1068 & 2.3094 \\
+        48 & 38033 & 24113 & 55650 & 2.3078 \\
+        96 & 9364 & 5902 & 13628 & 2.3090 \\
+        192 & 2323 & 1460 & 3371 & 2.3093 \\
+        384 & 578 & 363 & 838 & 2.3094 \\
+        768 & 144 & 90 & 209 & 2.3094 \\
         \bottomrule
     \end{tabular}
 \end{table}
+
 
 \begin{table}[htbp]
     \centering
@@ -415,250 +445,34 @@ We also define the diameter of a cell as $2\sqrt{\frac{|\Omega_{ij}|}{\pi}}$, wh
         \toprule
         $N$ & Mean Area (km$^2$) & Min Area (km$^2$) & Max Area (km$^2$) & $\frac{\text{Max}}{\text{Min}}$ \\
         \midrule
-        48 & 37762.8967 & 14145.7139 & 73403.5750 & 5.1891 \\
-        96 & 9331.7795 & 3462.3692 & 17985.0194 & 5.1944 \\
-        192 & 2319.5149 & 856.5522 & 4450.4100 & 5.1957 \\
-        384 & 578.2116 & 213.0213 & 1106.8685 & 5.1960 \\
-        768 & 144.3452 & 53.1165 & 276.0003 & 5.1961 \\
+        48 & 37762 & 14145 & 73403 & 5.1891 \\
+        96 & 9331 & 3462 & 17985 & 5.1944 \\
+        192 & 2319 & 856 & 4450 & 5.1957 \\
+        384 & 578 & 213 & 1106 & 5.1960 \\
+        768 & 144 & 53 & 276 & 5.1961 \\
         \bottomrule
     \end{tabular}
 \end{table}
 
 \begin{table}[htbp]
     \centering
-    \caption{As Table \ref{g0-da-table} but considering the equidistant grid (g1). \label{g2-da-table}}
+    \caption{As Table \ref{g0-da-table} but considering the equiangular grid (g2). \label{g2-da-table}}
     \begin{tabular}{cccccc}
         \toprule
         $N$ & Mean Area (km$^2$) & Min Area (km$^2$) & Max Area (km$^2$) & $\frac{\text{Max}}{\text{Min}}$ \\
         \midrule
-        48 & 38269.2622 & 32062.8284 & 45327.8673 & 1.4137 \\
-        96 & 9393.6416 & 7847.4299 & 11096.9937 & 1.4141 \\
-        192 & 2327.1605 & 1941.3433 & 2745.4160 & 1.4142 \\
-        384 & 579.1619 & 482.8032 & 682.7832 & 1.4142 \\
-        768 & 144.4637 & 120.3862 & 170.2515 & 1.4142 \\
+        48 & 38269 & 32062 & 45327 & 1.4137 \\
+        96 & 9393 & 7847 & 11096 & 1.4141 \\
+        192 & 2327 & 1941 & 2745 & 1.4142 \\
+        384 & 579 & 482 & 682 & 1.4142 \\
+        768 & 144 & 120 & 170 & 1.4142 \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-In tables \ref{g0-dx-table}, \ref{g1-dx-table}, and \ref{g2-dx-table},
-we display the diameters of the grids g0, g1, and g2 for $N=48\times 2^k$, 
-where $k = 0,\ldots, 4$. These values of $N$ are considered in this work.
-Similarly, in tables \ref{g0-dx-table}, \ref{g1-dx-table}, and \ref{g2-dx-table}, we display the areas.
 
-We can observe that in terms of areas and diameters of the cells, grid g1 is the least uniform,
-while g2 is the most uniform grid.
-Grid g0 is more uniform than g1, but the maximum/minimum ratio of the areas is almost 2.3.
-Therefore, in this thesis, we shall constrain our attention to grid g2, since it is ideally more uniform.
 
-\section{Tangent vectors on the sphere}
-\label{cs-tgvectors}
-The tangent space at $P \in \mathbb{S}^2_R$ is denoted by $T_P \mathbb{S}^2$.
-It is easy to see that:
-\begin{equation*}
-	T_P\mathbb{S}^2_R = \{P_0 \in \mathbb{R}^3: \langle P,P_0\rangle = 0\}.
-\end{equation*}
-We are going to consider three ways to represent an element of $\mathbb{S}_R^2$:
-using $(X,Y,Z)$ coordinates, or using $(\lambda, \phi)$
-latitude-longitude coordinates, or, at last, using the cubed-sphere
-coordinates $(x,y,p)$, where $(x,y)$ are the cube face coordinates and 
-$p \in \{1,2,\cdots, 6\}$ stands for a cube panel.
-We say that a vector field $\boldsymbol{u}: \mathbb{S}^2_R \to 
-\mathbb{R}^3$ is tangent on  the sphere if
-$\boldsymbol{u}(P) \in T_P\mathbb{S}^2_R$, $\forall P \in \mathbb{S}^2_R$.
 
-\subsection{Conversions between latitude-longitude and contravariant coordinates}
-\label{anexo-sph-ll}
-We consider the latitude-longitude mapping 
-$\Psi_{ll}: [0,2\pi] \times [-\frac{\pi}{2},\frac{\pi}{2}] \to \mathbb{S}^2_R$, given by:
-\begin{align}
-	\label{ll2sph}
-	X(\lambda,\phi) &= R\cos \phi \cos \lambda,\\
-	Y(\lambda,\phi) &= R\cos \phi \sin \lambda,\\
-	Z(\lambda,\phi) &= R\sin \phi.
-\end{align}
-The derivative or Jacobian matrix of the mapping $\Psi_{ll}$ is given by:
-\begin{equation}
-	\label{dpsi}
-	D\Psi_{ll} (\lambda,\phi) = 
-	R \begin{bmatrix}
-		-\cos \phi \sin \lambda &  -\sin \phi \cos \lambda \\
-		\cos \phi \cos \lambda & \sin \phi \sin \lambda \\
-		0  &  \cos \phi
-	\end{bmatrix}.
-\end{equation}
-Using this matrix columns, we can define the tangent vectors:
-\begin{equation}
-	\boldsymbol{r}_{\lambda}(\lambda,\phi) = D\Psi_{ll}(\lambda,\phi)
-	\begin{bmatrix}
-		1 \\
-		0
-	\end{bmatrix}, \quad
-	\boldsymbol{r}_{\phi}(\lambda,\phi) = D\Psi_{ll}(\lambda,\phi)
-	\begin{bmatrix}
-		0 \\
-		1
-	\end{bmatrix}.
-\end{equation}
-We normalize the vectors $\boldsymbol{r}_\lambda$ and $\boldsymbol{r}_\phi$
-and we obtain unit tangent vectors on the sphere at $\Phi_{ll}(\lambda, \phi)$:
-\begin{equation}
-	\label{latlon_tg_vectors}
-	\boldsymbol{e}_{\lambda}(\lambda,\phi) = 
-	\begin{bmatrix}
-		-\sin \lambda \\
-		\cos \lambda \\
-		0
-	\end{bmatrix}, \quad
-	\boldsymbol{e}_{\phi}(\lambda,\phi) =
-	\begin{bmatrix}
-		-\sin \phi \cos \lambda \\
-		-\sin \phi \sin \lambda \\
-		\cos \phi
-	\end{bmatrix}.
-\end{equation}
-Let us consider a tangent vector field $\boldsymbol{u}: \mathbb{S}^2_R \to 
-\mathbb{R}^3$ on the sphere, represented as
-\begin{equation}
-	\label{latlon-wind}
-	\boldsymbol{u}(\lambda, \phi) = 
-	u_{\lambda} (\lambda, \phi) \boldsymbol{e}_{\lambda} (\lambda, \phi) + 
-	v_{\phi} (\lambda, \phi) \boldsymbol{e}_{\phi} (\lambda, \phi). 
-\end{equation}
-Or, we may also represent this vector field using the basis 
-obtained by cubed-sphere coordinates:
-\begin{equation}
-	\label{contravariant-wind}
-	\boldsymbol{u}(x, y, p) = 
-	{u}(x, y, p) \boldsymbol{r}_{x}(x, y, p) + 
-	{v}(x, y, p) \boldsymbol{r}_{y}(x, y, p).
-\end{equation}
-This representation is known as contravariant representation.
-In order to relate the latitude-longitude representation
-with the contravariant representation, we notice that:
-\begin{align}
-	\label{basis-convertion1}
-	\boldsymbol{\partial_x \Phi_p}(x, y, p) &= 
-	\langle \boldsymbol{r}_{x} , \boldsymbol{e}_{\lambda}\rangle
-	\boldsymbol{e}_{\lambda} (\lambda, \phi)  
-	+ \langle \boldsymbol{r}_{x} , \boldsymbol{e}_{\phi}\rangle
-	\boldsymbol{e}_{\phi} (\lambda, \phi), \\
-	\label{basis-convertion2}
-	\boldsymbol{\partial_y \Phi_p}(x, y, p) &=  
-	\langle \boldsymbol{r}_{y} , \boldsymbol{e}_{\lambda}\rangle
-	\boldsymbol{e}_{\lambda} (\lambda, \phi) 
-	+ \langle \boldsymbol{r}_{y} , \boldsymbol{e}_{\phi}\rangle
-	\boldsymbol{e}_{\phi} (\lambda, \phi), 
-\end{align}
-which holds since the vectors $\boldsymbol{e}_{\lambda}(\lambda, \phi)$ and
-$\boldsymbol{e}_{\phi}(\lambda, \phi)$ are orthogonal.
-Replacing Equations \eqref{basis-convertion1} and \eqref{basis-convertion2}
-in Equation \eqref{contravariant-wind}, we obtain the values $(u_\lambda, v_\phi)$
-in terms of the contravariant components $({u},{v})$ 
-as the following matrix equation:
-\begin{equation}
-	\label{ll-to-contravariant}
-	\begin{bmatrix}
-		u_\lambda (\lambda, \phi) \\
-		v_\phi (\lambda, \phi) 
-	\end{bmatrix}
-	=
-	\begin{bmatrix}
-		\langle \boldsymbol{\partial_x \Phi_p}, \boldsymbol{e}_\lambda \rangle 
-		& \langle \boldsymbol{\partial_y \Phi_p}, \boldsymbol{e}_\lambda \rangle \\
-		\langle \boldsymbol{\partial_x \Phi_p}, \boldsymbol{e}_\phi \rangle 
-		& \langle \boldsymbol{\partial_y \Phi_p}, \boldsymbol{e}_\phi \rangle \\
-	\end{bmatrix}
-	\begin{bmatrix}
-		{u}(x,y,p) \\
-		{v}(x,y,p)
-	\end{bmatrix}.
-\end{equation}
-Conversely, we may express the contravariant components in terms of
-latitude-longitude components by inverting Equation \eqref{ll-to-contravariant}:
-\begin{equation}
-	\label{contravariant-to-ll}
-	\begin{bmatrix}
-		{u}(x,y,p) \\
-		{v}(x,y,p)
-	\end{bmatrix}
-	=
-	\frac{1}{\langle \boldsymbol{\partial_x \Phi_p}, \boldsymbol{e}_\lambda\rangle
-		\langle \boldsymbol{\partial_y \Phi_p}, \boldsymbol{e}_\phi \rangle
-		-\langle \boldsymbol{\partial_y \Phi_p}, \boldsymbol{e}_\lambda \rangle
-		\langle \boldsymbol{\partial_x \Phi_p}, \boldsymbol{e}_\phi \rangle}
-	\begin{bmatrix}
-		\langle \boldsymbol{\partial_y \Phi_p}, \boldsymbol{e}_\phi \rangle 
-		&-\langle \boldsymbol{\partial_y \Phi_p}, \boldsymbol{e}_\lambda \rangle \\
-		-\langle \boldsymbol{\partial_x \Phi_p}, \boldsymbol{e}_\phi \rangle 
-		& \langle \boldsymbol{\partial_x \Phi_p}, \boldsymbol{e}_\lambda \rangle \\
-	\end{bmatrix}
-	\begin{bmatrix}
-		u_\lambda (\lambda, \phi) \\
-		v_\phi (\lambda, \phi) 
-	\end{bmatrix}.
-\end{equation}
-
-\subsection{Covariant/contravariant conversion}
-\label{anexo-cov-con}
-Let us consider again a tangent vector field $\boldsymbol{u}: \mathbb{S}^2_R \to 
-\mathbb{R}^3$ on the sphere. Its contravariant representation 
-is given by Equation \eqref{contravariant-wind}.
-The covariant components $(U,V)$ are given by:
-\begin{align}
-	\label{covariant-u}
-	U(x,y,p) = \langle \boldsymbol{u}(x,y,p) , \boldsymbol{\partial_x \Phi_p}(x,y,p)  \rangle, \\
-	\label{covariant-v}
-	V(x,y,p) = \langle \boldsymbol{u}(x,y,p) , \boldsymbol{\partial_y \Phi_p}(x,y,p)  \rangle.
-\end{align}
-Replacing Equation \eqref{contravariant-wind} in 
-Equations \eqref{covariant-u} and \eqref{covariant-v} we obtain
-the relation covariant components in terms of the
-contravariant terms:
-\begin{equation}
-	\label{contravariant-to-covariant}
-	\begin{bmatrix}
-		{U}(x,y,p) \\
-		{V}(x,y,p)
-	\end{bmatrix}
-	=
-	\begin{bmatrix}
-		\langle \boldsymbol{\partial_x \Phi_p}, \boldsymbol{\partial_x \Phi_p} \rangle
-		& \langle \boldsymbol{\partial_x \Phi_p}, \boldsymbol{\partial_y \Phi_p} \rangle \\
-		\langle \boldsymbol{\partial_x \Phi_p}, \boldsymbol{\partial_y \Phi_p} \rangle 
-		& \langle \boldsymbol{\partial_y \Phi_p}, \boldsymbol{\partial_y \Phi_p} \rangle \\
-	\end{bmatrix}
-	\begin{bmatrix}
-		{u} (x,y,p) \\
-		{v} (x,y,p) 
-	\end{bmatrix}.
-\end{equation}
-We may express the contravariant components in terms of 
-the covariant terms inverting Equation \eqref{contravariant-to-covariant}:
-\begin{equation}
-	\label{convariant-to-contravariant}
-	\begin{bmatrix}
-		{u}(x,y,p) \\
-		{v}(x,y,p)
-	\end{bmatrix}
-	= \frac{1}{\langle \boldsymbol{\partial_x \Phi_p}, \boldsymbol{\partial_x \Phi_p} \rangle
-		\langle \boldsymbol{\partial_y \Phi_p}, \boldsymbol{\partial_y \Phi_p} \rangle
-		- \langle \boldsymbol{\partial_x \Phi_p}, \boldsymbol{\partial_y \Phi_p} \rangle^2}
-	\begin{bmatrix}
-		\langle \boldsymbol{\partial_y \Phi_p}, \boldsymbol{\partial_y \Phi_p} \rangle
-		& -\langle \boldsymbol{\partial_x \Phi_p}, \boldsymbol{\partial_y \Phi_p} \rangle \\
-		-\langle \boldsymbol{\partial_x \Phi_p}, \boldsymbol{\partial_y \Phi_p} \rangle 
-		& \langle \boldsymbol{\partial_x \Phi_p}, \boldsymbol{\partial_x \Phi_p} \rangle \\
-	\end{bmatrix}
-	\begin{bmatrix}
-		{U} (x,y,p) \\
-		{V} (x,y,p) 
-	\end{bmatrix}.
-\end{equation}
-Notice that combining Equations \eqref{contravariant-to-covariant}
-and \eqref{convariant-to-contravariant} with Equations 
-\eqref{ll-to-contravariant} and \eqref{contravariant-to-ll}
-one may get relations between the latitude-longitude 
-components and the covariant components.
 
 \subsection{Notation}
 \label{cs-notation}
@@ -683,25 +497,262 @@ For a grid function $Q$ we also use the notations:
 	Q_{\times,j,p} &:= (Q_{-\nu+1,j,p}, \ldots, Q_{N+\nu,j,p}) \in \mathbb{R}^{N}_{\nu},\\
 	Q_{i,\times,p} &:= (Q_{i,-\nu+1,p}, \ldots, Q_{i,M+\nu,p}) \in \mathbb{R}^{N}_{\nu}.
 \end{align*}
-$|\Omega_{ijp}|$ is the control volume area given by:
-\begin{equation}
-	\label{chp4-area}
-	|\Omega_{ijp}| = \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}{\sigma(x,y)} \,dx \,dy.
-\end{equation}
-We define the average values of a function $q$ with the aid of the metric tensor
-$\sigma(x,y)$ at time $t$: 
-\begin{equation*}
-	Q_{ijp}(t) = \frac{1}{|\Omega_{ijp}|}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
-	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}  q(x,y,p,t) {\sigma(x,y)}\,dx \,dy,
-\end{equation*}
-In this context, we define $Q(t) \in \mathcal{CS}_N$ given by 
-$Q(t) = (Q_{ijp}(t))_{i,j = -\nu +1, \ldots, N+\nu}^{p=1,\ldots,6}$.
-Similar to Proposition \ref{prop-bound-centroid-2d}, we may approximate the average value using the centroid value, that is
-\begin{equation*}
-	Q_{ijp}^n - q_{ijp}^n = O(\Delta x ^2), 
-\end{equation*}
 In this work, we shall always approximate the average values since our schemes are expected to be at most second-order,
 this approximation does not deteriorate the convergence order.
+
+\section{Tangent vectors on the sphere}
+\label{cs-tgvectors}
+The tangent space at $P \in \mathbb{S}^2_R$ is denoted by $T_P \mathbb{S}^2$.
+It is easy to see that:
+\begin{equation*}
+	T_P\mathbb{S}^2_R = \{P_0 \in \mathbb{R}^3: \langle P,P_0\rangle = 0\}.
+\end{equation*}
+We are going to consider three ways to represent an element of $\mathbb{S}_R^2$:
+using $(X,Y,Z)$ coordinates, or using $(\lambda, \phi)$
+latitude-longitude coordinates, or, at last, using the cubed-sphere
+coordinates $(x,y,p)$, where $(x,y)$ are the cube face coordinates and 
+$p \in \{1,2,\cdots, 6\}$ stands for a cube panel.
+We say that a vector field $\boldsymbol{u}: \mathbb{S}^2_R \to 
+\mathbb{R}^3$ is tangent on  the sphere if
+$\boldsymbol{u}(P) \in T_P\mathbb{S}^2_R$, $\forall P \in \mathbb{S}^2_R$.
+
+\subsection{Conversions between latitude-longitude and contravariant coordinates}
+\label{anexo-sph-ll}
+We consider the latitude-longitude mapping 
+$\boldsymbol{\Pi}: [0,2\pi] \times [-\frac{\pi}{2},\frac{\pi}{2}] \to \mathbb{S}^2_R$, 
+$\boldsymbol{\Pi} = ({\Pi}_1,{\Pi}_2,{\Pi}_3)$, given by:
+\begin{align}
+	\label{ll2sph}
+	{\Pi}_1(\lambda,\phi) &= R\cos \phi \cos \lambda,\\
+	{\Pi}_2(\lambda,\phi) &= R\cos \phi \sin \lambda,\\
+	{\Pi}_3(\lambda,\phi) &= R\sin \phi.
+\end{align}
+The derivative or Jacobian matrix of the mapping $\boldsymbol{\Pi}$ is given by:
+\begin{equation}
+	\label{dpsi}
+	d\boldsymbol{\Pi} (\lambda,\phi) = 
+	R \begin{bmatrix}
+		-\cos \phi \sin \lambda &  -\sin \phi \cos \lambda \\
+		\cos \phi \cos \lambda & \sin \phi \sin \lambda \\
+		0  &  \cos \phi
+	\end{bmatrix}.
+\end{equation}
+Using this matrix columns, we can define the tangent vectors:
+\begin{equation}
+	\partial_{\lambda}\boldsymbol{\Pi}(\lambda,\phi) = d\boldsymbol{\Pi}(\lambda,\phi)
+	\begin{bmatrix}
+		1 \\
+		0
+	\end{bmatrix}, \quad
+	\partial_{\phi}\boldsymbol{\Pi}(\lambda,\phi) = d\boldsymbol{\Pi}(\lambda,\phi)
+	\begin{bmatrix}
+		0 \\
+		1
+	\end{bmatrix}.
+\end{equation}
+We normalize the vectors $\partial_{\lambda}\boldsymbol{\Pi}$ and $\partial_{\phi}\boldsymbol{\Pi}$
+and we obtain unit tangent vectors on the sphere at $\Pi(\lambda, \phi)$:
+\begin{equation}
+	\label{latlon_tg_vectors}
+	\boldsymbol{e}_{\lambda}(\lambda,\phi) = 
+	\begin{bmatrix}
+		-\sin \lambda \\
+		\cos \lambda \\
+		0
+	\end{bmatrix}, \quad
+	\boldsymbol{e}_{\phi}(\lambda,\phi) =
+	\begin{bmatrix}
+		-\sin \phi \cos \lambda \\
+		-\sin \phi \sin \lambda \\
+		\cos \phi
+	\end{bmatrix}.
+\end{equation}
+Let us consider a tangent vector field $\boldsymbol{u}: \mathbb{S}^2_R \to 
+\mathbb{R}^3$ on the sphere, represented as
+\begin{equation}
+	\label{latlon-wind}
+	\boldsymbol{u}(\lambda, \phi) = 
+	u_{\lambda} (\lambda, \phi) \boldsymbol{e}_{\lambda} (\lambda, \phi) + 
+	v_{\phi} (\lambda, \phi) \boldsymbol{e}_{\phi} (\lambda, \phi). 
+\end{equation}
+We call $u_{\lambda}$ as zonal component of the wind and $v_{\phi}$ as meridional component of the wind.
+Or, we may also represent this vector field using the basis 
+obtained by cubed-sphere coordinates:
+\begin{equation}
+	\label{contravariant-wind}
+	\boldsymbol{u}(x, y, p) = 
+	\mathfrak{u}(x, y, p) \partial_x\boldsymbol{\Phi}_p(x, y) + 
+	\mathfrak{v}(x, y, p) \partial_y\boldsymbol{\Phi}_p(x, y).
+\end{equation}
+This representation is known as contravariant representation.
+In order to relate the latitude-longitude representation
+with the contravariant representation, we notice that:
+\begin{align}
+	\label{basis-convertion1}
+	\partial_x\boldsymbol{\Phi}_p(x, y, p) &= 
+	\langle \partial_x\boldsymbol{\Phi}_p , \boldsymbol{e}_{\lambda}\rangle
+	\boldsymbol{e}_{\lambda} (\lambda, \phi)  
+	+ \langle 	\partial_x\boldsymbol{\Phi}_p , \boldsymbol{e}_{\phi}\rangle
+	\boldsymbol{e}_{\phi} (\lambda, \phi), \\
+	\label{basis-convertion2}
+	\partial_y\boldsymbol{\Phi}_p(x, y, p) &=  
+	\langle \partial_y\boldsymbol{\Phi}_p , \boldsymbol{e}_{\lambda}\rangle
+	\boldsymbol{e}_{\lambda} (\lambda, \phi) 
+	+ \langle \partial_y\boldsymbol{\Phi}_p , \boldsymbol{e}_{\phi}\rangle
+	\boldsymbol{e}_{\phi} (\lambda, \phi), 
+\end{align}
+which holds since the vectors $\boldsymbol{e}_{\lambda}(\lambda, \phi)$ and
+$\boldsymbol{e}_{\phi}(\lambda, \phi)$ are orthogonal.
+Replacing Equations \eqref{basis-convertion1} and \eqref{basis-convertion2}
+in Equation \eqref{contravariant-wind}, we obtain the values $(u_\lambda, v_\phi)$
+in terms of the contravariant components $({u},{v})$ 
+as the following matrix equation:
+\begin{equation}
+	\label{ll-to-contravariant}
+	\begin{bmatrix}
+		u_\lambda (\lambda, \phi) \\
+		v_\phi (\lambda, \phi) 
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		\langle 	\partial_x\boldsymbol{\Phi}_p, \boldsymbol{e}_\lambda \rangle 
+		& \langle 	\partial_y\boldsymbol{\Phi}_p, \boldsymbol{e}_\lambda \rangle \\
+		\langle 	\partial_x\boldsymbol{\Phi}_p, \boldsymbol{e}_\phi \rangle 
+		& \langle 	\partial_y\boldsymbol{\Phi}_p, \boldsymbol{e}_\phi \rangle \\
+	\end{bmatrix}
+	\begin{bmatrix}
+		\mathfrak{u}(x,y,p) \\
+		\mathfrak{v}(x,y,p)
+	\end{bmatrix}.
+\end{equation}
+Conversely, we may express the contravariant components in terms of
+latitude-longitude components by inverting Equation \eqref{ll-to-contravariant}.
+
+In practice when discretizing PDEs on the cubed-sphere, FV3 schemes use the normalized contravariant wind
+$({u},{v})$ given by:
+\begin{equation}
+	\label{norm-contravariant-wind}
+	\boldsymbol{u}(x, y, p) = 
+	{u}(x, y, p) \boldsymbol{e}_x(x, y,p) + 
+	{v}(x, y, p) \boldsymbol{e}_y(x, y,p),
+\end{equation}
+where $\boldsymbol{e}_x$ and $\boldsymbol{e}_y$ are the normalized cubed-sphere tangent vectors:
+\begin{equation}
+   \boldsymbol{e}_x(x,y,p)  = \frac{\partial_x\boldsymbol{\Phi}_p(x,y)}{\|\partial_x\boldsymbol{\Phi}_p(x,y)\|}, \quad
+   \boldsymbol{e}_y(x,y,p)  = \frac{\partial_y\boldsymbol{\Phi}_p(x,y)}{\|\partial_y\boldsymbol{\Phi}_p(x,y)\|}.
+\end{equation}
+It is easy to see that:
+\begin{equation}
+	{u}(x,y,p)  = \frac{\mathfrak{u}(x,y,p)}{\|\partial_x\boldsymbol{\Phi}_p(x,y)\|}, \quad
+	{v}(x,y,p)  = \frac{\mathfrak{v}(x,y,p)}{\|\partial_y\boldsymbol{\Phi}_p(x,y)\|}.
+\end{equation}
+The normalized contravariant form is used because it offers greater generality and flexibility when working with optimized cubed-sphere grids,
+as discussed in \citet{putman:2007}, and stretched grids \citep{harris:2016}, 
+where explicit expressions of the exact, non-normalized tangent vectors are either available or can be overly complicated.
+On the other hand, the normalized tangent vectors at grid points may be computed easily in terms of the grid points (see Appendix C2 of \citet{chen:2021}).
+The latitude-longitude representation is related with the normalized contravariant representation by the expression:
+\begin{equation}
+	\label{ll-to-normcontravariant}
+	\begin{bmatrix}
+		u_\lambda (\lambda, \phi) \\
+		v_\phi (\lambda, \phi) 
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		\langle 	\boldsymbol{e}_x, \boldsymbol{e}_\lambda \rangle 
+		& \langle 	\boldsymbol{e}_y, \boldsymbol{e}_\lambda \rangle \\
+		\langle 	\boldsymbol{e}_x, \boldsymbol{e}_\phi \rangle 
+		& \langle 	\boldsymbol{e}_y, \boldsymbol{e}_\phi \rangle \\
+	\end{bmatrix}
+	\begin{bmatrix}
+		{u}(x,y,p) \\
+		{v}(x,y,p)
+	\end{bmatrix}.
+\end{equation}
+Conversely, we may express the normalized contravariant components in terms of
+latitude-longitude components by inverting Equation \eqref{ll-to-normcontravariant}.
+
+\subsection{Covariant/contravariant conversion}
+\label{anexo-cov-con}
+Let us consider again a tangent vector field $\boldsymbol{u}: \mathbb{S}^2_R \to 
+\mathbb{R}^3$ on the sphere. Its contravariant representation 
+is given by Equation \eqref{contravariant-wind}.
+The covariant components $(\mathfrak{U},\mathfrak{V})$ are given by:
+\begin{align}
+	\label{covariant-u}
+	\mathfrak{U}(x,y,p) = \langle \boldsymbol{u}(x,y,p) , 	\partial_x\boldsymbol{\Phi}_p(x,y,p)  \rangle, \\
+	\label{covariant-v}
+	\mathfrak{V}(x,y,p) = \langle \boldsymbol{u}(x,y,p) , 	\partial_y\boldsymbol{\Phi}_p(x,y,p)  \rangle.
+\end{align}
+Replacing Equation \eqref{contravariant-wind} in 
+Equations \eqref{covariant-u} and \eqref{covariant-v} we obtain
+the relation between covariant components in terms of the
+contravariant terms:
+\begin{equation}
+	\label{contravariant-to-covariant}
+	\begin{bmatrix}
+		\mathfrak{U}(x,y,p) \\
+		\mathfrak{V}(x,y,p)
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		\langle 	\partial_x\boldsymbol{\Phi}_p, \partial_x\boldsymbol{\Phi}_p \rangle
+		& \langle 	\partial_x\boldsymbol{\Phi}_p, \partial_y\boldsymbol{\Phi}_p \rangle \\
+		\langle 	\partial_x\boldsymbol{\Phi}_p, \partial_y\boldsymbol{\Phi}_p \rangle 
+		& \langle   \partial_y\boldsymbol{\Phi}_p, \partial_y\boldsymbol{\Phi}_p \rangle \\
+	\end{bmatrix}
+	\begin{bmatrix}
+		{u} (x,y,p) \\
+		{v} (x,y,p) 
+	\end{bmatrix}.
+\end{equation}
+Like the contravariant component, FV3 works with the normalized covariant wind $({U},{V})$ given by:
+\begin{align}
+	\label{norm-covariant-u}
+	{U}(x,y,p) = \langle \boldsymbol{u}(x,y,p) , \boldsymbol{e}_y(x,y,p)  \rangle, \\
+	\label{norm-covariant-v}
+	{V}(x,y,p) = \langle \boldsymbol{u}(x,y,p) , \boldsymbol{e}_y(x,y,p)  \rangle.
+\end{align}
+It is easy to see that:
+\begin{equation}
+	{U}(x,y,p)  = \frac{\mathfrak{U}(x,y,p)}{\|\partial_x\boldsymbol{\Phi}_p(x,y)\|}, \quad
+	{V}(x,y,p)  = \frac{\mathfrak{V}(x,y,p)}{\|\partial_y\boldsymbol{\Phi}_p(x,y)\|}.
+\end{equation}
+Replacing Equation \eqref{norm-contravariant-wind} in 
+Equations \eqref{norm-covariant-u} and \eqref{norm-covariant-v} we obtain
+the relation between normalized covariant components in terms of the
+normalized contravariant terms:
+\begin{equation}
+	\label{norm-contravariant-to-covariant}
+	\begin{bmatrix}
+		{U}(x,y,p) \\
+		{V}(x,y,p)
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		1 
+		& \langle 	\boldsymbol{e}_x, \boldsymbol{e}_y \rangle \\
+		\langle 	\boldsymbol{e}_x, \boldsymbol{e}_y \rangle 
+		& 1\\
+	\end{bmatrix}
+	\begin{bmatrix}
+		{u} (x,y,p) \\
+		{v} (x,y,p) 
+	\end{bmatrix}.
+\end{equation}
+Recall that
+\begin{equation}
+\langle 	\boldsymbol{e}_x, \boldsymbol{e}_y \rangle(x,y,p) = \cos \alpha(x,y,p),
+\end{equation}
+where $\alpha(x,y,p)$ is the angle between and 	$\boldsymbol{e}_x$, $\boldsymbol{e}_y$, which
+is the formula implemented in FV3 following \citet{putman:2007}.
+We may express the normalized contravariant components in terms of 
+the normalized covariant terms inverting Equation \eqref{norm-contravariant-to-covariant}.
+Notice that combining Equation \eqref{norm-contravariant-to-covariant} with Equations
+\eqref{ll-to-normcontravariant}
+one may get relations between the latitude-longitude 
+components and the covariant components.
+
 
 \section{Edges treatment}
 \label{cs-halodata}
