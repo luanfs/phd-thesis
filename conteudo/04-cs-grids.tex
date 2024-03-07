@@ -332,7 +332,6 @@ Also, this grid leads to more uniform cells after applying the grid stretching o
 We will utilize the notation introduced in Section \ref{chp-adv2d-sec-not} throughout this Chapter.
 We shall used the earth radius $R = 6.371 \times 10^6$ meters.
 The parameter $\nu$ represents a non-negative integer indicating the number of ghost cell layers in each panel boundary, called halo size.
-
 To generate the cubed-sphere, we consider a $(\Delta x, \Delta y)$-grid denoted by 
 $\Omega_{\Delta x, \Delta y} = (\Omega_{ij})_{i,j=-\nu+1,\ldots,N+\nu}$, 
 where $\Delta x = \Delta y$, and it covers the domain $\Omega$. 
@@ -357,7 +356,6 @@ The control volume area given by:
 	\sqrt{g}(x_i,y_j) \Delta x \Delta y + \mathcal{O}(\Delta x^2),
 \end{equation}
 where the last equality follows from Proposition \ref{prop-bound-centroid-2d}.
-
 In tables \ref{g0-dx-table}, \ref{g1-dx-table}, and \ref{g2-dx-table},
 we display the diameters of the grids g0, g1, and g2 for $N=48\times 2^k$, 
 where $k = 0,\ldots, 4$. These values of $N$ are considered in this work.
@@ -412,15 +410,7 @@ Similarly, in tables \ref{g0-dx-table}, \ref{g1-dx-table}, and \ref{g2-dx-table}
     \end{tabular}
 \end{table}
 
-We can observe that in terms of areas and diameters of the cells, grid g1 is the least uniform,
-while g2 is the most uniform grid.
-Grid g0 is more uniform than g1, but the maximum/minimum ratio of the areas is almost 2.3. 
-Despite this, g0 is operational in some applications of FV3 \citep{harris:2021,chen:2021}, such as, for instance, 
-the Next Generation Global Prediction System (NGGPS) \citep{zhou:2019}, 
-because this grid is expected to produce less grid imprinting due to its greater uniformity near the cubed edges.
-Therefore, in this thesis, we shall constrain our attention only to grids g0 and g2, since g2 is ideally more uniform and g0 is currently used in FV3.
 
-\newpage
 \begin{table}[htbp]
     \centering
     \caption{Mean area, minimum area, and maximum area for different values of $N$ considering the equi-edge grid (g0).\label{g0-da-table}}
@@ -438,6 +428,8 @@ Therefore, in this thesis, we shall constrain our attention only to grids g0 and
 \end{table}
 
 
+
+\newpage
 \begin{table}[htbp]
     \centering
     \caption{As Table \ref{g0-da-table} but considering the equidistant grid (g1). \label{g1-da-table}}
@@ -471,8 +463,28 @@ Therefore, in this thesis, we shall constrain our attention only to grids g0 and
 \end{table}
 
 
-
-
+We can observe that in terms of areas and diameters of the cells, grid g1 is the least uniform,
+while g2 is the most uniform grid.
+Grid g0 is more uniform than g1, but the maximum/minimum ratio of the areas is almost 2.3. 
+Despite this, g0 is operational in some applications of FV3 \citep{harris:2021,chen:2021}, such as, for instance, 
+the Next Generation Global Prediction System (NGGPS) \citep{zhou:2019}, 
+because this grid is expected to produce less grid imprinting due to its greater uniformity near the cubed edges.
+Therefore, in this thesis, we shall constrain our attention only to grids g0 and g2, since g2 is ideally more uniform and g0 is currently used in FV3.
+In Figure \ref{chp-cs-areas}, we illustrate the areas of both grids, g0 and g2.
+We can observe that the areas of g0 exhibit a higher gradient near the cube corners, while g2 appears to have a higher gradient near the middle of the cube edges.
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.48\textwidth}
+		\includegraphics[width=0.8\linewidth]{g0_384}
+		\caption{g0 grid areas (km$^2$).}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=0.8\linewidth]{g2_384}
+		\caption{g2 grid areas (km$^2$).}
+	\end{subfigure}
+	\caption{Areas for the grid g0 and g2 using $N=384$.\label{chp-cs-areas}}
+\end{figure}
 
 \subsection{Notation}
 \label{cs-notation}
@@ -628,7 +640,7 @@ as the following matrix equation:
 Conversely, we may express the contravariant components in terms of
 latitude-longitude components by inverting Equation \eqref{ll-to-contravariant}.
 
-In practice when discretizing PDEs on the cubed-sphere, FV3 schemes use the normalized contravariant wind
+In practice when discretizing Partial Differential Equations (PDE) on the cubed-sphere, FV3 schemes use the normalized contravariant wind
 $({u},{v})$ given by:
 \begin{equation}
 	\label{norm-contravariant-wind}
