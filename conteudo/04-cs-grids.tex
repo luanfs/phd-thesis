@@ -349,13 +349,14 @@ These grids are generated using the equidistant, equiangular and equi-edge mappi
 We will denote the area of $\Omega_{ijp}$ by $|\Omega_{ij}|$.
 Notice that the area does not depend on the panel due to the grid symmetry.
 We also define the diameter of a cell as $2\sqrt{\frac{|\Omega_{ij}|}{\pi}}$, which corresponds to the diameter of a circle with area $|\Omega_{ij}|$.
-The control volume area given by:
+The control volume area is given by:
 \begin{equation}
 	\label{chp4-area}
 	|\Omega_{ij}| = \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}{\sqrt{g}(x,y)} \,dx \,dy = 
-	\sqrt{g}(x_i,y_j) \Delta x \Delta y + \mathcal{O}(\Delta x^2),
+	|\tilde{\Omega}_{ij}| + \mathcal{O}(\Delta x^2),
 \end{equation}
-where the last equality follows from Proposition \ref{prop-bound-centroid-2d}.
+where $|\tilde{\Omega}_{ij}| = \sqrt{g}(x_i,y_j) \Delta x \Delta y$,
+and the last equality follows from Proposition \ref{prop-bound-centroid-2d}.
 In tables \ref{g0-dx-table}, \ref{g1-dx-table}, and \ref{g2-dx-table},
 we display the diameters of the grids g0, g1, and g2 for $N=48\times 2^k$, 
 where $k = 0,\ldots, 4$. These values of $N$ are considered in this work.
@@ -471,7 +472,7 @@ the Next Generation Global Prediction System (NGGPS) \citep{zhou:2019},
 because this grid is expected to produce less grid imprinting due to its greater uniformity near the cubed edges.
 Therefore, in this thesis, we shall constrain our attention only to grids g0 and g2, since g2 is ideally more uniform and g0 is currently used in FV3.
 In Figure \ref{chp-cs-areas}, we illustrate the areas of both grids, g0 and g2.
-We can observe that the areas of g0 exhibit a higher gradient near the cube corners, while g2 appears to have a higher gradient near the middle of the cube edges.
+	We can observe that the areas of g0 exhibit a higher gradient near the cube corners, while g2 appears to have a higher gradient near the middle of the cube edges.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.48\textwidth}
@@ -486,33 +487,84 @@ We can observe that the areas of g0 exhibit a higher gradient near the cube corn
 	\caption{Areas for the grid g0 and g2 using $N=384$.\label{chp-cs-areas}}
 \end{figure}
 
-\subsection{Notation}
-\label{cs-notation}
-We also utilize the notation $\mathcal{CS}_N=\mathbb{R}^{(N+\nu)\times(N+\nu)\times 6}$
-to represent grid functions on the cubed-sphere at cell centers.
-Let's assume we have a function $q:\mathbb{S}^2_R\times[0,T] \to \mathbb{R}$, 
-and we have a $(\Delta x, \Delta y, \Delta t, \lambda)$-discretization of $\Omega \times [0,T]$.
-We introduce $q^n \in \mathcal{CS}^N$, which represents the grid function $q$
-evaluated at the discrete points. 
-In other words, $q^n_{ijp} = q(x_i,y_j,p,t^n)$, where $i,j=-\nu +1, \ldots, N+\nu$, and $p=1, \ldots, 6$.
-Furthermore, we use the notations $q^n_{i+\frac{1}{2},j,p} = q(x_{i+\frac{1}{2}},y_j, t^n)$ 
-for $i=-\nu, \ldots, N+\nu$ and $j=-\nu +1, \ldots, N+\nu$ to represent $q$ at the midpoint of edges in
-the $x$ direction.
-Similarly, we use $q^n_{i,j+\frac{1}{2},p} = q(x_i,y_{j+\frac{1}{2}},t^n)$ for $i=-\nu +1, \ldots, N+\nu$ and $j=-\nu, \ldots, N+\nu$ to represent $q$ at the midpoint of edges in the $y$ direction.
-When $q$ does not depend on the time variable $t$, we can omit the index $n$.
-In Figure \ref{chp4-cs-grid-function}, we depict a grid function at centers, edge midpoints in the $x$ direction
-and edge midpoints in the $y$ direction for the equiangular cubed-sphere considering
-the halo size equal to three.
+There are four types of grid points on the cubed-sphere that we need to compute: the A-grid, B-grid, C-grid, and D-grid points.
+These names are based on the Arakawa grids \citep{arakawa:1977}.
+The locations of these points are illustrated in Figure \ref{chp-cs-gridpoints} for the g2 grid.
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=0.5\linewidth]{equiangular_sphere}
+	\caption{Illustration of the A-grid (white) B-grid (black), C-grid (blue) and D-grid (red) points 
+		for the g2 grid with $N=10$.\label{chp-cs-gridpoints}}
+\end{figure}
 
-For a grid function $Q$ we also use the notations:
-\begin{align*}
-	Q_{\times,j,p} &:= (Q_{-\nu+1,j,p}, \ldots, Q_{N+\nu,j,p}) \in \mathbb{R}^{N}_{\nu},\\
-	Q_{i,\times,p} &:= (Q_{i,-\nu+1,p}, \ldots, Q_{i,M+\nu,p}) \in \mathbb{R}^{N}_{\nu}.
-\end{align*}
-In this work, we shall always approximate the average values since our schemes are expected to be at most second-order,
-this approximation does not deteriorate the convergence order.
+One possible approach is to use the cubed-sphere mapping to generate these points, based on the grid points projected onto the sphere from the plane.
+These points shall be denoted using a superscript 'c'.
+The B-grid points represent the corners of the control volume, namely
+\begin{equation}
+	\Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^c := \Phi_p(x_{i+\frac{1}{2}},y_{j+\frac{1}{2}}).
+\end{equation}
+Similarly, the A grid points are the cell centers:
+\begin{equation}
+	\Phi_{i,j,p}^c := \Phi_p(x_{i},y_{j}).
+\end{equation}
+The C-grid points are the midpoints of the edge in the $y$-direction, namely:
+\begin{equation}
+	\Phi_{i+\frac{1}{2},j,p}^c := \Phi_p(x_{i+\frac{1}{2}},y_{j}).
+\end{equation}
+The D-grid points are the midpoints of the edge in the $x$-direction, namely:
+\begin{equation}
+	\Phi_{i,j+\frac{1}{2},p}^c := \Phi_p(x_{i},y_{j+\frac{1}{2}}).
+\end{equation}
+The grids g0 and g2, formulated with these grid points, are denoted by \textbf{g0.c} and \textbf{g2.c}, respectively.
+We refer to this grid points formulation as cube midpoints.
 
-\section{Tangent vectors on the sphere}
+Another way to compute the grid points, which is used in FV3, is to compute the B-grid
+points using as before and obtain the A, C and D-grids using the spherical midpoints.
+These points shall be denoted using a superscript 's'.
+The B-grid points in this case are:
+\begin{equation}
+	\Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^s := \Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^c.
+\end{equation}
+The A-grid points are computed by averaging the values of 4 B-grid points:
+\begin{equation}
+	\Phi_{i,j,p}^s :=
+	\frac{\Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Phi_{i+\frac{1}{2},j-\frac{1}{2},p}^s + \Phi_{i-\frac{1}{2},j+\frac{1}{2},p}^s + \Phi_{i-\frac{1}{2},j-\frac{1}{2},p}^s}
+         {\|\Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Phi_{i+\frac{1}{2},j-\frac{1}{2},p}^s + \Phi_{i-\frac{1}{2},j+\frac{1}{2},p}^s + \Phi_{i-\frac{1}{2},j-\frac{1}{2},p}^s\|}.
+\end{equation}
+Similarly, the C-grid points are obtained by averaging the values of 2 B-grid points.
+\begin{equation}
+	\Phi_{i+\frac{1}{2},j,p}^s :=
+	\frac{\Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Phi_{i+\frac{1}{2},j-\frac{1}{2},p}^s}
+	   {\|\Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Phi_{i+\frac{1}{2},j-\frac{1}{2},p}^s\|}.
+\end{equation}
+and the D-grid points are also  given by the average  the values of 2 B-grid points:
+\begin{equation}
+	\Phi_{i,j+\frac{1}{2},p}^s :=
+	\frac{\Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Phi_{i-\frac{1}{2},j+\frac{1}{2},p}^s}
+	     {\|\Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Phi_{i-\frac{1}{2},j+\frac{1}{2},p}^s\|}.
+\end{equation}
+The grids g0 and g2, formulated with these grid points, are denoted by \textbf{g0.s} and \textbf{g2.s}, respectively.
+We refer to this grid points formulation as spherical midpoints.
+One can easily see that:
+\begin{align}
+	\Phi_{i+\frac{1}{2},j,p}^s &= \Phi_{i+\frac{1}{2},j,p}^c+ \mathcal{O}(\Delta x^2),\\
+	\Phi_{i,j+\frac{1}{2},p}^s &= \Phi_{i,j+\frac{1}{2},p}^c+ \mathcal{O}(\Delta x^2),\\
+	\Phi_{i,j,p}^s &= \Phi_{i,j,p}^c + \mathcal{O}(\Delta x^2).
+\end{align}
+Then, we should expect similar results when using different grid-point formulations, especially when using a high-resolution grid.
+In g0.c or g2.c grids, the points are aligned along geodesics.
+This happens because the cube-mapping maps lines on the plane onto geodesics on the sphere.
+However, one can see that this does not occur on g0.s or g2.s, as the A, C, and D-grid points are not aligned on the same geodesic.
+Although this misalignment becomes negligible for high resolutions,
+it impacts ghost cell interpolation accuracy, as we shall see in Section \ref{cs-halodata}.
+
+\subsection{Duo-grid points}
+The B duo-grid points are generated by computing the mapping $\boldsymbol{\Phi}$ for the grid-points
+$(x_i,_y_j)$ for $i$ and $j$ out of the range $1, \ldots, N$.
+When using the cube midpoint, the A, C and D-grid points are compute analogously.
+In Figure we illustrate the duo-grid points obtained for both g0 and g2 grids.
+
+\subsection{Tangent vectors on the sphere}
 \label{cs-tgvectors}
 The tangent space at $P \in \mathbb{S}^2_R$ is denoted by $T_P \mathbb{S}^2$.
 It is easy to see that:
@@ -528,7 +580,7 @@ We say that a vector field $\boldsymbol{u}: \mathbb{S}^2_R \to
 \mathbb{R}^3$ is tangent on  the sphere if
 $\boldsymbol{u}(P) \in T_P\mathbb{S}^2_R$, $\forall P \in \mathbb{S}^2_R$.
 
-\subsection{Conversions between latitude-longitude and contravariant coordinates}
+\subsubsection{Conversions between latitude-longitude and contravariant coordinates}
 \label{anexo-sph-ll}
 We consider the latitude-longitude mapping 
 $\boldsymbol{\Pi}: [0,2\pi] \times [-\frac{\pi}{2},\frac{\pi}{2}] \to \mathbb{S}^2_R$, 
@@ -684,7 +736,8 @@ The latitude-longitude representation is related with the normalized contravaria
 Conversely, we may express the normalized contravariant components in terms of
 latitude-longitude components by inverting Equation \eqref{ll-to-normcontravariant}.
 
-\subsection{Covariant/contravariant conversion}
+
+\subsubsection{Covariant/contravariant conversion}
 \label{anexo-cov-con}
 Let us consider again a tangent vector field $\boldsymbol{u}: \mathbb{S}^2_R \to 
 \mathbb{R}^3$ on the sphere. Its contravariant representation 
@@ -768,6 +821,49 @@ components and the covariant components.
 
 \section{Edges treatment}
 \label{cs-halodata}
+
+\subsection{Notation}
+\label{cs-notation}
+We also utilize the notation $\mathcal{CS}_N=\mathbb{R}^{(N+\nu)\times(N+\nu)\times 6}$
+to represent grid functions on the cubed-sphere at cell centers.
+We define the average values of a function $q$ with the aid of the metric term
+$\sqrt{g}(x,y)$ at time $t$: 
+\begin{equation*}
+	Q_{ijp}(t) = \frac{1}{|\Omega_{ij}|}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
+	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}  q(x,y,p,t) {\sqrt{g}(x,y)}\,dx \,dy.
+\end{equation*}
+Let us assume we have a function $q:\mathbb{S}^2_R\times[0,T] \to \mathbb{R}$, 
+and we have a $(\Delta x, \Delta y, \Delta t, \lambda)$-discretization of $\Omega \times [0,T]$.
+We introduce $q^n \in \mathcal{CS}^N$, which represents the grid function $q$
+evaluated at the discrete points. 
+In other words, $q^n_{ijp} = q(x_i,y_j,p,t^n)$, where $i,j=-\nu +1, \ldots, N+\nu$, and $p=1, \ldots, 6$.
+Furthermore, we use the notations $q^n_{i+\frac{1}{2},j,p} = q(x_{i+\frac{1}{2}},y_j, t^n)$ 
+for $i=-\nu, \ldots, N+\nu$ and $j=-\nu +1, \ldots, N+\nu$ to represent $q$ at C-grid points.
+Similarly, we use $q^n_{i,j+\frac{1}{2},p} = q(x_i,y_{j+\frac{1}{2}},t^n)$ for $i=-\nu +1, \ldots, N+\nu$ and $j=-\nu, \ldots, N+\nu$ to represent $q$ at the
+D-grid points.
+When $q$ does not depend on the time variable $t$, we can omit the index $n$.
+For a grid function $Q$ we also use the notations:
+%In Figure \ref{chp4-cs-grid-function}, we depict a grid function at centers, edge midpoints in the $x$ direction
+%and edge midpoints in the $y$ direction for the equiangular cubed-sphere considering
+%the halo size equal to three.
+\begin{align*}
+	Q_{\times,j,p} &:= (Q_{-\nu+1,j,p}, \ldots, Q_{N+\nu,j,p}) \in \mathbb{R}^{N}_{\nu},\\
+	Q_{i,\times,p} &:= (Q_{i,-\nu+1,p}, \ldots, Q_{i,M+\nu,p}) \in \mathbb{R}^{N}_{\nu}.
+\end{align*}
+In this work, we shall always approximate the average values since our schemes are expected to be at most second-order,
+this approximation does not deteriorate the convergence order.
+\textbf{}
+
+\subsection{Ghost cells scalar field interpolation}
+\label{cs-interp}
+Let us consider a function $q: \mathbb{S}^2_R \to \mathbb{R}$ given at the cell centroids, 
+denoted by $q_{ijp}$, where $i, j=1\ldots, N$ and $p=1,\ldots, 6$. 
+Our objective is to estimate these values at positions outside the range $1, \ldots, N$, specifically at ghost cell positions.
+
+To solve this problem, we will employ the strategy outlined in \citet{zerroukat:2022}, 
+named duo grid by \citet{chen:2021}.
+As previously mentioned, the ghost cells in the local Cartesian systems are mapped onto the geodesics 
+of adjacent panels, which enables us to use Lagrange interpolation to obtain the values of ghost cells.
 
 \section{Concluding remarks}
 \label{cs-conc}
