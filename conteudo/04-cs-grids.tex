@@ -108,24 +108,24 @@ where:
 \end{equation*}
 
 
-The set of 6 maps $\{\boldsymbol{\Psi}_{p}, p = 1, \ldots, 6\}$ allow us to cover the sphere (Figure \ref{chp-cs-equidistant}).
-Here $p$ denotes a panel, and they are defined and orientated as Figure \ref{chp-cs-panels}
-shows. Then, we can represent a point on the sphere using the cubed-sphere coordinates
-$(x,y,p)$.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.42\textwidth}
-		\includegraphics[width=0.8\linewidth]{gnomonic_equidistant_cs_10_sphere}
+		\includegraphics[width=1\linewidth]{gnomonic_equidistant_cs_10_sphere}
 		\caption{Gridlines of the cube to the sphere mapping}
 	\end{subfigure}
 	\begin{subfigure}{0.42\textwidth}
 		\centering
-		\includegraphics[width=0.8\linewidth]{g1}
+		\includegraphics[width=1\linewidth]{g1}
 		\caption{Cube and sphere mapping for $Z=0$.}
 	\end{subfigure}
 	\caption{(a) Illustration of the resulting cube-to-sphere mapping and (b) illustration of the cube-to-sphere projection.\label{chp-cs-equidistant}}
 \end{figure}
-\newpage
+The set of 6 maps $\{\boldsymbol{\Psi}_{p}, p = 1, \ldots, 6\}$ allow us to cover the sphere (Figure \ref{chp-cs-equidistant}).
+Here $p$ denotes a panel, and they are defined and orientated as Figure \ref{chp-cs-panels}
+shows. Then, we can represent a point on the sphere using the cubed-sphere coordinates
+$(x,y,p)$.
+
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=0.4\linewidth]{chp4_panels}
@@ -292,12 +292,12 @@ This grid is denoted by \textbf{g2}, for the same reason of the notation \textbf
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.42\textwidth}
-		\includegraphics[width=0.8\linewidth]{gnomonic_equiangular_cs_10_sphere}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_10_sphere}
 		\caption{Gridlines of the cube to the sphere equiangular mapping}
 	\end{subfigure}
 	\begin{subfigure}{0.42\textwidth}
 		\centering
-		\includegraphics[width=0.8\linewidth]{g2}
+		\includegraphics[width=1\linewidth]{g2}
 		\caption{Cube and sphere equiangular mapping for $Z=0$.}
 	\end{subfigure}
 	\caption{(a) Illustration of the resulting cube-to-sphere mapping and (b) illustration of the cube-to-sphere projection using the equiangular mapping.\label{chp-cs-equiangular}}
@@ -312,12 +312,12 @@ Figure \ref{chp-cs-equiedge} illustrates the equi-edge mapping.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.42\textwidth}
-		\includegraphics[width=0.8\linewidth]{gnomonic_equiedge_cs_10_sphere}
+		\includegraphics[width=1\linewidth]{gnomonic_equiedge_cs_10_sphere}
 		\caption{Gridlines of the cube to the sphere equi-edge mapping}
 	\end{subfigure}
 	\begin{subfigure}{0.42\textwidth}
 		\centering
-		\includegraphics[width=0.8\linewidth]{g0}
+		\includegraphics[width=1\linewidth]{g0}
 		\caption{Cube and sphere equi-edge mapping for $Z=0$.}
 	\end{subfigure}
 	\caption{(a) Illustration of the resulting cube-to-sphere mapping and (b) illustration of the cube-to-sphere projection using the equi-edge mapping.\label{chp-cs-equiedge}}
@@ -360,7 +360,7 @@ and the last equality follows from Proposition \ref{prop-bound-centroid-2d}.
 In tables \ref{g0-dx-table}, \ref{g1-dx-table}, and \ref{g2-dx-table},
 we display the diameters of the grids g0, g1, and g2 for $N=48\times 2^k$, 
 where $k = 0,\ldots, 4$. These values of $N$ are considered in this work.
-Similarly, in tables \ref{g0-dx-table}, \ref{g1-dx-table}, and \ref{g2-dx-table}, we display the areas.
+Similarly, in tables \ref{g0-da-table}, \ref{g1-da-table}, and \ref{g2-da-table}, we display the areas.
 
 
 \begin{table}[htbp]
@@ -428,9 +428,6 @@ Similarly, in tables \ref{g0-dx-table}, \ref{g1-dx-table}, and \ref{g2-dx-table}
     \end{tabular}
 \end{table}
 
-
-
-\newpage
 \begin{table}[htbp]
     \centering
     \caption{As Table \ref{g0-da-table} but considering the equidistant grid (g1). \label{g1-da-table}}
@@ -516,7 +513,7 @@ The D-grid points are the midpoints of the edge in the $x$-direction, namely:
 	\Phi_{i,j+\frac{1}{2},p}^c := \Phi_p(x_{i},y_{j+\frac{1}{2}}).
 \end{equation}
 The grids g0 and g2, formulated with these grid points, are denoted by \textbf{g0.c} and \textbf{g2.c}, respectively.
-We refer to this grid points formulation as cube midpoints.
+We refer to this grid point formulation as cube midpoints, which is a common approach used in the literature \citep{guo:2014,katta:2015,katta:2015b,nair:2005,ullrich:2016}.
 
 Another way to compute the grid points, which is used in FV3, is to compute the B-grid
 points using as before and obtain the A, C and D-grids using the spherical midpoints.
@@ -615,17 +612,17 @@ This may require special attention from numerical schemes using g0 near edges du
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
-		\includegraphics[width=0.8\linewidth]{g0_duo}
+		\includegraphics[width=1\linewidth]{g0_duo}
 		\caption{g0 duo-grid.\label{cs-duo-g0}}
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=0.8\linewidth]{g0_duo2}
+		\includegraphics[width=1\linewidth]{g0_duo2}
 		\caption{Mirrored g0 duo-grid.\label{cs-duo-g02}}
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=0.8\linewidth]{g2_duo}
+		\includegraphics[width=1\linewidth]{g2_duo}
 		\caption{g2 duo-grid.\label{cs-duo-g2}}
 	\end{subfigure}
 	\caption{Duo-grid lines of panel 1 for the g0 (a) and g2 (c). (b) shows the mirrored duo-grid of g0.
@@ -1008,12 +1005,12 @@ Finally, we observe that the g0 grid yields slightly better results than g2 for 
 	\centering
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=0.8\linewidth]{g0_duo_error_tc-2_ha}
+		\includegraphics[width=1\linewidth]{g0_duo_error_tc-2_ha}
 		\caption{Error for g0.\label{cs-duoscalar-tc1-g0}}
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=0.8\linewidth]{g2_duo_error_tc-2_ha}
+		\includegraphics[width=1\linewidth]{g2_duo_error_tc-2_ha}
 		\caption{Error for g2.\label{cs-duoscalar-tc1-g2}}
 	\end{subfigure}
 	\caption{Error for the duo-grid interpolation of the scalar field of \eqref{duo-tc1} for the grid g0 (left) and g2 (right).
@@ -1101,12 +1098,12 @@ Additionally, dg2 yields smaller errors, and overall, g0 performs slightly bette
 	\centering
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=0.8\linewidth]{g0_duo_error_tc-2_uc}
+		\includegraphics[width=1\linewidth]{g0_duo_error_tc-2_uc}
 		\caption{Error for g0.\label{cs-duoscalar-tc2-g0}}
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=0.8\linewidth]{g2_duo_error_tc-2_uc}
+		\includegraphics[width=1\linewidth]{g2_duo_error_tc-2_uc}
 		\caption{Error for g2.\label{cs-duoscalar-tc2-g2}}
 	\end{subfigure}
 	\caption{As Figure \ref{cs-tc1-error} but using the C-grid wind given by Equation \eqref{duo-wind1}.\label{cs-tc2-error}}
@@ -1167,5 +1164,69 @@ We introduce the relative errors:
 \end{align*}
 We are going to compute $E$ for different values of $N$ and different schemes as in the numerical experiments of Section \ref{cs-interp}.
 
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{hord8_recon_g0.c}
+		\caption{Error for g0.\label{cs-recon-g0}}
+	\end{subfigure}
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{hord8_recon_g2.c}
+		\caption{Error for g2.\label{cs-recon-g2}}
+	\end{subfigure}
+	\caption{As Figure \ref{cs-tc1-error} but using the C-grid wind given by Equation \eqref{duo-wind1}.\label{cs-recon-error}}
+\end{figure}
+
 \section{Concluding remarks}
 \label{cs-conc}
+
+\newpage
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.9\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{recon_g0_192.s.kinked.hord8}
+		\caption{g0 grid areas (km$^2$).}
+	\end{subfigure}
+	
+	\begin{subfigure}{0.9\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{recon_g0_192.s.dg2.hord8}
+		\caption{g2 grid areas (km$^2$).}
+	\end{subfigure}
+	
+	\begin{subfigure}{0.9\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{recon_g0_192.c.dg2.hord8}
+		\caption{g2 grid areas (km$^2$).}
+	\end{subfigure}
+	\caption{Areas for the grid g0 and g2 using $N=384$.\label{cs-recon-errors-g0}}
+\end{figure}
+
+\newpage
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.9\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{recon_g2_192.s.kinked.hord8}
+		\caption{g0 grid areas (km$^2$).}
+	\end{subfigure}
+	
+	\begin{subfigure}{0.9\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{recon_g2_192.s.dg2.hord8}
+		\caption{g2 grid areas (km$^2$).}
+	\end{subfigure}
+	
+	\begin{subfigure}{0.9\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{recon_g2_192.c.dg2.hord8}
+		\caption{g2 grid areas (km$^2$).}
+	\end{subfigure}
+	\caption{Areas for the grid g0 and g2 using $N=384$.\label{cs-recon-errors-g2}}
+\end{figure}
+
+
+
