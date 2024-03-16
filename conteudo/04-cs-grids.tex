@@ -71,6 +71,8 @@ We start with a basic review of the CS mappings in Section \ref{cs-mappings}.
 In Section \ref{sec-cs-grids}, we introduce the CS grids and investigate its geometrical properties.
 Section \ref{cs-halodata} investigates how we can apply 1D Lagrange interpolation using the adjacent panels
 data to obtain values of a scalar/vector field on ghost cells.
+In Section \ref{cs-recon}, compare the current extrapolation used in FV3 with Lagrange when using the PPM reconstruction to
+remap the values from centers to edges on the cubed-sphere cells.
 Final thoughts are presented in Section \ref{cs-conc}.
 
 \newpage
@@ -329,6 +331,7 @@ This grid is denoted by \textbf{g0}, for the same reason of the notation \textbf
 Also, this grid leads to more uniform cells after applying the grid stretching option of FV3 \citep{harris:2016, chen:2021}.
 
 \subsection{Geometric properties}
+\label{cs-geo}
 We will utilize the notation introduced in Section \ref{chp-adv2d-sec-not} throughout this Chapter.
 We shall used the earth radius $R = 6.371 \times 10^6$ meters.
 The parameter $\nu$ represents a non-negative integer indicating the number of ghost cell layers in each panel boundary, called halo size.
@@ -1109,6 +1112,7 @@ Additionally, dg2 yields smaller errors, and overall, g0 performs slightly bette
 	\caption{As Figure \ref{cs-tc1-error} but using the C-grid wind given by Equation \eqref{duo-wind1}.\label{cs-tc2-error}}
 \end{figure}
 
+\newpage
 \subsection{Edges reconstruction}
 \label{cs-recon}
 Let us consider the following problem: given the values $q_{ijp}$ we wish to find 
@@ -1162,8 +1166,11 @@ We introduce the relative errors:
 	e_{ijp} &= \max\{e_{{i-\frac{1}{2}},j,p}, e_{{i+\frac{1}{2}},j,p} , e_{i,{j-\frac{1}{2}},p}, e_{i,{j+\frac{1}{2}},p} \},\\
 	E &= \max \{e_{ijp}\}.
 \end{align*}
-We are going to compute $E$ for different values of $N$ and different schemes as in the numerical experiments of Section \ref{cs-interp}.
-
+We are going to compute $E$ for different values of $N$ as in the numerical experiments of Section \ref{cs-interp}.
+We consider the kinked scheme for the grids g0.s and g2.s, and the dg2 scheme for the grids g0.s, g0.c, g2.s, and g2.c.
+The reconstruction scheme employed is hord8. We depict the errors in Figure \ref{cs-recon-error}.
+We can observe that the error for g0 is only slightly better than the error for g2.
+Also, the errors for the cube midpoint formulation and the spherical midpoint formulation are essentially the same when using dg2.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
@@ -1176,57 +1183,99 @@ We are going to compute $E$ for different values of $N$ and different schemes as
 		\includegraphics[width=1\linewidth]{hord8_recon_g2.c}
 		\caption{Error for g2.\label{cs-recon-g2}}
 	\end{subfigure}
-	\caption{As Figure \ref{cs-tc1-error} but using the C-grid wind given by Equation \eqref{duo-wind1}.\label{cs-recon-error}}
+	\caption{Relative error for the PPM reconstruction using scalar field from Equation \eqref{duo-tc1}.
+	g0 grid results are on the left, and g2 results are on the right.
+	Green lines represent g2.s with the kinked method;
+	red lines represent g2.s with dg2;
+	blue lines represent g2.c with dg2.
+	The reconstruction scheme is hord8.\label{cs-recon-error}}
 \end{figure}
 
-\section{Concluding remarks}
-\label{cs-conc}
+From Figure \ref{cs-recon-error}, we see that the dg2 method leads to second-order accuracy, while the kinked method leads to first-order accuracy.
+Since the kinked and dg2 affect hord8 only near to the cube edges, we expect that the error of the kinked  method is larger only at the corners, leading to grid imprinting.
+Indeed, in Figure \ref{recon-errors-g0}, we depict the logarithm of the error (on base 10 for plotting purposes) for the g0 grids.
+It becomes clear from Figure \ref{recon-errors-g0-s} that the kinked method leads to grid imprinting,
+while Figures \ref{recon-errors-g0-s-dg} and \ref{recon-errors-g0-c-dg} show that dg2 introduces less grid imprinting.
+Figure \ref{recon-errors-g2} shows similar results to Figure \ref{recon-errors-g0}, but considering the g2 grid instead, from which we can draw similar conclusions.
+In general, dg2 is not sensitive to changing midpoints formulation.
+Additionally, the kinked method exhibits less grid imprinting in the g0 grid (Figure \ref{recon-errors-g0-s}) than in the g2 grid (Figure \ref{recon-errors-g2-s}).
 
 \newpage
-\begin{figure}[!htb]
+\begin{figure}[!ht]
 	\centering
 	\begin{subfigure}{0.9\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{recon_g0_192.s.kinked.hord8}
-		\caption{g0 grid areas (km$^2$).}
+		\caption{g0.s with kinked. \label{recon-errors-g0-s}}
 	\end{subfigure}
 	
 	\begin{subfigure}{0.9\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{recon_g0_192.s.dg2.hord8}
-		\caption{g2 grid areas (km$^2$).}
+		\caption{g0.s with dg2.\label{recon-errors-g0-s-dg}}
 	\end{subfigure}
 	
 	\begin{subfigure}{0.9\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{recon_g0_192.c.dg2.hord8}
-		\caption{g2 grid areas (km$^2$).}
+		\caption{g0.c with dg2.\label{recon-errors-g0-c-dg}}
 	\end{subfigure}
-	\caption{Areas for the grid g0 and g2 using $N=384$.\label{cs-recon-errors-g0}}
+	\caption{The logarithm in base 10 of the errors of the C and D grid reconstruction from A-grid values of the scalar field, 
+		given by Equation \eqref{duo-tc1}, using the g0 grid with $N=192$. \label{recon-errors-g0}}
 \end{figure}
 
 \newpage
-\begin{figure}[!htb]
+\begin{figure}[!ht]
 	\centering
 	\begin{subfigure}{0.9\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{recon_g2_192.s.kinked.hord8}
-		\caption{g0 grid areas (km$^2$).}
+		\caption{g0.s with kinked. \label{recon-errors-g2-s}}
 	\end{subfigure}
 	
 	\begin{subfigure}{0.9\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{recon_g2_192.s.dg2.hord8}
-		\caption{g2 grid areas (km$^2$).}
+		\caption{g0.s with dg2.\label{recon-errors-g2-s-dg}}
 	\end{subfigure}
 	
 	\begin{subfigure}{0.9\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{recon_g2_192.c.dg2.hord8}
-		\caption{g2 grid areas (km$^2$).}
+		\caption{g0.c with dg2.\label{recon-errors-g2-c-dg}}
 	\end{subfigure}
-	\caption{Areas for the grid g0 and g2 using $N=384$.\label{cs-recon-errors-g2}}
+	\caption{As Figure \ref{recon-errors-g0} but using the g2 grid. \label{recon-errors-g2}}
 \end{figure}
 
+
+\section{Concluding remarks}
+\label{cs-conc}
+In this Chapter, we reviewed cubed-sphere mappings with a special focus on the equiangular and equi-edge mappings,
+which leads to a more uniform cubed-sphere grid, with the equiangular being the most uniform.
+The B-grid points are generated using the equiangular and equi-edge mappings;
+however, the A, C, and D grid points may be generated using the cubed-sphere mappings or using midpoints based on spherical midpoints of the B-grid points
+(Section \ref{cs-geo}).
+
+
+We observed that the equiangular cubed-sphere ghost cells, obtained by extending the gridlines, has a nice property:
+their edge and center ghost points are located on a common geodesic that contains the edge and center points of the adjacent panels. 
+This property allows us to use 1D Lagrange interpolation to obtain the values of scalar and vector fields in the ghost cells.
+The equi-edge grid does not have this property, but we may mirror some points to make its ghost cells have the same property as in the equiangular grid.
+In fact, we demonstrated the accuracy of this interpolation on the duo-grid method through numerical examples in Sections \ref{cs-interp} and \ref{cs-wind-interp}.
+We explored two ways of computing the Lagrange polynomials: one based on geodesic distance and the other based on local coordinate distances.
+Overall, the method based on local coordinate distances showed to introduce smaller errors,
+especially when using the cube midpoints formulation instead of the spherical midpoints formulation.
+
+Afterward, in Section \ref{cs-recon}, we investigated different methods for computing stencils near the cube edges.
+We considered the scheme based on 1D Lagrange interpolation and a scheme based on extrapolations from \citet{putman:2007}, which is currently implemented in FV3.
+Through numerical examples, we demonstrated that the reconstruction at cell edges using hord8 PPM scheme generates grid imprinting near
+the cubed edges when using extrapolations.
+The grid imprinting is greatly reduced when we apply the duo-grid Lagrange interpolation,
+showing that this scheme is much better for filling the ghost cells of the cube panels.
+
+One major conclusion of this Chapter is that the cube and spherical midpoints formulation have a second-order difference.
+This impacts severely the duo-grid interpolation step, where we attain the expected orders of interpolation only for the cube midpoints formulation.
+However, in the reconstruction from A-grid to C/D grid points, both formulations have essentially the same errors.
+Hence, we expect that both midpoint formulations should lead to the very similar results.
 
 
