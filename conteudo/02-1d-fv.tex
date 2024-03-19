@@ -1269,7 +1269,7 @@ error, despite the scheme having third-order accuracy in space. However, the DP2
 preserved third-order accuracy despite being only second-order accurate. We expect that, in 
 general, combining PPM with the DP2 scheme should result in at least second-order accuracy.
 The DP2 scheme also showed to lead to a more accurate result when combined with hord8, especially in the $L_1$ norm.
-
-Clearly, the DP2 scheme is more computationally expensive since it requires linear interpolation of the velocity field. One possible way to reduce 
-its cost would be to use larger CFL numbers allowed by the FV-SL schemes, as discussed in 
-Section \ref{chp-adv1d-sec-flux}.
+Clearly, the DP2 scheme is more computationally expensive since it requires linear interpolation of the velocity field, but this additional cost is minimal.
+%One possible way to reduce 
+%its cost would be to use larger CFL numbers allowed by the FV-SL schemes, as discussed in 
+%Section \ref{chp-adv1d-sec-flux}.
