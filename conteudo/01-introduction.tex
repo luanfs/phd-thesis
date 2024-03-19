@@ -15,3 +15,252 @@
 
 \section{Background}
 
+Weather and climate predictions are recognized as a good for mankind,
+due to the information they yield for diverse activities. 
+For instance, short-range forecasts are useful for public use, while
+medium-range forecasts are helpful for industrial activities and agriculture. 
+Seasonal forecasts (one up to three months) are important to energy planning and agriculture.
+At last, longer-range forecasts (one century, for instance) are useful for climate change 
+projections that are important for government planning.
+
+The first global Numerical Weather Prediction models emerged in the 1960s
+with applications to weather, seasonal and climate forecasts. 
+All these applications are essentially based on the same set of Partial Differential Equations
+(PDEs) but with distinct time scales \citep{stan:2008}. These PDEs are defined on the sphere
+and model the evolution of the atmospheric fluid given the initial conditions.
+One important component of global models is the dynamical core, which is responsible
+for solving the PDEs that governs the atmosphere dynamics on grid-scale \citep{will:2007}. 
+The development of numerical methods for dynamical cores has been an active research area since the 1960s.
+
+Global models use the sphere as the computational domain and therefore they require a discretization
+of the sphere. 
+The first global models used the latitude-longitude grid (Figure \ref{latlon-grid}), which is
+very suitable for finite-differences schemes due to its orthogonality \citep{will:2007}. The major drawback of the latitude-longitude grid
+is the clustering of points at the poles, known as the ``pole problem'', which leads to extremely
+small time steps for explicit-in-time schemes due to the Courant-Friedrichs-Lewy (CFL) condition, 
+making these schemes computationally very expensive \citep{randall:2020}.
+
+The most successful method adopted in global atmospheric dynamical cores that overcomes the CFL 
+restriction is the Semi-Implicit Semi-Lagrangian (SI-SL) scheme \citep{randall:2018}, which 
+emerged in the 1980s and consists of the Lagrangian advection scheme applied at each time-step 
+and the solution of fast gravity waves implicitly, allowing very large time steps despite the pole problem.
+The SI-SL approach combined with finite differences is still used nowadays, for instance in 
+the UK Met Office global model ENDGame \citep{wood:2014}.
+The expensive part of the  SI-SL approach is to solve an elliptic equation at each time step,
+that comes from the semi-implicit discretization, which requires global data communication,
+being inefficient to run in massive parallel supercomputers. Besides that, 
+Semi-Lagrangian schemes are inherently non-conservatives for mass,
+which is critical for climate forecasts \citep{will:2007}.
+
+\begin{figure}
+	\centering
+	\begin{subfigure}{.3\linewidth}
+		\centering
+		\includegraphics[width = \linewidth]{latlon_sphere}
+		\caption{Latitude-longitude grid}\label{latlon-grid}
+	\end{subfigure}%
+  \hspace{1em}% Space between image A and B
+\begin{subfigure}{.3\linewidth}
+	\centering
+	\includegraphics[width = \linewidth]{gnomonic_equiangular_15_sphere}
+	\caption{Cubed-sphere}\label{cs-grid}
+\end{subfigure}%
+	\hspace{2em}% Space between image B and C
+	\begin{subfigure}{.3\linewidth}
+		\centering
+		\includegraphics[width = \linewidth]{icos_pol_nopt_3_edsphere}
+		\caption{Icosahedral grid}\label{icos-grid}
+	\end{subfigure}
+	\begin{subfigure}{.3\linewidth}
+		\centering
+		\includegraphics[width = \linewidth]{icos_pol_nopt_3_edhxsphere}
+		\caption{Pentagonal/Hexagonal grid}\label{voronoi-grid}
+	\end{subfigure}
+	\begin{subfigure}{.3\linewidth}
+		\centering
+		\includegraphics[width = \linewidth]{octg_pol_nopt_4_edsphere}
+		\caption{Octahedral grid}\label{octg-grid}
+	\end{subfigure}
+	\caption{Examples of spherical grids: latitude-longitude grid (a) and grids based on Platonic solids (b)-(d).}
+\end{figure}
+
+The emergence of the Fast Fourier Transform (FFT) in the 1960s with the work from 
+\citet{cooley:1965} allowed the computation of discrete Fourier transforms with
+$N\log(N)$ complexity. 
+The viability of the usage of FFTs for solving atmospheric flows was shown by \citet{orszag:1970},
+using the barotropic vorticity equation on the sphere, and by \citet{eliasen:1970}, using
+the primitive equations.
+The spectral transform method expresses latitude-longitude grid values, that represent some scalar field,
+using truncated spherical harmonics expansions, which consists of Fourier expansions 
+in latitude circles and Legendre functions expansions in longitude circles. 
+The coefficients in the spectral expansions are known
+as spectral coefficients and are usually thought to live in the so-called spectral space.
+Given the grid values, the spectral coefficients are obtained by performing a FFT followed by a 
+Legendre Transform (LT). 
+Conversely, given the spectral coefficients,
+the grid values are obtained by performing an inverse LT followed by an inverse FFT.
+The main idea of the spectral method is to apply the spectral transform, in order to 
+go the spectral space, and evaluate spatial derivatives in the spectral space, which
+consists of multiplying the spectral coefficients by constants. 
+Then, the method performs the inverse spectral transform
+in order to get back to grid space, and the nonlinear terms are treated on the grid space
+\citep{krishnamurti:2006}.
+
+The spectral transform makes the use of SI-SL methods computationally cheap, 
+since the solution to elliptic problems becomes easy, once the spherical harmonics are
+eigenfunctions of the Laplacian operator on the sphere.
+Therefore, the spectral transform method gets faster when combined with the SI-SL approach
+due to the larger times-steps allowed in this case.
+Due to these enhancements, the spectral transform dominated global atmospheric modeling 
+\citep{randall:2018} since the 1980s.
+Indeed, the spectral method is still used in many current operational Weather Forecasting models such as
+the Integrated Forecast System (IFS) from  European Centre for Medium-Range Weather Forecasts (ECMWF),
+Global Forecast System (GFS) from National Centers for Environmental Prediction (NCEP) and the
+Brazilian Global Atmospheric Model (BAM) \citep{figueroa:2016} from  Center for Weather Forecasting 
+and Climate Research [Centro de Previsão de Tempo e Estudos Climáticos (CPTEC)].
+
+With the beginning of the multicore era in the 1990s, the global atmospheric models
+started to move towards parallel efficiency aiming to run at very high resolutions. 
+Even though the spectral transform expansions have a global data dependency, some parallelization
+is feasible among all the computations of FFTs, LTs and their inverses \citep{barros:1995}.
+However, the parallelization of the spectral method requires data transpositions in order
+to compute FFTs and LTs in parallel.  
+These transpositions demand a lot of global communication using, for instance,
+the Message Passing Interface (MPI) \citep{zheng:2018}. 
+Indeed, the spectral transform becomes the most expensive component of global spectral models
+when the resolution is increased due to the amount of MPI communications \citep{mueller:2019}.
+
+The adiabatic and frictionless continuous equations that govern the atmospheric flow have 
+conserved quantities. Among them, some of the most important are mass, total energy, 
+angular momentum and potential vorticity \citep{thuburn:2011}.
+Numerical schemes that are known for having discrete analogous of these conservative properties
+are known as mimetic schemes.
+As we pointed out, Semi-Lagrangian schemes lack mass conservation. Nevertheless, 
+these schemes have been employed in dynamical cores for better computational performance.
+However, dynamical cores should have discrete analogous of the 
+continuous conserved quantities, especially concerning for longer simulation runs.
+
+Aiming for better performance in massively parallel computers and conservation properties, 
+new dynamical cores have been developed since the beginning of the 2000s.
+Novel spherical grids have been proposed, in order to avoid the pole problem.
+A popular choice are grids based on Platonic solids \citep{stan:2012}.
+The construction of these grids relies on a Platonic circumscribed on the sphere and 
+the projection of its faces onto the sphere, which leads to quasi-uniform and more isotropic
+spherical grids.
+Some examples of spherical grids based on Platonic solids employed in the new generation
+of dynamical cores are the cubed-sphere (Figure \ref{cs-grid}), icosahedral grid (Figure \ref{icos-grid}), 
+the pentagonal/hexagonal or Voronoi grid (Figure \ref{voronoi-grid}) and octahedral grid (Figure \ref{octg-grid}),
+which are based on the cube, icosahedron, dodecahedron and octahedron, respectively \citep{ullrich:2017}.
+
+\section{Motivations and the FV3 model}
+The cubed-sphere became a popular quasi-uniform grid for the new generation of dynamical cores.
+It was originally proposed by \citet{sadourny:1972} and it was revisited by \citet{ronchi:1996}.
+Some of the cubed-sphere advantages are: uniformity; quadrilateral structure, 
+making the grid indexing trivial; no overlappings; it is cheap to generate.
+However, the major drawbacks of the cubed-sphere are: non-orthogonal coordinate system, which
+leads to metric terms on the differential operators; discontinuity of the coordinate system
+at the cube edges, which may generate numerical noise and
+demands special treatment of discrete operators at the cube edges.
+
+Despite of its drawbacks, the cubed-sphere has been adopted in some of the new generation
+dynamical cores.
+For instance, the cubed-sphere is used in the 
+Community Atmosphere Model (CAM-SE) from the NCAR using spectral elements \citep{dennis:2012} and in the
+Nonhydrostatic Unified Model of the Atmosphere (NUMA) from the US Navy using Discontinuous Galerkin 
+methods \citep{giraldo:2013}. The cubed-sphere was also chosen to be used in the next UK Met Office
+global model using mixed finite elements \citep{melvin:2022}.
+At last, the Finite­ Volume Cubed-Sphere dynamical core (FV3) from the Geophysical Fluid 
+Dynamics Laboratory (GFDL) and the National Oceanic and Atmospheric Administration (NOAA)
+\citep{putman:2007,harris:2013} is another example
+of new generation dynamical core based on the cubed-sphere.
+
+The FV3 dynamical core is an extension of the Finite-Volume dynamical core (FVcore)
+from latitude-longitude grids to the cubed-sphere.
+The numerical methods from FVcore started to be developed with the transport scheme from the work \citet{lin:1994},
+which is based on the piecewise linear scheme from \citet{vanleer:1977}. 
+This scheme was later improved, using the Piecewise Parabolic Method (PPM) \citep{colella:1984, carpenter:1990}
+using dimension splitting techniques that guarantee monotonicity and mass conservation,
+for the transport equation \citep{lin:1996} and the shallow-water equations \citep{lin:1997}. 
+An important feature is that the FVcore combines the  Arakawa C- and D-grids \citep{arakawa:1977},
+where the C-grid values are computed in and intermediate time step. 
+The full global model was then presented by \citet{lin:2004}.
+
+A computational disadvantage of the FVcore is its Semi-Lagrangian formulation that creates more demand
+for MPI communication when computing the accumulated fluxes \citep{lin:1996}.
+The FVcore was then adapted to the cubed-sphere grid \citep{putmanthesis:2007, putman:2007}, 
+to reach better performance in parallel computers, leading to the FV3 model.
+Later, the FV3 also was improved to allow locally refinement grids 
+through grid-nesting or grid-stretching \citep{harris:2013}.
+Currently, the FV3 model is capable of perfoming hydrostatic and non-hydrostatic atmospheric simulations 
+and it was chosen as the new US global weather prediction model, indeed, it replaced the spectral transform
+Global Forecast System (GFS) in June, 2019
+(\url{https://www.noaa.gov/media-release/noaa-upgrades-us-global-weather-forecast-model}, last access: 19th of March, 2024).
+
+
+The FV3 dynamical core is also employed in the GEOS Chem model \citep{martin:2022} from Harvard University,
+aimed at aerosols,
+in NASA’s next-generation Mars Climate Model \citep{wilson:2022},
+and also the model SHiELD from GFDL \citep{harris:2020}.
+
+However, a well-known problem that occurs on cubed-sphere models that use low-order numerical methods
+is the grid imprinting visible due to the coordinate system discontinuity, 
+especially at larger scales, leading to the emergence of a wavenumber 4 pattern.
+This was reported in the paper of \citet{rancic:2017}, where the authors employ a 
+finite-difference numerical scheme on the Uniform Jacobian cubed-sphere using a Arakawa B-grid.
+The unpublished report from \citet{whitaker:2015} shows grid imprinting in other models, including 
+the FV3.
+More recently, \citet{mouallem:2023} has shown some idealized simulations using FV3 where grid imprinting appears in many simulations.
+
+Generally speaking, grid imprinting is the presence of artificial behaviors on 
+the numerical solution that is associated with the grid employed.
+It is important to stress out that other quasi-uniform grids may also suffer from grid imprinting.
+For instance, a popular mimetic method, known as TRiSK, was proposed in the literature by
+\citet{thuburn:2009} and \citet{ringler:2010} using finite difference and finite volume schemes.
+This scheme is designed for general orthogonal grids, such as the Voronoi and icosahedral grids,
+and ensures mass and total energy conservation.
+This method has been employed in the dynamical core of the Model for Prediction Across Scales (MPAS)
+from National Center for Atmospheric Research (NCAR) \citep{skamarock:2012}, 
+which intended to work on general Voronoi grids, including locally refined Voronoi grids.
+However, the TRiSK scheme is a low-order scheme and also suffers from grid imprinting, \textit{i.e.},
+geometric properties of the grid, such as cell alignment, interfere with the method accuracy
+\citep{weller:2012, peixoto:2013, peixoto:2016}.
+
+Despite being chosen as the new US global weather prediction model,
+there is a lack of numerical studies of the FV3 discretizations in the literature,
+especially regarding the grid imprinting problem and its mimetic properties.
+Numerical results for the advection equation on the cubed-sphere using the
+FV3 dynamical core was presented in \citet{putman:2007} and some shallow-water 
+simulations were presented in \citet{harris:2013}, considering cubed-spheres
+with local refinement through grid nesting.
+From the work \citet{harris:2013} we can notice that the FV3 dynamical
+lack convergence on the maximum norm for the shallow-water model considering
+the classical balanced geostrophic flow test case from \citet{will:1992}.
+The authors attribute these errors to the abrupt change in the grid resolution
+near the nested grid, but no quantitative results are shown considering the quasi-uniform grid.
+Many other papers available in the literature use the complete FV3 model in three-dimensional
+frameworks which make it harder to perform a numerical analysis study due not only to its computational cost
+but also due to the complexity of three-dimensional atmospheric models.
+There are no detailed works published in intermediate two-dimensional frameworks, using, for 
+instance, the shallow-water equations on the sphere.
+Even though the advection equation on the sphere plays a key role in the dynamical core development,
+since it models the transport of scalar fields on the sphere, important features captured by the shallow-water
+equations on the sphere, such as the Coriolis effect, inertia-gravity waves, geostrophic adjustment, Rossby waves,
+among others, are not captured by a simple advection model.
+Hence, shallow-water equations provide an excellent benchmark to assess dynamical cores in general,
+since it is only two-dimensional but is a complex enough geophysical model for atmosphere dynamics.
+
+\section{Outline}
+This thesis is outlined as follows.
+\begin{itemize}
+\item Chapter \ref{chp-1d-fv} is dedicated to review the Piecewise Parabolic Method (PPM)
+for the one-dimensional advection equation. 
+\item Chapter \ref{chp-2d-fv} reviews the dimension splitting method, which allow us to use 
+one-dimensional methods, such as the PPM, to solve the two-dimensional advection equation.
+\item Chapter \ref{chp-cs-grids} introduces the cubed-sphere grid and shows how we can compute stencils
+near to the cubed-edges using 1D Lagrange interpolation through the duogrid technique.
+\item Chapter \ref{chp-cs-fv} extends the ideas of Chapter \ref{chp-2d-fv} to the cubed-sphere grid.
+The dimension-splitting method on each cubed-sphere panel works as in the plane, with the addition
+of metric terms, due to non-orthogonality of the grid, and interpolation between panels
+to obtain ghost cells values needed for stencil computations.
+\end{itemize}
+We give some future work perspectives in Chapter \ref{chp-conclusions}.
