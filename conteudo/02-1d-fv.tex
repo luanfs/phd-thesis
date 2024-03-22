@@ -473,7 +473,7 @@ entire interval $[t^n, t^{n+1}]$. This is described in Problem \ref{chp-adv1d-se
 	\begin{split}
 {Q}_i(t^{n+1}) =  {Q}_i(t^{n}) -
 \lambda
-\bigg( \frac{1}{\Delta t}\int_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})}^{x_{i+\frac{1}{2}}}{q}(x, t^n) \,dx-
+\bigg( \frac{1}{\Delta t}\int_{x_{i+\frac{1}{2}}^d(t^n,t^{n+1})}^{x_{i+\frac{1}{2}}}{q}(x, t^n) \,dx-
 \frac{1}{\Delta t} \int_{x_{i-\frac{1}{2}}^d(t^n,t^{n+1})}^{x_{i-\frac{1}{2}}}{q}(x, t^n) \,dx \bigg),\\
 \quad \forall i = 1, \ldots, N,
 \quad \forall n = 0, \ldots, N_T-1,
@@ -489,7 +489,7 @@ entire interval $[t^n, t^{n+1}]$. This is described in Problem \ref{chp-adv1d-se
 \end{prob}
 At each time step $t^n$, we compute the values of ${Q}_i(t^{n+1})$ based on ${Q}_i(t^{n})$ and the integrals 
 of $q(x, t^n)$ over specific intervals. These intervals are defined by the departure points 
-$X(t^n, t^{n+1}; x_{i+\frac{1}{2}})$ and $X(t^n, t^{n+1}; x_{i-\frac{1}{2}})$.
+$x_{i+\frac{1}{2}}^d(t^n,t^{n+1})$ and $x_{i-\frac{1}{2}}^d(t^n,t^{n+1})$.
 To perform the computations, we need to determine the departure points from the edges of all control volumes
 and calculate the required integrals. This idea serves as the motivation for defining finite-volume 
 Semi-Lagrangian schemes. These schemes involve estimating the departure points and reconstructing the 

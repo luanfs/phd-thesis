@@ -191,16 +191,13 @@ The FVcore was then adapted to the cubed-sphere grid \citep{putmanthesis:2007, p
 to reach better performance in parallel computers, leading to the FV3 model.
 Later, the FV3 also was improved to allow locally refinement grids 
 through grid-nesting or grid-stretching \citep{harris:2013}.
+
 Currently, the FV3 model is capable of perfoming hydrostatic and non-hydrostatic atmospheric simulations 
 and it was chosen as the new US global weather prediction model, indeed, it replaced the spectral transform
 Global Forecast System (GFS) in June, 2019
 (\url{https://www.noaa.gov/media-release/noaa-upgrades-us-global-weather-forecast-model}, last access: 19th of March, 2024).
-
-
-The FV3 dynamical core is also employed in the GEOS Chem model \citep{martin:2022} from Harvard University,
-aimed at aerosols,
-in NASA’s next-generation Mars Climate Model \citep{wilson:2022},
-and also the model SHiELD from GFDL \citep{harris:2020}.
+Additionally, the FV3 dynamical core is employed in the GEOS Chem model \citep{martin:2022} from Harvard University, 
+in NASA’s next-generation Mars Climate Model \citep{wilson:2022}, and also in the SHiELD model from GFDL \citep{harris:2020}.
 
 However, a well-known problem that occurs on cubed-sphere models that use low-order numerical methods
 is the grid imprinting visible due to the coordinate system discontinuity, 
@@ -249,11 +246,15 @@ among others, are not captured by a simple advection model.
 Hence, shallow-water equations provide an excellent benchmark to assess dynamical cores in general,
 since it is only two-dimensional but is a complex enough geophysical model for atmosphere dynamics.
 
-\section{Outline}
+\section{Outline and contributions}
 This thesis is outlined as follows.
 \begin{itemize}
 \item Chapter \ref{chp-1d-fv} is dedicated to review the Piecewise Parabolic Method (PPM)
 for the one-dimensional advection equation. 
+In this Chapter, we demonstrate how the temporal component of this PPM can be expressed as a departure point calculation.
+Subsequently, we enhance the departure point calculation from first order (which is utilized in FV3) to second order.
+This enhancement results in a significant improvement, particularly in non-constant wind simulations.
+The additional cost is only due to linear interpolation, which has little impact on the overall performance.
 \item Chapter \ref{chp-2d-fv} reviews the dimension splitting method, which allow us to use 
 one-dimensional methods, such as the PPM, to solve the two-dimensional advection equation.
 \item Chapter \ref{chp-cs-grids} introduces the cubed-sphere grid and shows how we can compute stencils
