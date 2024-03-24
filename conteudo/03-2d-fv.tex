@@ -193,6 +193,7 @@ In summary, $\mathcal{S}_P(\Omega)$ represents the space of periodic functions, 
 represents the space of $k$-times periodically differentiable functions over $\Omega$ subject to periodic boundary conditions.
 
 \subsection{The 2D advection equation}
+\label{chp-adv2d-sec1}
 Let us consider a  velocity field given by $\boldsymbol{u}=(u,v)$, where
 $u$ is the velocity in $x$-direction and $v$ is the velocity in $x$ and $y$ direction
 and $u,v \in \mathcal{C}^1_P(\Omega)$.
@@ -527,6 +528,7 @@ the average Lie-Trotter splitting allows for a modification that eliminates a sp
 arising from considering a constant scalar field and non-divergent velocity \citep{lin:1996}.
 
 \subsection{Lie-Trotter splitting using PPM}
+\label{lit-trotter-sp}
 To move towards the scheme from \citet{lin:1996}, let us consider Problem \ref{chp-adv2d-sec2-prob1} in its differential form (Equation \eqref{sec-adv2d:eq1}).
 We are going to consider $N+2\nu$ one-dimensional advection equations in the $x$-direction:
 \begin{equation*}
@@ -714,6 +716,7 @@ This scheme shall be referred to in this work as the average Lie-Trotter (\textb
 Finally, we point out that this scheme could be built using any other 1D numerical flux function, 
 but we focus on PPM since this is what is used in FV3.
 \subsection{Elimination of splitting error for a constant scalar field and non-divergent wind}
+\label{sp-error}
 Let us, for an instant, assume that $\mathbf{F}$ and $\mathbf{G}$ are linear in their first input. This implies that Equation \eqref{chp-adv2d-LT} may be rewritten as:
 \begin{align}
 \label{chp-adv2d-LT-linear}

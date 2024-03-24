@@ -229,7 +229,7 @@ $\forall (x,y) \in [-1,1]\times[-1,1]$.
 The Jacobian of the metric tensor $G_{\boldsymbol{\Psi}}(x,y)$, denoted by $\sqrt{\mathfrak{g}_{\boldsymbol{\Psi}}}$ and called metric term, is then given by:
 \begin{equation*}
         \sqrt{\mathfrak{g}_{\boldsymbol{\Psi}}}(x,y) :=
-	\sqrt{|\det{G_{\boldsymbol{\Psi}}(x,y)}|} = \frac{R^2}{(1+x^2+y^2)^{3/2}}.
+	\sqrt{|\det{G_{\boldsymbol{\Psi}}(x,y)}|} = \frac{R^2}{(1+x^2+y^2)^{3/2}},
 \end{equation*}
 Now let us assume that we have a function $\beta:[-\alpha,\alpha] \to [-1,1]$, for some positive $\alpha>0$,
 supposed to be bijective and $\mathcal{C}^1$ with inverse $\mathcal{C}^1$ as well.
@@ -263,8 +263,21 @@ The metric tensor of $\boldsymbol{\Phi}_p$ is defined as $G_{\Psi}$ in Equation 
 Finally, the metric term $\sqrt{\mathfrak{g}}:= \sqrt{\det{G}}$ is expressed in terms of $\sqrt{\mathfrak{g}}_{\Psi}$ as
 \begin{align*}
     \sqrt{\mathfrak{g}}(x,y) &= \beta'(x)\beta'(y)\sqrt{\mathfrak{g}}_{\Psi}\big(\beta(x),\beta(y)\big)\\
-    &= \beta'(x)\beta'(y)\frac{R^2}{\big(1+\beta(x)^2+\beta(y)^2\big)^{3/2}}.
+    &= \beta'(x)\beta'(y)\frac{R^2}{\big(1+\beta(x)^2+\beta(y)^2\big)^{3/2}},
 \end{align*}
+which may also be expressed as
+\begin{equation}
+	\label{mt-sina}
+	\sqrt{\mathfrak{g}}(x,y) =	
+\|\partial_x  \boldsymbol{\Phi}_p \| \|\partial_y  \boldsymbol{\Phi}_p \| \sin \alpha(x,y,p),
+\end{equation}
+where $\alpha$ is the angle between $\partial_x \boldsymbol{\Phi}_p$ and $\partial_y \boldsymbol{\Phi}_p$ that
+satisfies
+\begin{equation*}
+	\label{mt-cosa}
+\cos{\alpha(x,y,p)} = \frac{\langle  {\partial_x  \boldsymbol{\Phi}_p}, {\partial_x \boldsymbol{\Phi}_p} \rangle }
+{\|\partial_x \boldsymbol{\Phi}_p\|  \|\partial_y \boldsymbol{\Phi}_p\|}.
+\end{equation*}
 
 \newpage
 \section{Cubed-sphere grids}
@@ -561,6 +574,7 @@ it impacts ghost cell interpolation accuracy, as we shall see in Section \ref{cs
 Hereafter, we are going to omit the superscripts 's' and 'c'.
 Finally, we introduce the following geodesic distances in $x$ and $y$ directions, respectively,
 \begin{align}
+	\label{distcube}
 	{\delta} x_{ij} &= d(\Phi_{i+\frac{1}{2},j,p},\Phi_{i-\frac{1}{2},j,p}) ,\\
 	{\delta} y_{ij} &= d(\Phi_{i,j+\frac{1}{2},p},\Phi_{i,j-\frac{1}{2},p}),
 \end{align}
@@ -577,6 +591,7 @@ These distances may be represented in terms of the tangent vector norms as:
 \end{align}
 Hence, their midpoint approximations are defined as:
 \begin{align}
+	\label{distcube2}
 	\hat{\delta} x_{ij} &= \|\partial_x \mathbf{\Phi}_{ijp} \|\Delta x,\\
 	\hat{\delta} y_{ij} &= \|\partial_y \mathbf{\Phi}_{ijp} \|\Delta y,
 \end{align}
@@ -896,10 +911,11 @@ We also utilize the notation $\mathcal{CS}_N=\mathbb{R}^{(N+\nu)\times(N+\nu)\ti
 to represent grid functions on the cubed-sphere at cell centers.
 We define the average values of a function $q$ with the aid of the metric term
 $\sqrt{\mathfrak{g}}(x,y)$ at time $t$: 
-\begin{equation*}
+\begin{equation}
+	\label{qav-sphere}
 	Q_{ijp}(t) = \frac{1}{|\Omega_{ij}|}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
 	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}  q(x,y,p,t) {\sqrt{\mathfrak{g}}(x,y)}\,dx \,dy.
-\end{equation*}
+\end{equation}
 Let us assume we have a function $q:\mathbb{S}^2_R\times[0,T] \to \mathbb{R}$, 
 and we have a $(\Delta x, \Delta y, \Delta t, \lambda)$-discretization of $\Omega \times [0,T]$.
 We introduce $q^n \in \mathcal{CS}^N$, which represents the grid function $q$
@@ -1026,7 +1042,7 @@ Green lines represent dg1, and red lines represent dg2.\label{cs-tc1-error}}
 \subsection{Ghost cells wind interpolation}
 \label{cs-wind-interp}
 Let us consider the following problem: Assume that we are given a tangent vector field of the sphere, denoted as 
-$\boldsymbol{u}:\mathbb{S}^2_R \to \mathbb{R}^3$. We also have its normal covariant components at the C and D grid points, namely $u_{i+\frac{1}{2},j,p}$ for $i=0, \ldots, N$ and $j=1, \ldots, N$, as well as
+$\boldsymbol{u}:\mathbb{S}^2_R \to \mathbb{R}^3$. We also have its normalized covariant components at the C and D grid points, namely $u_{i+\frac{1}{2},j,p}$ for $i=0, \ldots, N$ and $j=1, \ldots, N$, as well as
 $v_{i,j+\frac{1}{2},p}$ for $i=1, \ldots, N$ and $j=0, \ldots, N$. This grid function is called C-grid wind (Figure \ref{cs-duovec-1}).
 
 Our objective is to obtain the values 
