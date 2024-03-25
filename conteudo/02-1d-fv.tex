@@ -689,6 +689,7 @@ Notice that for this scheme, we need ghost values for the velocity, depending on
 In particular, if the CFL number is less than 2, then $k=0$ and we need the ghost values $u_{-1+\frac{1}{2}}^n$ and $u_{N+\frac{3}{2}}^n$.
 In this case, it useful to work with the time-averaged CFL number:
 \begin{equation}
+	\label{cfl-dp2}
 	\tilde{c}^n_{i+\frac{1}{2}} =
 	\begin{cases}
 		\bigg(1-\frac{c_{i+\frac{1}{2}}^n}{2} \bigg)c^{n+\frac{1}{2}}_{i+\frac{1}{2}} +
