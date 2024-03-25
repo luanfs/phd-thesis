@@ -194,6 +194,7 @@ In this Section, we will utilize the dimension splitting method described in Sec
 To facilitate notation, we shall omit the index $p$ whenever it may appear in this Section, as what is described here does not depend on $p$.
 Also, the ghost cell values are assumed to be filled using the duo-grid interpolation.
 \subsection{PPM and the metric term}
+\label{sec-metricppm}
 Recall that the dimension splitting technique requires the numerical solution of advection in the $x$ and $y$ directions for separability.
 For instance, in the case of the advection equation on the cubed-sphere (Equation \eqref{eq2-adv-cs}), we need to solve the following equations in the $x$ direction:
 \begin{equation}
@@ -210,7 +211,7 @@ the solution of the desired problem using an general 1D FV-SL scheme as discusse
 \begin{equation}
 	\label{1d-qx}
 	q^{x,n+1}_{ij} = q^{n}_{ij}  - \frac{\Delta t}{\sqrt{\mathfrak{g}_{ij}}\Delta x}
-	\bigg[{F}_{i+\frac{1}{2}}
+	\bigg[{F}_{i+\frac{1}{2},j}
 	\big({q}^{n}; \tilde{c}^{x,n}_{i+\frac{1}{2},j}\big) - 
 	{F}_{i-\frac{1}{2},j}
 	\big({q}^{n}; \tilde{c}^{x,n}_{i-\frac{1}{2},j}\big)\bigg],
@@ -253,6 +254,8 @@ This occurs because when we use mt1, we have
 assuming that the departure point is computed using the DP1 method for the departure point calculation (as discussed in Section \ref{sp-error}).
 The property from Equation \eqref{mt1-flux2} does not occur for mt0.
 
+\subsection{The 2D scheme on each cube panel}
+\label{sec-splittingcs}
 For a CS-grid function $\psi \in \mathcal{CS}_N$
 we introduce the following PPM flux in the $x$ direction (recall Equation \eqref{chp-sec-flux:numerical-flux8})
 \begin{align}
@@ -260,13 +263,13 @@ we introduce the following PPM flux in the $x$ direction (recall Equation \eqref
 	\mathfrak{F}_{i+\frac{1}{2},j}^{PPM,x} [{{\psi}^n;\tilde{c}^{x,n}_{i+\frac{1}{2},j}}]= %\tilde{u}^{n}_{i+\frac{1}{2},j}\times
 	\begin{cases}
 		{\psi}_{i-1,j}^{n}+(1-\tilde{c}_{i+\frac{1}{2}}^{x,n})
-		(b^L_{i,j}-\tilde{c}_{i+\frac{1}{2},j}^{x,n})
-		(b^L_{i,j}+b^R_{ij}),
+		(b^L_{ij}-\tilde{c}_{i+\frac{1}{2},j}^{x,n})
+		(b^L_{ij}+b^R_{ij}),
 		\quad &\text{if} \quad \tilde{c}_{i+\frac{1}{2},j}^{x,n}>0,\\
 		{\psi}_{ij}^{n}+(1+\tilde{c}_{i+\frac{1}{2},j}^{x,n})
 		(b^L_{i+1,j}+\tilde{c}_{i+\frac{1}{2},j}^{x,n})
 		(b^L_{i+1,j}+b^R_{i+1,j}),
-		\quad &\text{if} \quad \tilde{c}_{i+\frac{1}{2},j}^{x,n}\leq0,
+		\quad &\text{if} \quad \tilde{c}_{i+\frac{1}{2},j}^{x,n}\leq0.
 	\end{cases}
 \end{align}
 for each $j=-\nu+1, \ldots, N+\nu$ and $i=1, \ldots, N$, and
@@ -301,7 +304,7 @@ and the PPM fluxes are
 \begin{align}
 	\mathfrak{F}_{i+\frac{1}{2},j}^x [{{q}^n;\tilde{c}^{x,n}_{i,j+\frac{1}{2}}}] = 
 	\begin{cases}
-		\mathfrak{F}_{i+\frac{1}{2},j}^{PPM,x}[{{\sqrt{g}q}^n;\tilde{c}^{x,n}_{i+\frac{1}{2},j}}]
+		\mathfrak{F}_{i+\frac{1}{2},j}^{PPM,x}[{{\sqrt{\mathfrak{g}}q}^n;\tilde{c}^{x,n}_{i+\frac{1}{2},j}}]
 		\quad &\text{for mt0},\\
 		\mathfrak{F}_{i+\frac{1}{2},j}^{PPM,x}[{{q}^n;\tilde{c}^{x,n}_{i+\frac{1}{2},j}}]
 		\quad &\text{for mt1}.
@@ -309,7 +312,7 @@ and the PPM fluxes are
 \end{align}
 Similarly, we may derive a scheme to solve Equation \eqref{eq2-adv-cs} in the $y$ direction as
 \begin{equation}
-	q^{x,n+1}_{ij} = q^{n}_{ij} + \mathbf{G}_{ij}[{q^n,\tilde{c}^{x,n}}],
+	q^{y,n+1}_{ij} = q^{n}_{ij} + \mathbf{G}_{ij}[{q^n,\tilde{c}^{x,n}}],
 \end{equation}
 for $i=-\nu+1, \ldots, N + \nu$  $j=1, \ldots, N$.
 \begin{align*}
@@ -326,54 +329,93 @@ and
 		\sin{\alpha_{i,j+\frac{1}{2}}}
 		{\tilde{c}}_{i,j+\frac{1}{2}}^{y,n},
 		\quad &\text{for mt0},\\
-		{\Delta x}{\Delta y}{\tilde{c}}_{i,j+\frac{1}{2}}^{y,n}
-		\quad &\text{for mt1}
+		{\Delta x}{\Delta y}{\tilde{c}}_{i,j+\frac{1}{2}}^{y,n},
+		\quad &\text{for mt1},
 	\end{cases}
 \end{align}
 and the PPM fluxes are
 \begin{align}
 	\mathfrak{F}_{i,j+\frac{1}{2}} ({{q}^n;\tilde{c}^{y,n}_{i,j+\frac{1}{2}}})= 
 	\begin{cases}
-		\mathfrak{F}_{i,j+\frac{1}{2}}^{PPM,y}({{\sqrt{g}q}^n;\tilde{c}^{y,n}_{i,j+\frac{1}{2}}})
+		\mathfrak{F}_{i,j+\frac{1}{2}}^{PPM,y}({{\sqrt{\mathfrak{g}}q}^n;\tilde{c}^{y,n}_{i,j+\frac{1}{2}}})
 		\quad &\text{for mt0},\\
 		\mathfrak{F}_{i+\frac{1}{2},j}^{PPM,y}({{q}^n;\tilde{c}^{y,n}_{i,j+\frac{1}{2}}})
 		\quad &\text{for mt1}.
 	\end{cases}
 \end{align}
+In FV3, the terms ${\hat{\delta} x_{ij}}$ and ${\hat{\delta} y_{ij}}$ and $|\hat{\Omega}_{ij}|$ (for integers or half integers $i$ and $j$)
+are replaced by ${{\delta} x_{ij}}$, ${{\delta} y_{ij}}$ and $|\hat{\Omega}_{ij}|$,
+which represent the geodesic distances and areas (Section \ref{cs-geo}).
+\begin{table}[!h]
+	\begin{tabular}{|c|l|l|}
+		\hline
+		Scheme & \multicolumn{1}{c|}{$\mathbf{f}_{ij}(q^n, \tilde{c}^{x,n})$}
+		& \multicolumn{1}{c|}{$\mathbf{g}_{ij}(q^n, \tilde{c}^{y,n})$} \\ \hline
+		LT   & $\mathbf{F}_{ij}(q^n,\tilde{c}^{x,n})$ 
+		& $\mathbf{G}_{ij}(q^n,\tilde{c}^{y,n})$ \\ \hline
+		PL   & $-q_{ij}^n +
+		\frac{q_{ij}^n  + \mathbf{F}_{ij}(q^n,\tilde{c}^{x,n})}
+		{1 - \frac{1}{|\hat{\Omega}_{ij}|}\big(\mathcal{A}_{i+\frac{1}{2},j}^{x} - \mathcal{A}_{i-\frac{1}{2},j}^{x}\big)}$
+		& $-q_{ij}^n +
+		\frac{q_{ij}^n  + \mathbf{G}_{ij}(q^n,\tilde{c}^{y,n})}
+		{1 - \frac{1}{|\hat{\Omega}_{ij}|}\ \big(\mathcal{A}_{i,j+\frac{1}{2}}^{y} - \mathcal{A}_{i,j-\frac{1}{2}}^{y}\big)}$
+		\\ \hline
+	\end{tabular}
+	\caption{Expression of the inner advective operators considered in this work.
+		LT stands for the average Lie-Trotter  scheme, while PL stands for the scheme from \citet{putman:2007}.}
+	\label{chp-csfv-tab1}
+\end{table}
 
-We recall the advection equation on a cubed-sphere panel is just an advection on the plane with a metric.
-Then, from Section, we 
-
+Following the same discussion of Sections \ref{lit-trotter-sp} and  \ref{sp-error}, we may combine the operators $\mathbf{F}$ and $\mathbf{G}$ and
+obtain the following scheme to update the cell centered values:
 \begin{align}
+	\label{q-split}
 	q^{n+1} = q^n &+ \frac{1}{2}\mathbf{F}[q^n,\tilde{c}^{x,n}] + \frac{1}{2}\mathbf{G}[q^n,\tilde{c}^{y,n}]\nonumber \\
 	&+\frac{1}{2}\mathbf{F}\bigg[q^n + \mathbf{g}[q^n, \tilde{c}^{y,n}], \tilde{c}^{x,n}\bigg]+
 	\frac{1}{2}\mathbf{G}\bigg[q^n + \mathbf{f}[q^n, \tilde{c}^{x,n}], \tilde{c}^{y,n}\bigg],
 \end{align}
-We start by introducing the CFL number as follows (recall the wind formulation in Section \ref{anexo-sph-ll}):
-\begin{align*}
+where the inner advection operators $\mathbf{f}$ and $\mathbf{g}$ are given in Table \ref{chp-csfv-tab1}.
+
+\subsection{The upwind CFL number}
+\label{sec-cfl}
+When using the DP2 scheme (Section \ref{chp-adv1d-sec-DP2}), we define the CFL number as (recall the wind formulation in Section \ref{anexo-sph-ll}):
+\begin{align}
+	\label{cfl_dp2-x}
 	{c}_{i+\frac{1}{2},j}^{x,n} = {\mathfrak{u}}_{i+\frac{1}{2},j,p}^{x,n}\frac{\Delta t}{\Delta x}
 	= {{u}}_{i+\frac{1}{2},j}^{x,n}\frac{\Delta t}{\hat{\delta} x_{i+\frac{1}{2},j}},\\
+	\label{cfl_dp2-y}
 	{c}_{i,j+\frac{1}{2}}^{y,n} = {\mathfrak{v}}_{i,j+\frac{1}{2},p}^{y,n}\frac{\Delta t}{\Delta y}
-	= {{v}}_{i,j+\frac{1}{2}}^{y,n}\frac{\Delta t}{\hat{\delta} y_{i,j+\frac{1}{2}}}.\\
-\end{align*}
-In FV3, the terms ${\hat{\delta} x_{ij}}$ and ${\hat{\delta} y_{ij}}$ and $|\hat{\Omega}_{ij}|$ (for integers of half integers $i$ and $j$)
-are replaced by ${{\delta} x_{ij}}$, ${{\delta} y_{ij}}$ and $|\hat{\Omega}_{ij}|$,
-which represent the geodesic distances and areas (Section \ref{cs-geo}).
-
-The discrete divergence is then obtained as:
-\begin{equation}
-	\label{eqdiv-split}
-	\mathbb{D}^n_{ijp} = -\frac{1}{\Delta t}
-	\bigg[
-	\mathbf{F}_{ijp}\bigg(Q^n + \frac{1}{2}\mathbf{g}(Q^n,\tilde{v}^n), \tilde{u}^n \bigg) 
-	+\mathbf{G}_{ijp}\bigg(Q^n + \frac{1}{2}\mathbf{f}(Q^n,\tilde{u}^n), \tilde{v}^n \bigg) \bigg],
-\end{equation}
-where the inner advective operators $\mathbf{f}$ and $\mathbf{g}$ are given in Table \ref{chp3-tab1}.
-
-Now, our objective is to describe the 1D fluxes ${F}_{i+\frac{1}{2},j,p}^n$ and ${G}_{i,j+\frac{1}{2},p}^n$. 
-It is important to note that these fluxes depend on the edge treatment, as well as the computation of stencils
-and metric tensor treatment, as we will see in the following section.
-
+	= {{v}}_{i,j+\frac{1}{2}}^{y,n}\frac{\Delta t}{\hat{\delta} y_{i,j+\frac{1}{2}}}.
+\end{align}
+Therefore, the time-averaged CFL numbers may be computed using Equation \eqref{cfl-dp2}.
+The current implementation of FV3 and the advection schemes from \citet{lin:2004} and \citet{putman:2007}
+uses the DP1 scheme (Section \ref{chp-adv1d-sec-DP1}) and the following upwind CFL number introduced in \citet{lin:1994}:
+\begin{align}
+	\label{cfl_dp1-x}
+{c}_{i+\frac{1}{2},j}^{x,n} =
+	\begin{cases}
+        {{u}}_{i+\frac{1}{2},j}^{x,n}\frac{\Delta t}{\hat{\delta} x_{ij}},
+        \quad &\text{if }{{{u}}_{i+\frac{1}{2},j}^{x,n} < 0},\\
+         {{u}}_{i+\frac{1}{2},j}^{x,n}\frac{\Delta t}{\hat{\delta} x_{i+1,j}},
+	 	\quad &\text{if }{{{u}}_{i+\frac{1}{2},j}^{x,n} < 0},
+	\end{cases}
+\end{align}
+\begin{align}
+	\label{cfl_dp1-y}
+	{c}_{i,j+\frac{1}{2}}^{y,n} =
+	\begin{cases}
+		{{v}}_{i,j+\frac{1}{2}}^{x,n}\frac{\Delta t}{\hat{\delta} y_{ij}},
+		\quad &\text{if }{{{v}}_{i,j+\frac{1}{2}}^{y,n} < 0},\\
+		{{v}}_{i,j+\frac{1}{2}}^{x,n}\frac{\Delta t}{\hat{\delta} y_{i,j+1}},
+		\quad &\text{if }{{{v}}_{i,j+\frac{1}{2}}^{y,n} < 0},
+	\end{cases}
+\end{align}
+We point out that Equation \eqref{cfl_dp2-x} to \eqref{cfl_dp2-y} and Equations \eqref{cfl_dp1-x} to \eqref{cfl_dp1-y} 
+are equivalent when the metric term is constant and equal to one, as on the Cartesian grid on the plane.
+dditionally, we could use Equations \eqref{cfl_dp1-x} to \eqref{cfl_dp1-y} for the DP2 scheme, 
+but we observed that the results obtained on advection simulations using Equations \eqref{cfl_dp2-x} to \eqref{cfl_dp2-y} are much better, 
+while Equations \eqref{cfl_dp1-x} to \eqref{cfl_dp1-y} limit schemes with DP2 to first-order. 
+Finally, we stress that for DP1, both formulations of the CFL number yield very similar results, but we use the upwind CFL for DP1 since this is what is used in FV3.
 
 \subsection{Flux at edges treatment}
 As in Section \ref{sec:fv-2d}  we introduce the notion of discrete divergence,
@@ -381,31 +423,40 @@ which allow us to check the consistency of CS-FV schemes.
 \begin{definition}[Discrete divergence]
 	\label{chp5-def-div}
 	For Problem \ref{chp5-prob3}, we define the discrete divergence as a 
-	$\mathcal{CS}_N$-grid function $\mathbb{D}^n(Q^n,\mathfrak{u}^n,\mathfrak{v}^n)$
+	$\mathcal{CS}_N$-grid function $\mathbb{D}^n(q^n,\mathfrak{u}^n,\mathfrak{v}^n)$
 	given by:
 	\begin{equation}
 		\label{chp5-def-div-eq}
-		\mathbb{D}_{ijp}^n(Q^n,\mathfrak{u}^n,\mathfrak{v}^n)=  \frac{1}{\Delta t |\Omega_{ij}|}
-		\bigg({\delta_i {F}_{ijp}^{n}} + {\delta_j {G}_{ijp}^{n}}\bigg), 
+		\mathbb{D}_{ijp}^n(q^n,\mathfrak{u}^n,\mathfrak{v}^n)=  \frac{1}{\Delta t \sqrt{\mathfrak{g}_{ij}}}
+		\bigg(\frac{\delta_i {F}_{ijp}^{n}}{\Delta x} + \frac{\delta_j {G}_{ijp}^{n}}{\Delta y}\bigg), 
 		\quad i = 1, \ldots, N, \quad j=1, \ldots,M.
 	\end{equation}
 \end{definition}
 With the aid of the discrete divergence, Equation \eqref{chp5-csfv} becomes:
 \begin{equation}
 	\label{chp5-def-div-eq2}
-	Q^{n+1} = Q^n - \Delta t \mathbb{D}^n(Q^n,\mathfrak{u}^n,\mathfrak{v}^n).
+	q^{n+1} = q^n - \Delta t \mathbb{D}^n(q^n,\mathfrak{u}^n,\mathfrak{v}^n).
 \end{equation}
-For a CS-FV scheme the discrete total mass at the time-step $n$ is given by
+When using the dimension splitting technique, it follows from Equation \eqref{q-split} that 
+the discrete divergence may be expressed as:
+\begin{align}
+	\label{eqdiv-split}
+	\mathbb{D}^n = \frac{-1}{\Delta t}\bigg(
+ \frac{1}{2}\mathbf{F}[q^n,\tilde{c}^{x,n}] +\frac{1}{2}\mathbf{G}[q^n,\tilde{c}^{y,n}]
++\frac{1}{2}\mathbf{F}\bigg[q^n + \mathbf{g}[q^n, \tilde{c}^{y,n}], \tilde{c}^{x,n}\bigg]
++\frac{1}{2}\mathbf{G}\bigg[q^n + \mathbf{f}[q^n, \tilde{c}^{x,n}], \tilde{c}^{y,n}\bigg]\bigg).
+\end{align}
+For a CS-FV scheme the discrete total mass at the time-step $n$ is given by:
 \begin{equation*}
-	M^n =\sum_{p=1}^6 \sum_{i,j=1}^N Q_{ijp}^n |\Omega_{ij}|
+	M^n =\sum_{p=1}^6 \sum_{i,j=1}^N Q_{ijp}^n |\hat{\Omega}_{ij}|.
 \end{equation*}
 It follows from Equation \eqref{chp5-def-div-eq2} that:
 \begin{align*}
-	M^{n+1} &= M^n  - \sum_{p=1}^6 \sum_{i,j=1}^N \mathbb{D}_{ijp}^{n} |\Omega_{ij}|.
+	M^{n+1} &= M^n  - \sum_{p=1}^6 \sum_{i,j=1}^N \mathbb{D}_{ijp}^{n} |\hat{\Omega}_{ij}|.
 \end{align*}
 Hence, to ensure mass conservation, we must ensure that
 \begin{align*}
-	\sum_{p=1}^6 \sum_{i,j=1}^N   \mathbb{D}_{ijp}^{n} |\Omega_{ij}| = 0.
+	\sum_{p=1}^6 \sum_{i,j=1}^N   \mathbb{D}_{ijp}^{n} |\hat{\Omega}_{ij}| = 0.
 \end{align*}
 This property is discrete version of
 \begin{align*}
@@ -444,9 +495,77 @@ In the PPM reconstruction, we employ extrapolation near the cubed edges that def
 When combining MT-PL07 with ET-PL07, a first-order error is introduced.
 However, we can ensure that the PL07 splitting scheme (Table \ref{chp3-tab1}) eliminates the splitting error when $q$ is constant.
 
+\newpage
 \section{Numerical experiments}
 \label{chp-cs-numexpadv}
 This Section is dedicated to present the numerical experiments for the
 advection equation on the sphere. In Table \ref{chp5-tab1} we present
 the initial conditions (IC) and in Table \ref{chp5-tab2} we present
-the velocity fields (VF) considered.  
+the velocity fields (VF) considered.
+\begin{table}[!ht]
+	\begin{tabular}{|c|l|l|}
+		\hline
+		IC name & \multicolumn{1}{c|}{$q_0$} \\ \hline
+		IC1   & $\exp(b_0((X-X_0)^2+ (Y-Y_0)^2 + (Z-Z_0)^2))$ \\ \hline
+		IC2   & $\exp(b_0[(X-X_1)^2+ (Y-Y_1)^2 + (Z-Z_1)^2] + \exp(b_0[(X-X_2)^2+ (Y-Y_2)^2 + (Z-Z_2)^2])$ \\ \hline
+	\end{tabular}
+	\caption{Initial conditions considered in the numerical experiments (Figure \ref{chp5-ic}).}
+	\label{chp5-tab1} 
+\end{table}
+
+\begin{table}[!ht]
+	\begin{tabular}{|c|l|l|l|}
+		\hline
+		VF name & \multicolumn{1}{c|}{$u_\lambda(\lambda,\phi,t) $} & \multicolumn{1}{c|}{$v_\phi(\lambda,\phi,t)$}  & \multicolumn{1}{c|}{$\Delta t^{(0)}$}\\ \hline
+		VF1   & $u_0(\cos(\phi)\cos(\alpha) + \sin(\phi)\cos(\lambda)\sin(\alpha))$ 
+		& $-u_0\sin(\lambda)\sin(\alpha)$ & 3600  \\ \hline
+		VF2   & $u_0\sin^2(\lambda_p)\sin(2\phi)\cos(\frac{\pi t}{T})+u_0\cos\phi$ 
+		& $u_0\sin(2\lambda_p)\cos(\phi)\cos(\frac{\pi t}{T})$& 1600  \\ \hline
+		VF3   & $-u_0\sin^2(\frac{\lambda+\pi}{2})\sin(2\phi)\cos^2(\phi)\cos(\frac{\pi t}{T}),$ 
+		& $\frac{u_0}{2}\sin(\lambda+\pi)\cos^3(\phi)\cos(\frac{\pi t}{T})$ & 7200 \\ \hline
+	\end{tabular}
+	\caption{Velocity fields considered in the numerical experiments and its initial time step $\Delta t^{(0)}$.}
+	\label{chp5-tab2}
+\end{table}
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc-3_t0_alpha45_C384_g2_dg2_adv2_hord8_mf1_tf12}
+		\caption{IC1. \label{chp5-ic1}}
+	\end{subfigure}
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc-5_t0_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
+		\caption{IC2. \label{chp5-ic2}}
+	\end{subfigure}
+	\caption{ Illustration of the initial conditions considered in this chapter (Table \ref{chp5-tab1}) .\label{chp5-ic}}
+\end{figure}
+
+
+In Table \ref{chp5-tab1}, we have $(X_0,Y_0,Z_0)=(\frac{1}{\sqrt{3}},\frac{1}{\sqrt{3}},\frac{1}{\sqrt{3}})$, while 
+$(X_1,Y_1,Z_1)$ and $(X_2,Y_2,Z_2)$ are the Cartesian coordinates of the latitude-longitude points
+$(\lambda_1,\phi_1) = (-\frac{\pi}{4},0)$ and
+$(\lambda_2,\phi_2) = ( \frac{\pi}{4},0)$, respectively.
+IC1 represents a Gaussian hill centered at a cube corner and we set $b_0 = -10$.
+IC2 represents two Gaussian hills as suggested by \citet{nair:2010} and we set $b_0 = -5$.
+%IC3 is based on the steady flow presented in \citet{will:1992} and we adopt $\alpha=-\frac{45\pi}{180}$.
+The initial conditions are shown in Figure \ref{chp5-ic}.
+
+For the velocities provided in Table \ref{chp5-tab2}, we adopt the following parameter values: $\alpha=-\frac{45\pi}{180}$, $\lambda_p=\lambda-\frac{2\pi t}{T}$, $T=12$ days (12$\times$86400 seconds)
+and $R$ is the Earth radius.
+For VF1 and VF2, we use $u_0 = \frac{2\pi R}{T}$, while for VF3, we use $u_0 = \frac{\pi R}{2T}$.
+In this context, VF1 represents the non-divergent rotated zonal field introduced in \citet{will:1992}.
+VF2 corresponds to the non-divergent deformational flow described in \citet{nair:2010},
+and VF3 represents the divergent flow also presented in \citet{nair:2010}.
+For all velocity fields presented here, the initial condition is equal to the final solution after 12 days.
+
+We are going to consider the schemes LT-DP2 and PL-DP1 since these schemes yield better results on planar simulations (Section \ref{sec-ds-exp}).
+For a shorter notation, we shall denote LT-DP2 and PL-DP1 by \textbf{LT} and \textbf{PL} advection schemes.
+As we mentioned in Section \ref{sec-metricppm}, the PL scheme needs the \textbf{mt1} 
+metric term formulation for the 1D flux operators to eliminate the splitting error for a constant scalar field.
+For the LT scheme, we shall use the \textbf{mt0} metric term formulation because for this scheme, 
+we do not have the constraint of eliminating the splitting error for a constant scalar field. 
+Furthermore, this formulation makes the LT scheme much more accurate, while \textbf{mt1} for LT makes it first-order.
+
+\subsection{Advection of one Gaussian hill through the rotated zonal wind}
