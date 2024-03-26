@@ -251,17 +251,39 @@ This thesis is outlined as follows.
 \begin{itemize}
 \item Chapter \ref{chp-1d-fv} is dedicated to review the Piecewise Parabolic Method (PPM)
 for the one-dimensional advection equation. 
-In this Chapter, we demonstrate how the temporal component of this PPM can be expressed as a departure point calculation.
-Subsequently, we enhance the departure point calculation from first order (which is utilized in FV3) to second order.
+In this Chapter, we demonstrate how the temporal component of PPM can be expressed as a departure point calculation.
+Subsequently, we enhance the departure point calculation from first-order (which is utilized in FV3) to second-order.
 This enhancement results in a significant improvement, particularly in non-constant wind simulations.
+Its benefit is also observed when using the monotonic version of PPM used in FV3 and proposed by \citet{lin:2004}.
 The additional cost is only due to linear interpolation, which has little impact on the overall performance.
 \item Chapter \ref{chp-2d-fv} reviews the dimension splitting method, which allow us to use 
 one-dimensional methods, such as the PPM, to solve the two-dimensional advection equation.
-\item Chapter \ref{chp-cs-grids} introduces the cubed-sphere grid and shows how we can compute stencils
-near to the cubed-edges using 1D Lagrange interpolation through the duogrid technique.
-\item Chapter \ref{chp-cs-fv} extends the ideas of Chapter \ref{chp-2d-fv} to the cubed-sphere grid.
+We review the current 2D advection scheme of FV3 on the plane proposed by \citet{putman:2007}.
+The main feature of this scheme is that it preserves a constant scalar field when the wind is divergence free.
+We show through some numerical simulations that this scheme is second-order order accurate only for divergence free winds.
+When the wind is not divergence free, we show that this scheme is only first-order accurate.
+On the other hand, we propose a small modification of the \citet{putman:2007} scheme using the
+second-order departure point computation presented in Chapter \ref{chp-1d-fv}, that allow us to achieve second-order
+and smaller errors for divergent and divergence free winds,
+despite this scheme does not preserve the a constant scalar for a divergence free, but having a second-order error in this case as well.
+Further, when the monotonic scheme is used in the 1D solver,
+this scheme has also smaller errors when compared to the  \citet{putman:2007} scheme.
+\item Chapter \ref{chp-cs-grids} introduces the cubed-sphere grid used in FV3,
+namely the equi-edge \citet{chen:2021} and equiangular grids \citet{ronchi:1996},
+and we investigate its geometrical properties. 
+Then, we present all the tools needed to extend the advection schemes on the plane from Chapter \ref{chp-2d-fv} to the sphere.
+We review the contravariant/covariant wind formulation induced by the cubed-sphere mappings.
+Also, we show how we can compute stencils near to the cube-edges through the duo-grid technique to generate the ghost cells that allow us to 
+use 1D Lagrange interpolation to fill the ghost cells.
+
+\item Chapter \ref{chp-cs-fv} extends the ideas of Chapter \ref{chp-2d-fv} to the cubed-sphere grid using the tools from Chapter \ref{chp-cs-grids}.
 The dimension-splitting method on each cubed-sphere panel works as in the plane, with the addition
 of metric terms, due to non-orthogonality of the grid, and interpolation between panels
 to obtain ghost cells values needed for stencil computations.
+We show that the scheme from \citet{putman:2007} uses a less accurate formulation of the metric term to preserve the constant scalar
+for a divergence-free wind, while our new scheme may use a more accurate metric term formulation, since it does not have this preservation constraint.
+The results are essentially the same from Chapter \ref{chp-2d-fv},
+showing that our scheme is successfully extended from the plane to the cubed-sphere and is more accurate.
+We also show that our new scheme has smaller error at the corner compared to the scheme from \citet{putman:2007}.
 \end{itemize}
 We give some future work perspectives in Chapter \ref{chp-conclusions}.

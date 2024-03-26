@@ -137,7 +137,7 @@ on the control volume.
 		\frac{1}{\Delta x \Delta y}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
 		\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}{f(x,y)\,dx \,dy}-f(x_i,y_j) = C \Delta x^2, 
 	\end{equation}
-	where $C_1$ is a constants that depends only on $f$, where we assume $x_i = \frac{x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}}}{2}$,
+	where $C_1$ is a constant that depends only on $f$, where we assume $x_i = \frac{x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}}}{2}$,
 	$y_i = \frac{y_{j+\frac{1}{2}} + y_{j-\frac{1}{2}}}{2}$, $\Delta x = x_{i+\frac{1}{2}}-x_{i-\frac{1}{2}}$,
 	$\Delta y= y_{j+\frac{1}{2}}-y_{j-\frac{1}{2}}$ and $\Delta x = \Delta y$.
 \end{thrm}
@@ -201,29 +201,29 @@ Using Theorem \ref{prop-bound-midpoint2d}, we have:
 \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} {f(x,y)\,dx \,dy}\\
  &= 
 \sum_{i,j=1}^N {f(x_i,y_j)} +
-\frac{\Delta x^2}{24} \sum_{i,j=1}^N  \bigg({\partial^2_x f(\nu_i,y_j)}+{\partial^2_y f(\nu_i,y_j)}\bigg).
+\frac{\Delta x^2}{24} \sum_{i,j=1}^N  \bigg({\partial^2_x f(\nu_i,y_j)}+{\partial^2_y f(\theta_i, \eta_j)}\bigg).
 \end{align*}
 We notice that
 \begin{align*}
 {\Delta x \Delta y}
-\sum_{i,j=1}^N \bigg(\partial^2_x f(\nu_i,y_j)+\partial^2_y f(\nu_i,y_j)\bigg) = 
+\sum_{i,j=1}^N \bigg(\partial^2_x f(\nu_i,y_j)+\partial^2_y f(\theta_i, \eta_j)\bigg) = 
 \frac{(b-a)(d-c)}{N^2}
-\sum_{i,j=1}^N \bigg(\partial^2_x f(\nu_i,y_j)+\partial^2_y f(\nu_i,y_j)\bigg) 
+\sum_{i,j=1}^N \bigg(\partial^2_x f(\nu_i,y_j)+\partial^2_y f(\theta_i, \eta_j)\bigg),
 \end{align*}
 and we also point that from the inequality
 \begin{align*}
-	\min{ \big(\partial^2_x f+\partial^2_y f\big)(x,y)} \leq
+	\min_{x,u\in[a,b], y,v\in[c,d]}{ \big(\partial^2_x f(x,y) +\partial^2_y f(u,v)\big)}&\leq
 	\frac{1}{N^2}
-	\sum_{i,j=1}^N \bigg(\partial^2_x f(\nu_i,y_j)+\partial^2_y f(\nu_i,y_j)\bigg) 
-	\leq \max{ \big(\partial^2_x f+\partial^2_y f\big)(x,y)},
+	\sum_{i,j=1}^N \bigg(\partial^2_x f(\nu_i,y_j)+\partial^2_y f(\theta_i, \eta_j)\bigg) \\
+	&\leq \max_{x,u\in[a,b], y,v\in[c,d]}{ \big(\partial^2_x f(x,y) +\partial^2_y f(u,v) \big)} ,
 \end{align*}
 and with the aid of the intermediate value theorem, we have
 \begin{align*}
 	\frac{1}{N^2}
-	\sum_{i,j=1}^N \bigg(\partial^2_x f(\nu_i,y_j)+\partial^2_y f(\nu_i,y_j)\bigg) 
-	= \big(\partial^2_x f+\partial^2_y f\big)(\overline{x},\overline{y}) 
+	\sum_{i,j=1}^N \bigg(\partial^2_x f(\nu_i,y_j)+\partial^2_y f(\theta_i, \eta_j)\bigg) 
+	= \partial^2_x f(\overline{x},\overline{y}) +\partial^2_y f(\overline{x},\overline{y}),
 \end{align*}
-for some $(\overline{x},\overline{y}) \in [a,b]\times[c,d]$ from which the claim follows.
+for some $(\overline{x},\overline{y}) \in [a,b]\times[c,d]$, $(\overline{u},\overline{v}) \in [a,b]\times[c,d]$, from which the claim follows.
 \end{proof}
 
 \section{Convergence of 1D FV-SL schemes}
@@ -484,21 +484,18 @@ with $\alpha$ independent of $\Delta t$, $N$ and $n$, then we ensure the stabili
 \subsection{Flux accuracy analysis}
 \label{chp-adv1d-sub-flux}
 With the PPM operator, we can compute the amplification factor by applying it
-on each Fourier mode considering the PPM and the hybrid PPM schemes, both without monotonization.
+on each Fourier mode considering any PPM  scheme without monotonization.
 We assume a constant velocity equal to one and $N=100$ (number of control volumes).
-In Figure \ref{chp-adv1d-fig-amplification} we show the amplification factor for both PPM and hybrid PPM schemes
-considering different CFL numbers.
-We can observe that both schemes damp most of the Fourier modes for larger $k$, regardless of the CFL number.
-Besides that, the hybrid scheme is more effective when reducing the Fourier modes amplitude.
-We point out that both schemes are exact when the CFL number is equal to 1.
-From this analysis, we can conclude that the PPM and hybrid PPM schemes satisfy the
+In Figure \ref{chp-adv1d-fig-amplification} we show the amplification factor for the hord0 scheme.
+We can observe that hord0 damp most of the Fourier modes for larger $k$, regardless of the CFL number.
+We point out that hord0 is exact when the CFL number is equal to 1.
+From this analysis, we can conclude that hord0 satisfy the
 Von Neumann stability criteria when the CFL restriction is respected.
 For an analysis of stability for larger time-steps, we refer to \citet{lauritzen:2007}.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.49\linewidth]{stability_PPM-0}
-	\includegraphics[width=0.49\linewidth]{stability_PPM-PL07}
-	\caption{Amplification factor for the PPM (left) and hybrid PPM (right) schemes for different CFL numbers.}
+	\caption{Amplification factor for the hord0 scheme for different CFL numbers.}
 	\label{chp-adv1d-fig-amplification}
 \end{figure}
 
@@ -1072,76 +1069,76 @@ Indeed, we prove this on the follow up Proposition \ref{prop:ppm-bound4}.
 	which concludes the proof.
 \end{proof}
 
-\section{Splitting analysis}
+%\section{Splitting analysis}
 
-\begin{equation}
-{x}_{i+\frac{1}{2},j}^d({t^n},{t^{n+1}}) = x_{i+\frac{1}{2}} - \tilde{u}^{n}_{i+\frac{1}{2},j}\Delta t,
-\end{equation}
-\begin{equation}
-\tilde{u}^{n}_{i+\frac{1}{2}}(y) = \frac{1}{\Delta t}
-\int_{t^n}^{t^{n+1}}u
-\big( x_{i+\frac{1}{2},j}^d(\theta,t^{n+1}\big),y,\theta) \,d\theta.
-\end{equation}
-\begin{equation}
-{y}_{i,j+\frac{1}{2}}^d({t^n},{t^{n+1}}) = y_{j+\frac{1}{2}} - \tilde{v}^{n}_{i,j+\frac{1}{2}}\Delta t,
-\end{equation}
-\begin{equation}
-\tilde{v}^{n}_{j+\frac{1}{2}}(x) = \frac{1}{\Delta t}
-\int_{t^n}^{t^{n+1}}v
-\big(x, y_{i,j+\frac{1}{2}}^d(\theta,t^{n+1}),\theta\big) \,d\theta.
-\end{equation}
-\begin{align*}
-\mathbf{F}_{i}^E[{q(x,y,t^n),\tilde{u}^{n}}](y) = 
--\lambda \frac{1}{\Delta t} 
-\bigg(\int^{x_{i+\frac{1}{2}}}_{x^d_{i+\frac{1}{2},j}(t^n,t^{n+1})} q(x,y,t^n)\,dx - 
-      \int^{x_{i-\frac{1}{2}}}_{x^d_{i-\frac{1}{2},j}(t^n,t^{n+1})} q(x,y,t^n)\,dx \bigg),
-\end{align*}
+%\begin{equation}
+%{x}_{i+\frac{1}{2},j}^d({t^n},{t^{n+1}}) = x_{i+\frac{1}{2}} - \tilde{u}^{n}_{i+\frac{1}{2},j}\Delta t,
+%\end{equation}
+%\begin{equation}
+%\tilde{u}^{n}_{i+\frac{1}{2}}(y) = \frac{1}{\Delta t}
+%\int_{t^n}^{t^{n+1}}u
+%\big( x_{i+\frac{1}{2},j}^d(\theta,t^{n+1}\big),y,\theta) \,d\theta.
+%\end{equation}
+%\begin{equation}
+%{y}_{i,j+\frac{1}{2}}^d({t^n},{t^{n+1}}) = y_{j+\frac{1}{2}} - \tilde{v}^{n}_{i,j+\frac{1}{2}}\Delta t,
+%\end{equation}
+%\begin{equation}
+%\tilde{v}^{n}_{j+\frac{1}{2}}(x) = \frac{1}{\Delta t}
+%\int_{t^n}^{t^{n+1}}v
+%\big(x, y_{i,j+\frac{1}{2}}^d(\theta,t^{n+1}),\theta\big) \,d\theta.
+%\end{equation}
+%\begin{align*}
+%\mathbf{F}_{i}^E[{q(x,y,t^n),\tilde{u}^{n}}](y) = 
+%-\lambda \frac{1}{\Delta t} 
+%\bigg(\int^{x_{i+\frac{1}{2}}}_{x^d_{i+\frac{1}{2},j}(t^n,t^{n+1})} q(x,y,t^n)\,dx - 
+%      \int^{x_{i-\frac{1}{2}}}_{x^d_{i-\frac{1}{2},j}(t^n,t^{n+1})} q(x,y,t^n)\,dx \bigg),
+%\end{align*}
 
-\begin{align*}
-\mathbf{G}_{j}^E[{q(x,y,t^n),\tilde{v}^{n}}](x) = 
--\lambda \frac{1}{\Delta t} 
-\bigg(\int^{y_{j+\frac{1}{2}}}_{y^d_{i,j+\frac{1}{2}}(t^n,t^{n+1})} q(x,y,t^n)\,dy - 
-      \int^{y_{j-\frac{1}{2}}}_{y^d_{i,j-\frac{1}{2}}(t^n,t^{n+1})} q(x,y,t^n)\,dy \bigg),
-\end{align*}
+%\begin{align*}
+%\mathbf{G}_{j}^E[{q(x,y,t^n),\tilde{v}^{n}}](x) = 
+%-\lambda \frac{1}{\Delta t} 
+%\bigg(\int^{y_{j+\frac{1}{2}}}_{y^d_{i,j+\frac{1}{2}}(t^n,t^{n+1})} q(x,y,t^n)\,dy - 
+%      \int^{y_{j-\frac{1}{2}}}_{y^d_{i,j-\frac{1}{2}}(t^n,t^{n+1})} q(x,y,t^n)\,dy \bigg),
+%\end{align*}
 
-\begin{align*}
-\mathbf{F}_{i}^E[{\overline{q},\tilde{u}^{n}}](y) = 
--\lambda \overline{q}\delta_i\tilde{u}^{n}_{i}(y),
-\end{align*}
+%\begin{align*}
+%\mathbf{F}_{i}^E[{\overline{q},\tilde{u}^{n}}](y) = 
+%-\lambda \overline{q}\delta_i\tilde{u}^{n}_{i}(y),
+%\end{align*}
 
-\begin{align*}
-\mathbf{G}_{j}^E[{\overline{q},\tilde{v}^{n}}](x) = 
--\lambda \overline{q}\delta_j\tilde{v}^{n}_{j}(x),
-\end{align*}
+%\begin{align*}
+%\mathbf{G}_{j}^E[{\overline{q},\tilde{v}^{n}}](x) = 
+%-\lambda \overline{q}\delta_j\tilde{v}^{n}_{j}(x),
+%\end{align*}
 
-\begin{align*}
-&\mathbf{F}_{ij}^E[{-\lambda \overline{q}\delta_j\tilde{v}^{n}_{j}(x),\tilde{u}^{n}}] =
--\lambda \overline{q}\mathbf{F}_{ij}^E[{\delta_j\tilde{v}^{n}_{j}(x),\tilde{u}^{n}}]  \\
-&= -\lambda^2\overline{q} \frac{1}{\Delta t} 
-\bigg(\int^{x_{i+\frac{1}{2}}}_{x^d_{i+\frac{1}{2},j}(t^n,t^{n+1})} \delta_j\tilde{v}^{n}_{j}(x)\,dx - 
-      \int^{x_{i-\frac{1}{2}}}_{x^d_{i-\frac{1}{2},j}(t^n,t^{n+1})} \delta_j\tilde{v}^{n}_{j}(x)\,dx \bigg) \\
-&= \frac{-\overline{q}}{\Delta x^2} 
-\bigg(\int_{t^n}^{t^{n+1}}
- \big[ \Psi \big( x_{i+\frac{1}{2}}, y_{i,j+\frac{1}{2}}^d(\theta,t^{n+1}),\theta\big)-
-   \Psi \big( x_{i-\frac{1}{2}}, y_{i,j+\frac{1}{2}}^d(\theta,t^{n+1}),\theta\big)\big]-\\
-&\big[\Psi \big( x_{i+\frac{1}{2},j}^d, y_{i,j-\frac{1}{2}}^d(\theta,t^{n+1}),\theta\big)
-  -\Psi \big( x_{i-\frac{1}{2},j}^d, y_{i,j-\frac{1}{2}}^d(\theta,t^{n+1}),\theta\big)\big]
-\,d\theta \bigg)
-\end{align*}
+%\begin{align*}
+%&\mathbf{F}_{ij}^E[{-\lambda \overline{q}\delta_j\tilde{v}^{n}_{j}(x),\tilde{u}^{n}}] =
+%-\lambda \overline{q}\mathbf{F}_{ij}^E[{\delta_j\tilde{v}^{n}_{j}(x),\tilde{u}^{n}}]  \\
+%&= -\lambda^2\overline{q} \frac{1}{\Delta t} 
+%\bigg(\int^{x_{i+\frac{1}{2}}}_{x^d_{i+\frac{1}{2},j}(t^n,t^{n+1})} \delta_j\tilde{v}^{n}_{j}(x)\,dx - 
+%      \int^{x_{i-\frac{1}{2}}}_{x^d_{i-\frac{1}{2},j}(t^n,t^{n+1})} \delta_j\tilde{v}^{n}_{j}(x)\,dx \bigg) \\
+%&= \frac{-\overline{q}}{\Delta x^2} 
+%\bigg(\int_{t^n}^{t^{n+1}}
+% \big[ \Psi \big( x_{i+\frac{1}{2}}, y_{i,j+\frac{1}{2}}^d(\theta,t^{n+1}),\theta\big)-
+%   \Psi \big( x_{i-\frac{1}{2}}, y_{i,j+\frac{1}{2}}^d(\theta,t^{n+1}),\theta\big)\big]-\\
+%&\big[\Psi \big( x_{i+\frac{1}{2},j}^d, y_{i,j-\frac{1}{2}}^d(\theta,t^{n+1}),\theta\big)
+%  -\Psi \big( x_{i-\frac{1}{2},j}^d, y_{i,j-\frac{1}{2}}^d(\theta,t^{n+1}),\theta\big)\big]
+%\,d\theta \bigg)
+%\end{align*}
 
-\begin{align*}
-&\mathbf{G}_{ij}^E[{-\lambda \overline{q}\delta_i\tilde{u}^{n}_{i}(y),\tilde{v}^{n}}] = 
--\lambda \overline{q} \mathbf{G}_{ij}^E[{\delta_i\tilde{u}^{n}_{i}(y),\tilde{v}^{n}}] \\ 
-&= -\lambda^2\overline{q} \frac{1}{\Delta t} 
-\bigg(\int^{y_{j+\frac{1}{2}}}_{y^d_{i,j+\frac{1}{2}}(t^n,t^{n+1})} \delta_i\tilde{u}^{n}_{i}(y)\,dy - 
-      \int^{y_{j-\frac{1}{2}}}_{y^d_{i,j-\frac{1}{2}}(t^n,t^{n+1})} \delta_i\tilde{u}^{n}_{i}(y)\,dy \bigg)\\
-&= \frac{\overline{q}}{\Delta x^2} 
-\bigg(\int_{t^n}^{t^{n+1}}
-\big [ \Psi \big( x_{i+\frac{1}{2},j}^d(\theta,t^{n+1}),y_{j+\frac{1}{2}},\theta\big)-
-   \Psi \big( x_{i+\frac{1}{2},j}^d(\theta,t^{n+1}),y_{j-\frac{1}{2}},\theta\big)\big]-\\
-& \big[\Psi \big( x_{i-\frac{1}{2},j}^d(\theta,t^{n+1}),y_{i,j+\frac{1}{2}}^d,\theta\big)
-  -\Psi \big( x_{i-\frac{1}{2},j}^d(\theta,t^{n+1}),y_{i,j-\frac{1}{2}}^d,\theta\big)\big]
-\,d\theta \bigg)
-\end{align*}
+%\begin{align*}
+%&\mathbf{G}_{ij}^E[{-\lambda \overline{q}\delta_i\tilde{u}^{n}_{i}(y),\tilde{v}^{n}}] = 
+%-\lambda \overline{q} \mathbf{G}_{ij}^E[{\delta_i\tilde{u}^{n}_{i}(y),\tilde{v}^{n}}] \\ 
+%&= -\lambda^2\overline{q} \frac{1}{\Delta t} 
+%\bigg(\int^{y_{j+\frac{1}{2}}}_{y^d_{i,j+\frac{1}{2}}(t^n,t^{n+1})} \delta_i\tilde{u}^{n}_{i}(y)\,dy - 
+%     \int^{y_{j-\frac{1}{2}}}_{y^d_{i,j-\frac{1}{2}}(t^n,t^{n+1})} \delta_i\tilde{u}^{n}_{i}(y)\,dy \bigg)\\
+%&= \frac{\overline{q}}{\Delta x^2} 
+%\bigg(\int_{t^n}^{t^{n+1}}
+%\big [ \Psi \big( x_{i+\frac{1}{2},j}^d(\theta,t^{n+1}),y_{j+\frac{1}{2}},\theta\big)-
+%   \Psi \big( x_{i+\frac{1}{2},j}^d(\theta,t^{n+1}),y_{j-\frac{1}{2}},\theta\big)\big]-\\
+%& \big[\Psi \big( x_{i-\frac{1}{2},j}^d(\theta,t^{n+1}),y_{i,j+\frac{1}{2}}^d,\theta\big)
+%  -\Psi \big( x_{i-\frac{1}{2},j}^d(\theta,t^{n+1}),y_{i,j-\frac{1}{2}}^d,\theta\big)\big]
+%\,d\theta \bigg)
+%\end{align*}
 
 
