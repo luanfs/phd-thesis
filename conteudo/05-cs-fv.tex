@@ -259,7 +259,7 @@ The property from Equation \eqref{mt1-flux2} does not occur for mt0.
 For a CS-grid function $\psi \in \mathcal{CS}_N$
 we introduce the following PPM flux in the $x$ direction (recall Equation \eqref{chp-sec-flux:numerical-flux8})
 \begin{align}
-	%	\label{chp3-flux-xdir}
+	\label{chp5-flux-xdir}
 	\mathfrak{F}_{i+\frac{1}{2},j}^{PPM,x} [{{\psi}^n;\tilde{c}^{x,n}}]= %\tilde{u}^{n}_{i+\frac{1}{2},j}\times
 	\begin{cases}
 		{\psi}_{i-1,j}^{n}+(1-\tilde{c}_{i+\frac{1}{2}}^{x,n})
@@ -283,8 +283,8 @@ for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and where
 \begin{align*}
 	\mathbf{F}_{ij}[{q^n,\tilde{c}^{x,n}}] = 
 	-\frac{1}{|\hat{\Omega}_{ij}|}
-	\bigg(\mathcal{A}_{i+\frac{1}{2},j}^{x} \mathfrak{F}_{i+\frac{1}{2},j}^{x}[q^n_{\times,j},\tilde{c}^{x,n}]-
-	\mathcal{A}_{i-\frac{1}{2},j}^{x} \mathfrak{F}_{i-\frac{1}{2},j}^{x}[q^n_{\times,j},\tilde{c}^{x,n}] \bigg),
+	\bigg(\mathcal{A}_{i+\frac{1}{2},j}^{x} \mathcal{F}_{i+\frac{1}{2},j}^{PPM,x}[q^n_{\times,j},\tilde{c}^{x,n}]-
+	\mathcal{A}_{i-\frac{1}{2},j}^{x} \mathcal{F}_{i-\frac{1}{2},j}^{PPM,x}[q^n_{\times,j},\tilde{c}^{x,n}] \bigg),
 \end{align*}
 recalling the term $|\hat{\Omega}_{ij}|$ from defined Equation \eqref{chp4-area},
 and following the discussion on the metric term, we have the coefficients
@@ -302,7 +302,7 @@ and following the discussion on the metric term, we have the coefficients
 where we have made use of Equation \eqref{distcube2} and Equation \eqref{mt-sina}, 
 and the PPM fluxes are
 \begin{align}
-	\mathfrak{F}_{i+\frac{1}{2},j}^x [{{q}^n;\tilde{c}^{x,n}}] = 
+	\mathcal{F}_{i+\frac{1}{2},j}^{PPM,x} [{{q}^n;\tilde{c}^{x,n}}] = 
 	\begin{cases}
 		\mathfrak{F}_{i+\frac{1}{2},j}^{PPM,x}[{{\sqrt{\mathfrak{g}}q}^n;\tilde{c}^{x,n}}]
 		\quad &\text{for mt0},\\
@@ -318,8 +318,8 @@ for $i=-\nu+1, \ldots, N + \nu$  $j=1, \ldots, N$.
 \begin{align*}
 	\mathbf{G}_{ij}[{q^n,\tilde{c}^{y,n}}] = 
 	-\frac{1}{|\hat{\Omega}_{ij}|}
-	\bigg(\mathcal{A}_{i,j+\frac{1}{2}}^{y} \mathfrak{F}_{i,j+\frac{1}{2}}^{y}[q^n_{i,\times},\tilde{c}^{y,n}]-
-	\mathcal{A}_{i,j-\frac{1}{2}}^{y} \mathfrak{F}_{i,j-\frac{1}{2}}^{y}[q^n_{i,\times},\tilde{c}^{y,n}] \bigg),
+	\bigg(\mathcal{A}_{i,j+\frac{1}{2}}^{y} \mathcal{F}_{i,j+\frac{1}{2}}^{PPM,y}[q^n_{i,\times},\tilde{c}^{y,n}]-
+	\mathcal{A}_{i,j-\frac{1}{2}}^{y} \mathcal{F}_{i,j-\frac{1}{2}}^{PPM,y}[q^n_{i,\times},\tilde{c}^{y,n}] \bigg),
 \end{align*}
 and
 \begin{align}
@@ -335,14 +335,15 @@ and
 \end{align}
 and the PPM fluxes are
 \begin{align}
-	\mathfrak{F}_{i,j+\frac{1}{2}} [{{q}^n;\tilde{c}^{y,n}}]= 
+	\mathcal{F}_{i,j+\frac{1}{2}}^{PPM,y} [{{q}^n;\tilde{c}^{y,n}}]= 
 	\begin{cases}
 		\mathfrak{F}_{i,j+\frac{1}{2}}^{PPM,y}[{{\sqrt{\mathfrak{g}}q}^n;\tilde{c}^{y,n}}]
 		\quad &\text{for mt0},\\
 		\mathfrak{F}_{i+\frac{1}{2},j}^{PPM,y}[{{q}^n;\tilde{c}^{y,n}}]
-		\quad &\text{for mt1}.
+		\quad &\text{for mt1},
 	\end{cases}
 \end{align}
+where $\mathfrak{F}_{i,j+\frac{1}{2}}^{PPM,y}$ is the analogous of Equation \eqref{chp5-flux-xdir} in $y$ direction.
 In FV3, the terms ${\hat{\delta} x_{ij}}$ and ${\hat{\delta} y_{ij}}$ and $|\hat{\Omega}_{ij}|$ (for integers or half integers $i$ and $j$)
 are replaced by ${{\delta} x_{ij}}$, ${{\delta} y_{ij}}$ and $|\hat{\Omega}_{ij}|$,
 which represent the geodesic distances and areas (Section \ref{cs-geo}).
@@ -381,10 +382,10 @@ where the inner advection operators $\mathbf{f}$ and $\mathbf{g}$ are given in T
 When using the DP2 scheme (Section \ref{chp-adv1d-sec-DP2}), we define the CFL number as (recall the wind formulation in Section \ref{anexo-sph-ll}):
 \begin{align}
 	\label{cfl_dp2-x}
-	{c}_{i+\frac{1}{2},j}^{x,n} = {\mathfrak{u}}_{i+\frac{1}{2},j,p}^{x,n}\frac{\Delta t}{\Delta x}
+	{c}_{i+\frac{1}{2},j}^{x,n} = {\mathfrak{u}}_{i+\frac{1}{2},j}^{x,n}\frac{\Delta t}{\Delta x}
 	= {{u}}_{i+\frac{1}{2},j}^{x,n}\frac{\Delta t}{\hat{\delta} x_{i+\frac{1}{2},j}},\\
 	\label{cfl_dp2-y}
-	{c}_{i,j+\frac{1}{2}}^{y,n} = {\mathfrak{v}}_{i,j+\frac{1}{2},p}^{y,n}\frac{\Delta t}{\Delta y}
+	{c}_{i,j+\frac{1}{2}}^{y,n} = {\mathfrak{v}}_{i,j+\frac{1}{2}}^{y,n}\frac{\Delta t}{\Delta y}
 	= {{v}}_{i,j+\frac{1}{2}}^{y,n}\frac{\Delta t}{\hat{\delta} y_{i,j+\frac{1}{2}}}.
 \end{align}
 Therefore, the time-averaged CFL numbers may be computed using Equation \eqref{cfl-dp2}.
@@ -392,22 +393,22 @@ The current implementation of FV3 and the advection schemes from \citet{lin:2004
 uses the DP1 scheme (Section \ref{chp-adv1d-sec-DP1}) and the following upwind CFL number introduced in \citet{lin:1994}:
 \begin{align}
 	\label{cfl_dp1-x}
-{c}_{i+\frac{1}{2},j}^{x,n} =
+{c}_{i+\frac{1}{2},j}^{x,n} ={{u}}_{i+\frac{1}{2},j}^{x,n}{\Delta t} \times
 	\begin{cases}
-        {{u}}_{i+\frac{1}{2},j}^{x,n}\frac{\Delta t}{\hat{\delta} x_{ij}},
-        \quad &\text{if }{{{u}}_{i+\frac{1}{2},j}^{x,n} < 0},\\
-         {{u}}_{i+\frac{1}{2},j}^{x,n}\frac{\Delta t}{\hat{\delta} x_{i+1,j}},
+       \frac{1}{\hat{\delta} x_{ij}},
+        \quad &\text{if }{{{u}}_{i+\frac{1}{2},j}^{x,n} \ge 0},\\
+       \frac{1}{\hat{\delta} x_{i+1,j}}, 
 	 	\quad &\text{if }{{{u}}_{i+\frac{1}{2},j}^{x,n} < 0},
 	\end{cases}
 \end{align}
 \begin{align}
 	\label{cfl_dp1-y}
-	{c}_{i,j+\frac{1}{2}}^{y,n} =
+	{c}_{i,j+\frac{1}{2}}^{y,n} = {{v}}_{i,j+\frac{1}{2}}^{y,n}{\Delta t} \times
 	\begin{cases}
-		{{v}}_{i,j+\frac{1}{2}}^{x,n}\frac{\Delta t}{\hat{\delta} y_{ij}},
-		\quad &\text{if }{{{v}}_{i,j+\frac{1}{2}}^{y,n} < 0},\\
-		{{v}}_{i,j+\frac{1}{2}}^{x,n}\frac{\Delta t}{\hat{\delta} y_{i,j+1}},
-		\quad &\text{if }{{{v}}_{i,j+\frac{1}{2}}^{y,n} < 0},
+		\frac{1}{\hat{\delta} y_{ij}},
+		\quad &\text{if }{{{v}}_{i,j+\frac{1}{2}}^{y,n} \ge 0},\\
+		\frac{1}{\hat{\delta} y_{i,j+1}},
+		\quad &\text{if }{{{v}}_{i,j+\frac{1}{2}}^{y,n} < 0}.
 	\end{cases}
 \end{align}
 We point out that Equation \eqref{cfl_dp2-x} to \eqref{cfl_dp2-y} and Equations \eqref{cfl_dp1-x} to \eqref{cfl_dp1-y} 
@@ -575,6 +576,8 @@ and the convergence rate is defined as
 \subsection{Advection of one Gaussian hill through the rotated zonal wind}
 As a second test case, we consider the advection of the Gaussian hill given by IC1 using 
 the rotated zonal wind VF1.
+In Figure \ref{chp-advcs-sec-exp-adv2}, we illustrate how the Gaussian hill is advected and passes over 4 cube corners, 
+eventually returning to its initial position. 
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
@@ -620,7 +623,48 @@ the rotated zonal wind VF1.
 		We are using the LT-hord8-mf1 scheme on the g2 grid with $N=384$. \label{chp-advcs-sec-exp-adv2}}
 \end{figure}
 
+The goal of this test is to observe the ability of all schemes and grids to perform this test without creating
+larger errors or grid-imprinting when the Gaussian hill reaches a corner.
+In fact, in Figure \ref{chp-advcs-sec-exp-adv2-evol-linf} we show how the error evolves with time over 12 days in the $L_{\infty}$ norm for $N=384$.
+Similarly, Figure \ref{chp-advcs-sec-exp-adv2-evol-l2} shows the error evolution over time in the $L_2$ norm.
+Both figures use green lines to represent the PL scheme and blue lines to represent the LT scheme.
+Light colors denote cases where the mass fixer is not used, while dark colors represent cases where it is used. 
+Dashed lines represent hord8 while solid lines represent hord0.
+
 \newpage
+In terms of the $L_2$ norm, as shown in Figure \ref{chp-advcs-sec-exp-adv2-evol-l2}, 
+no spikes are observed in the graphs corresponding to the days when the Gaussian passes over a corner.
+Another conclusion is that the mass fixer does not have too much impact on error evolution when hord8 scheme is used.
+However, from Figure \ref{chp-advcs-sec-exp-adv2-evol-linf} we can see some small spikes in the $L_{\infty}$
+on the g0 grid when using the PL scheme, which is not very pronounced in the LT scheme.
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=1\linewidth]{tc-3_C384_linf_errors}
+	\caption{
+		$L_{\infty}$ error evolution for IC1 and VF1 from Table \ref{chp5-ic} on the g0 (left) and g2 (right) grids for 12 days.
+		Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme.
+		Solid lines represent the results with the hord8 scheme, whereas dashed lines represent the results with hord8.
+		Light colors show the result without mass fixer (mf0), whereas dark colors show the results with flux averaging (mf1).
+		\label{chp-advcs-sec-exp-adv2-evol-linf}}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=1\linewidth]{tc-3_C384_l2_errors}
+	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-evol-linf} but using the $L_2$ error.\label{chp-advcs-sec-exp-adv2-evol-l2}}
+\end{figure}
+
+\newpage
+This indicates that LT is less sensitive to corners than PL when using hord8. 
+Indeed, Figure \ref{chp-advcs-sec-exp-adv2-errors-0} shows the final error at a cube corner for the g0 grid, 
+and Figure \ref{chp-advcs-sec-exp-adv2-errors-2} shows it for the g2 grid.
+The results without a mass fixer are very similar and are not shown here. 
+We can observe that the errors for PL are larger at the corner 
+(Figures \ref{chp-advcs-sec-exp-adv2-errors-0a} and \ref{chp-advcs-sec-exp-adv2-errors-2a}), 
+which is not observed for LT (Figures \ref{chp-advcs-sec-exp-adv2-errors-0b} and \ref{chp-advcs-sec-exp-adv2-errors-2b}).
+Also, g0 and g2 yield similar results for both schemes, 
+although g2 exhibits a very small error near the corner, which is not observed in g0, 
+indicating that g0 is less sensitive to the corner for the LT scheme.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
@@ -653,24 +697,13 @@ the rotated zonal wind VF1.
 	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-errors-0} but using the g2 grid.\label{chp-advcs-sec-exp-adv2-errors-2}}
 \end{figure}
 
-\newpage
-\begin{figure}[!htb]
-		\centering
-		\includegraphics[width=1\linewidth]{tc-3_C384_linf_errors}
-		\caption{
-$L_{\infty}$ error evolution for IC1 and VF1 from Table \ref{chp5-ic} on the g0 (left) and g2 (right) grids for 12 days.
-Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme.
-Solid lines represent the results with the hord8 scheme, whereas dashed lines represent the results with hord8.
-Light colors show the result without mass fixer (mf0), whereas dark colors show the results with flux averaging (mf1).\label{chp-advcs-sec-exp-adv2-evol-linf}}
-\end{figure}
-
-\begin{figure}[!htb]
-		\centering
-		\includegraphics[width=1\linewidth]{tc-3_C384_l2_errors}
-		\caption{As Figure \ref{chp-advcs-sec-exp-adv2-evol-linf} but using the $L_2$ error.\label{chp-advcs-sec-exp-adv2-evol-l2}}
-\end{figure}
 
 \newpage
+Finally, in Figures \ref{chp-advcs-sec-exp-adv2-linf} and \ref{chp-advcs-sec-exp-adv2-l2} we show the error convergence in $L_{\infty}$ and $L_{2}$ norms.
+We can observe that all schemes with hord0 achieve second-order accuracy as expected.
+However, the order is reduced, which is also expected.
+Additionally, we can see that hord8 with LT has smaller errors when comparing the blue dashed lines with the green dashed lines, 
+for both $L_{\infty}$ and $L_{2}$ norms on both g0 and g2 grids, indicating that LT is more accurate.
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=1\linewidth]{linferror_tc-3_alpha45}
@@ -684,13 +717,17 @@ Light colors show the result without mass fixer (mf0), whereas dark colors show 
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=1\linewidth]{l2error_tc-3_alpha45}
-	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-linf} but considering the $L_2$ norm. \label{chp-advcs-sec-exp-adv2-error}}
+	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-linf} but considering the $L_2$ norm. \label{chp-advcs-sec-exp-adv2-l2}}
 \end{figure}
 
 \newpage
 \subsection{Non-divergent deformational flow}
-As the fourth test case, we considered the non-divergent vector field VF2 velocity from table \ref{chp5-tab2}. 
-We used the initial condition IC2 from table \ref{chp5-tab1}, as suggested by \citet{nair:2010}, which also shows how the solution evolves with time. 
+The second test case considers the divergence free wind VF2 from Table \ref{chp5-tab2}, along with the initial condition IC2 from Table \ref{chp5-tab1}, 
+where the velocity is time-dependent.
+This test is suggested by \citet{nair:2010}, and Figure \ref{chp-advcs-sec-exp-adv3} shows how the solution evolves over time.
+Since the wind is divergence free, we observe that it deforms the two Gaussian hills, without creating new extrema.
+Eventually, the final solution is equal to the initial condition after 12 days.
+This test is the spherical analogous of the planar divergent deformational flow test presented in Section \ref{2d-adv-ndivflow}.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
@@ -778,9 +815,12 @@ We used the initial condition IC2 from table \ref{chp5-tab1}, as suggested by \c
 
 \newpage
 \subsection{Divergent deformational flow}
-The fifth and last test case consider the divergent wind VF3 from table \ref{chp5-tab2} along with
-the initial condition IC2 from table \ref{chp5-tab1}.
-This test is also suggested by \citet{nair:2010} and the their paper shows how the solution evolves over time.
+The third and last test case considers the divergent wind VF3 from Table \ref{chp5-tab2}, along with the initial condition IC2 from Table \ref{chp5-tab1}, 
+where the velocity is time-dependent.
+This test is also suggested by \citet{nair:2010}, and Figure \ref{chp-advcs-sec-exp-adv4} shows how the solution evolves over time.
+Since the wind is divergent, we observe that it deforms the two Gaussian hills, creating new extrema.
+Eventually, the final solution is equal to the initial condition after 12 days.
+This test is the spherical analogous of the planar divergent deformational flow test presented in Section \ref{2d-adv-divflow}.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
