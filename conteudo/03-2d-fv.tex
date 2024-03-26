@@ -27,6 +27,7 @@ To begin, similar to Chapter \ref{chp-1d-fv}, we start this Chapter with a revie
 advection equation in Section \ref{sec-adv2d}. Following this, in Section \ref{sec:fv-2d}, we establish the framework for general two-dimensional finite-volume schemes.
 Subsequently, the dimension splitting method is presented in Section \ref{sec-dsplit}, where we delve into its intricacies.
 Finally, we showcase numerical experiments in Section \ref{sec-ds-exp} to illustrate the practical application of the dimension splitting approach.
+Final thoughts are presented in Section \ref{chp-2d-fv-conc}.
 
 \section{Two-dimensional advection equation in integral form}
 \label{sec-adv2d}
@@ -909,6 +910,7 @@ This similarity arises because no splitting error is introduced when the velocit
 Figure \ref{chp-adv2d-sec-exp-adv1-c} illustrates that PL splitting maintains monotonicity, particularly noticeable when using the monotonic 1D scheme hord8.
 
 \subsection{Flow deformation with nondivergent wind}
+\label{2d-adv-ndivflow}
 For a first variable velocity testing, we consider two Gaussian hills given by:
 \begin{align}
 	\begin{split}
@@ -1022,6 +1024,7 @@ The errors in $L_{1}$ norm (Figure \ref{chp-adv2d-sec-exp-adv2-error-l1}) exhibi
 that PL-DP1 and LT-DP2 have smaller errors than PL-DP2 and LT-DP1, along with higher convergence order.
 
 \subsection{Flow deformation with divergent wind}
+\label{2d-adv-divflow}
 For a second variable velocity testing, we consider two Gaussian hills given by Equation 
 \eqref{chp-adv2d-ic2} and the following wind:
 \begin{equation}
@@ -1130,6 +1133,7 @@ Finally, the schemes PL-DP2 and LT-DP1 have the same errors for both hord0 and h
 
 
 \section{Concluding remarks}
+\label{chp-2d-fv-conc}
 In this Chapter, we introduced the dimension-splitting method, 
 which replaces the solution of the 2D advection equation with the
 solution of multiple 1D advection equations, resulting in more cost-effective 2D-FV schemes. 
