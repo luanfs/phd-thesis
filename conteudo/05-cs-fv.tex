@@ -701,9 +701,10 @@ indicating that g0 is less sensitive to the corner for the LT scheme.
 \newpage
 Finally, in Figures \ref{chp-advcs-sec-exp-adv2-linf} and \ref{chp-advcs-sec-exp-adv2-l2} we show the error convergence in $L_{\infty}$ and $L_{2}$ norms.
 We can observe that all schemes with hord0 achieve second-order accuracy as expected.
-However, the order is reduced, which is also expected.
+However, for hord8, the order is reduced, which is also expected.
 Additionally, we can see that hord8 with LT has smaller errors when comparing the blue dashed lines with the green dashed lines, 
 for both $L_{\infty}$ and $L_{2}$ norms on both g0 and g2 grids, indicating that LT is more accurate.
+In general, the errors of g0 are slightly smaller than those of g2.
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=1\linewidth]{linferror_tc-3_alpha45}
@@ -727,7 +728,7 @@ where the velocity is time-dependent.
 This test is suggested by \citet{nair:2010}, and Figure \ref{chp-advcs-sec-exp-adv3} shows how the solution evolves over time.
 Since the wind is divergence free, we observe that it deforms the two Gaussian hills, without creating new extrema.
 Eventually, the final solution is equal to the initial condition after 12 days.
-This test is the spherical analogous of the planar divergent deformational flow test presented in Section \ref{2d-adv-ndivflow}.
+This test is the spherical analogous of the planar divergence free deformational flow test presented in Section \ref{2d-adv-ndivflow}.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
@@ -765,6 +766,9 @@ This test is the spherical analogous of the planar divergent deformational flow 
 	\caption{Similar to Figure \ref{chp-advcs-sec-exp-adv2} but using IC2 and VF2 from Table \ref{chp5-ic}.\label{chp-advcs-sec-exp-adv3}}
 \end{figure}
 
+Figures \ref{chp-advcs-sec-exp-adv3-errors-0} and \ref{chp-advcs-sec-exp-adv3-errors-2} show the final error at a cube face for the g0 and g2 grids, respectively.
+The results without a mass fixer are very similar and are not shown here. 
+We can observe that the errors for both PL and LT are very similar, and also the type of grid does not have a significant impact.
 \newpage
 \begin{figure}[!htb]
 	\centering
@@ -797,8 +801,11 @@ This test is the spherical analogous of the planar divergent deformational flow 
 	\end{subfigure}
 	\caption{As Figure \ref{chp-advcs-sec-exp-adv3-errors-0} but using the g2 grid.\label{chp-advcs-sec-exp-adv3-errors-2}}
 \end{figure}
-
-
+Figures \ref{chp-advcs-sec-exp-adv3-linf} and \ref{chp-advcs-sec-exp-adv3-l2} we show the error convergence in $L_{\infty}$ and $L_{2}$ norms.
+Once more, it is evident that all schemes with hord0 achieve second-order accuracy as expected, while those with hord8 experience a reduced order 
+in $L_{\infty}$ norm. In $L_{2}$ norm, the order is 2 for hord8.
+Furthermore, LT demonstrates smaller errors when utilizing hord8, reaffirming that LT is indeed more accurate than PL.
+We also notice that the mass fixer does not impact the errors.
 \newpage
 \begin{figure}[!htb]
 	\centering
@@ -809,7 +816,7 @@ This test is the spherical analogous of the planar divergent deformational flow 
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=1\linewidth]{l2error_tc-5_alpha0}
-	\caption{As Figure \ref{chp-advcs-sec-exp-adv3-linf} but considering the $L_2$ norm. \label{chp-advcs-sec-exp-adv3-error}}
+	\caption{As Figure \ref{chp-advcs-sec-exp-adv3-linf} but considering the $L_2$ norm. \label{chp-advcs-sec-exp-adv3-l2}}
 \end{figure}
 
 
@@ -858,6 +865,9 @@ This test is the spherical analogous of the planar divergent deformational flow 
 	\caption{Similar to Figure \ref{chp-advcs-sec-exp-adv2} but using IC2 and VF3 from Table \ref{chp5-ic}.\label{chp-advcs-sec-exp-adv4}}
 \end{figure}
 
+Figures \ref{chp-advcs-sec-exp-adv4-errors-0} and \ref{chp-advcs-sec-exp-adv4-errors-2} show the final error at a cube face for the g0 and g2 grids, respectively.
+The results without a mass fixer are very similar and are not shown here. 
+We can observe that the errors for PL are much larger, with significant errors present in many cells, whereas LT has smaller errors that are concentrated in some ripples.
 \newpage
 \begin{figure}[!htb]
 	\centering
@@ -891,7 +901,14 @@ This test is the spherical analogous of the planar divergent deformational flow 
 	\caption{As Figure \ref{chp-advcs-sec-exp-adv4-errors-0} but using the g2 grid.\label{chp-advcs-sec-exp-adv4-errors-2}}
 \end{figure}
 
-
+Figures \ref{chp-advcs-sec-exp-adv4-linf} and \ref{chp-advcs-sec-exp-adv4-l2} we show the error convergence in $L_{\infty}$ and $L_{2}$ norms.
+These figures highlight a major significant distinction between LT and PL schemes, unlike the previous tests.
+It is clear that PL with hord0 achieves only first-order accuracy, whereas LT with hord0 achieves third-order accuracy, 
+surpassing second-order the expectation, for both g0 and g2 grids and norms.
+For hord8, LT demonstrates second-order accuracy in the $L_2$ norm, while PL is only first-order.
+LT with hord8 exhibits smaller errors in the $L_{\infty}$ norm compared to the PL scheme for all grids.
+This discrepancy arises because the PL splitting is designed for divergence-free flows, while LT is designed to be second-order regardless of the flow characteristics.
+Finally, these results are similar to the planar divergent deformational flow test presented in Section \ref{2d-adv-divflow}.
 
 \newpage
 
@@ -904,9 +921,34 @@ This test is the spherical analogous of the planar divergent deformational flow 
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=1\linewidth]{l2error_tc-6_alpha0}
-	\caption{As Figure \ref{chp-advcs-sec-exp-adv4-linf} but considering the $L_2$ norm. \label{chp-advcs-sec-exp-adv4-error}}
+	\caption{As Figure \ref{chp-advcs-sec-exp-adv4-linf} but considering the $L_2$ norm. \label{chp-advcs-sec-exp-adv4-l2}}
 \end{figure}
 
 \newpage
 \section{Concluding remarks}
 \label{chp-cs-conc}
+In summary, in this Chapter, we demonstrate how the dimension-splitting methods from Chapter \ref{chp-2d-fv}, 
+namely the PL and LT methods, can be extended to the cubed-sphere to solve the advection equation on the sphere 
+using the cubed-sphere grids g0 and g2, along with the duo-grid interpolation presented in Chapter \ref{chp-cs-grids}.
+We observed a major difference in the metric term that appears in this case, and it may be treated differently in the PPM flux computation.
+Also, on the cubed-sphere, we need to apply a mass fixer, namely averaging the fluxes at the cube edges, to ensure exact mass preservation.
+
+We showed that LT may use a more accurate metric term formulation, since this scheme is more flexible and does not need to eliminate the splitting error for a constant
+scalar wind and divergence-free wind, which is demanded for the PL scheme.
+This difference in requirements allows the LT scheme to utilize a more accurate metric term formulation compared to PL.
+
+
+The conclusions of this Chapter are essentially extensions of the results from Chapter \ref{chp-2d-fv} from the plane to the cubed-sphere.
+In fact, the LT scheme, which utilize a second-order departure point calculation, showed to have smaller errors than the PL scheme,
+which is designed to preserve a constant scalar field for divergence-free winds.
+Both schemes are second-order when no limiter is employed and the wind is divergence-free.
+The major difference between LT and PL is when the wind is not divergence-free.
+In this case, PL is only first order, while LT is second-order. Even with a limiter, LT is much more accurate than PL in this case.
+This was demonstrated consistently throughout the simulations.
+Therefore, our major conclusion here is that the LT scheme is much more accurate regardless of whether the wind is divergence-free or not, while 
+PL is only accurate for divergence-free winds.
+
+Additionally, the Gaussian hill advection through a rotated zonal wind showed that some errors of PL presented small spikes whenever the Gaussian hill passed over a corner,
+while LT did not exhibit this behavior. Also, the final error of PL was concentrated at a cube corner, which was not observed for the LT scheme.
+We could also observe that the mass fixer did not significantly impact the results,
+and the g0 grid generally exhibited smaller errors compared to the g2 grid, with LT showing good performance in both grids.
