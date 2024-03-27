@@ -980,12 +980,12 @@ Assuming a halo size of 3, we also indicate the target values at the ghost cell
 positions using blue squares (Figure \ref{cs-duoscalar-3}). 
 It is worth noting that the dashed blue lines in Figure \ref{cs-duoscalar-4} 
 illustrate how the ghost cell points lie on geodesics containing grid positions from adjacent panels.
-With the exception of the blue  squares that lie on a cube corner (Figure \ref{cs-duoscalar-4}),
+With the exception of the blue squares that lie on a cube corner (Figure \ref{cs-duoscalar-4}),
 all the ghost cell values can be obtained using 1D Lagrange interpolation, 
 utilizing the surrounding red/green circles on the geodesic. 
 This interpolation procedure can be performed for all panels. 
-Subsequently, the blue squares that are on a cube corner can be interpolated using the values obtained in the first step of interpolation 
-while preserving the order of accuracy of the interpolation, assuming it is fixed.
+Subsequently, the blue squares located on a cube corner can be interpolated using the 
+green and red points by connecting these points using geodesics and further extending the blue lines from Figure \ref{cs-duoscalar-4}.
 
 There are two ways of computing the Lagrange polynomials.
 The first one is based on the geodesic distances of the duo-grid line points.
