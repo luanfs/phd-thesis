@@ -176,11 +176,11 @@ of new generation dynamical core based on the cubed-sphere.
 
 The FV3 dynamical core is an extension of the Finite-Volume dynamical core (FVcore)
 from latitude-longitude grids to the cubed-sphere.
-The numerical methods from FVcore started to be developed with the transport scheme from the work \citet{lin:1994},
+The numerical methods from FVcore started to be developed with the advection scheme from the work \citet{lin:1994},
 which is based on the piecewise linear scheme from \citet{vanleer:1977}. 
 This scheme was later improved, using the Piecewise Parabolic Method (PPM) \citep{colella:1984, carpenter:1990}
 using dimension splitting techniques that guarantee monotonicity and mass conservation,
-for the transport equation \citep{lin:1996} and the shallow-water equations \citep{lin:1997}. 
+for the advection equation \citep{lin:1996} and the shallow-water equations \citep{lin:1997}. 
 An important feature is that the FVcore combines the  Arakawa C- and D-grids \citep{arakawa:1977},
 where the C-grid values are computed in and intermediate time step. 
 The full global model was then presented by \citet{lin:2004}.
@@ -197,7 +197,8 @@ and it was chosen as the new US global weather prediction model, indeed, it repl
 Global Forecast System (GFS) in June, 2019
 (\url{https://www.noaa.gov/media-release/noaa-upgrades-us-global-weather-forecast-model}, last access: 19th of March, 2024).
 Additionally, the FV3 dynamical core is employed in the GEOS Chem model \citep{martin:2022} from Harvard University, 
-in NASA’s next-generation Mars Climate Model \citep{wilson:2022}, and also in the SHiELD model from GFDL \citep{harris:2020}.
+in NASA’s next-generation Mars Climate Model \citep{wilson:2022}, 
+and also in the System for High-resolution prediction on Earth-to-Local Domain (SHiELD) model from GFDL \citep{harris:2020}.
 
 However, a well-known problem that occurs on cubed-sphere models that use low-order numerical methods
 is the grid imprinting visible due to the coordinate system discontinuity, 
@@ -207,83 +208,62 @@ finite-difference numerical scheme on the Uniform Jacobian cubed-sphere using a 
 The unpublished report from \citet{whitaker:2015} shows grid imprinting in other models, including 
 the FV3.
 More recently, \citet{mouallem:2023} has shown some idealized simulations using FV3 where grid imprinting appears in many simulations.
+Generally speaking, grid imprinting refers to the presence of artificial behaviors in the numerical solution that are associated with the grid used.
+It is important to emphasize that other quasi-uniform grids may also experience grid imprinting, such as hexagonal grids \citep{weller:2012, peixoto:2013, peixoto:2016}.
 
-Generally speaking, grid imprinting is the presence of artificial behaviors on 
-the numerical solution that is associated with the grid employed.
-It is important to stress out that other quasi-uniform grids may also suffer from grid imprinting.
-For instance, a popular mimetic method, known as TRiSK, was proposed in the literature by
-\citet{thuburn:2009} and \citet{ringler:2010} using finite difference and finite volume schemes.
-This scheme is designed for general orthogonal grids, such as the Voronoi and icosahedral grids,
-and ensures mass and total energy conservation.
-This method has been employed in the dynamical core of the Model for Prediction Across Scales (MPAS)
-from National Center for Atmospheric Research (NCAR) \citep{skamarock:2012}, 
-which intended to work on general Voronoi grids, including locally refined Voronoi grids.
-However, the TRiSK scheme is a low-order scheme and also suffers from grid imprinting, \textit{i.e.},
-geometric properties of the grid, such as cell alignment, interfere with the method accuracy
-\citep{weller:2012, peixoto:2013, peixoto:2016}.
+Despite being chosen as the new US global weather prediction model, there is a lack of numerical studies on the FV3 discretizations in the literature.
+Numerical results for the advection equation on the cubed-sphere using the FV3 dynamical core were presented in \citet{putman:2007}.
+However, they utilized extrapolations near the cube edges instead of the duo-grid approach from \citet{mouallem:2023}, which affects the convergence of this method.
+The current solver of FV3 solves the shallow-water equation on the so-called Lagrangian surfaces.
+This shallow-water solver, based on \citet{lin:1997}, 
+utilizes the advection solver from \citet{putman:2007} to update the pressure, vorticity, and kinetic energy fluxes.
+Therefore, advection is a key aspect of the FV3 dynamical core and it deserves to be better understood.
+Although \citet{mouallem:2023} present results on the convergence of some shallow-water tests,
+they do not provide a detailed discussion on the solver on the cubed-sphere itself.
+Therefore, in this thesis, we propose to thoroughly examine all the minor details of the scheme from \citet{putman:2007} and suggest potential improvements,
+thus addressing gaps in the existing literature.
 
-Despite being chosen as the new US global weather prediction model,
-there is a lack of numerical studies of the FV3 discretizations in the literature,
-especially regarding the grid imprinting problem and its mimetic properties.
-Numerical results for the advection equation on the cubed-sphere using the
-FV3 dynamical core was presented in \citet{putman:2007} and some shallow-water 
-simulations were presented in \citet{harris:2013}, considering cubed-spheres
-with local refinement through grid nesting.
-From the work \citet{harris:2013} we can notice that the FV3 dynamical
-lack convergence on the maximum norm for the shallow-water model considering
-the classical balanced geostrophic flow test case from \citet{will:1992}.
-The authors attribute these errors to the abrupt change in the grid resolution
-near the nested grid, but no quantitative results are shown considering the quasi-uniform grid.
-Many other papers available in the literature use the complete FV3 model in three-dimensional
-frameworks which make it harder to perform a numerical analysis study due not only to its computational cost
-but also due to the complexity of three-dimensional atmospheric models.
-There are no detailed works published in intermediate two-dimensional frameworks, using, for 
-instance, the shallow-water equations on the sphere.
-Even though the advection equation on the sphere plays a key role in the dynamical core development,
-since it models the transport of scalar fields on the sphere, important features captured by the shallow-water
-equations on the sphere, such as the Coriolis effect, inertia-gravity waves, geostrophic adjustment, Rossby waves,
-among others, are not captured by a simple advection model.
-Hence, shallow-water equations provide an excellent benchmark to assess dynamical cores in general,
-since it is only two-dimensional but is a complex enough geophysical model for atmosphere dynamics.
 
 \section{Outline and contributions}
 This thesis is outlined as follows.
 \begin{itemize}
-\item Chapter \ref{chp-1d-fv} is dedicated to review the Piecewise Parabolic Method (PPM)
-for the one-dimensional advection equation. 
-In this Chapter, we demonstrate how the temporal component of PPM can be expressed as a departure point calculation.
+\item Chapter \ref{chp-1d-fv} is dedicated to reviewing the Piecewise Parabolic Method (PPM) for the one-dimensional advection equation. 
+In this Chapter, we demonstrate how the temporal component of PPM can be expressed as a departure point calculation. 
 Subsequently, we enhance the departure point calculation from first-order (which is utilized in FV3) to second-order.
 This enhancement results in a significant improvement, particularly in non-constant wind simulations.
-Its benefit is also observed when using the monotonic version of PPM used in FV3 and proposed by \citet{lin:2004}.
+Its benefits are also observed when using the monotonic version of PPM used in FV3 and proposed by \citet{lin:2004}.
 The additional cost is only due to linear interpolation, which has little impact on the overall performance.
-\item Chapter \ref{chp-2d-fv} reviews the dimension splitting method, which allow us to use 
-one-dimensional methods, such as the PPM, to solve the two-dimensional advection equation.
+
+\item Chapter \ref{chp-2d-fv} reviews the dimension splitting method, which allows us to use one-dimensional methods, 
+such as the PPM, to solve the two-dimensional advection equation. 
 We review the current 2D advection scheme of FV3 on the plane proposed by \citet{putman:2007}.
-The main feature of this scheme is that it preserves a constant scalar field when the wind is divergence free.
-We show through some numerical simulations that this scheme is second-order order accurate only for divergence free winds.
-When the wind is not divergence free, we show that this scheme is only first-order accurate.
-On the other hand, we propose a small modification of the \citet{putman:2007} scheme using the
-second-order departure point computation presented in Chapter \ref{chp-1d-fv}, that allow us to achieve second-order
-and smaller errors for divergent and divergence free winds,
-despite this scheme does not preserve the a constant scalar for a divergence free, but having a second-order error in this case as well.
-Further, when the monotonic scheme is used in the 1D solver,
-this scheme has also smaller errors when compared to the  \citet{putman:2007} scheme.
-\item Chapter \ref{chp-cs-grids} introduces the cubed-sphere grid used in FV3,
-namely the equi-edge \citet{chen:2021} and equiangular grids \citet{ronchi:1996},
-and we investigate its geometrical properties. 
-Then, we present all the tools needed to extend the advection schemes on the plane from Chapter \ref{chp-2d-fv} to the sphere.
+The main feature of this scheme is that it preserves a constant scalar field when the wind is divergence-free.
+We show through some numerical simulations that this scheme is second-order accurate only for divergence-free winds.
+When the wind is not divergence-free, we show that this scheme is only first-order accurate.
+On the other hand, we propose a small modification of the \citet{putman:2007} scheme 
+using the second-order departure point computation presented in Chapter \ref{chp-1d-fv},
+which allows us to achieve second-order accuracy and smaller errors for both divergent and divergence-free winds. 
+Despite this scheme not preserving a constant scalar for divergence-free winds, it still exhibits second-order error in this case as well. 
+Furthermore, when the monotonic scheme is used in the 1D solver, this scheme also has smaller errors compared to the \citet{putman:2007} scheme.
+
+\item In Chapter \ref{chp-cs-grids}, we introduce the cubed-sphere grid utilized in FV3, 
+which includes the equi-edge \citep{chen:2021} and equiangular grids \citep{ronchi:1996}, 
+and we investigate their geometrical properties.
+Next, we present all the tools necessary to extend the advection schemes on the plane from Chapter \ref{chp-2d-fv} to the sphere.
 We review the contravariant/covariant wind formulation induced by the cubed-sphere mappings.
-Also, we show how we can compute stencils near to the cube-edges through the duo-grid technique to generate the ghost cells that allow us to 
-use 1D Lagrange interpolation to fill the ghost cells.
+Additionally, we demonstrate how stencils can be computed near the cube-edges through the duo-grid 
+technique to generate the ghost cells required for utilizing 1D Lagrange interpolation to fill these ghost cells.
+
 
 \item Chapter \ref{chp-cs-fv} extends the ideas of Chapter \ref{chp-2d-fv} to the cubed-sphere grid using the tools from Chapter \ref{chp-cs-grids}.
-The dimension-splitting method on each cubed-sphere panel works as in the plane, with the addition
-of metric terms, due to non-orthogonality of the grid, and interpolation between panels
-to obtain ghost cells values needed for stencil computations.
-We show that the scheme from \citet{putman:2007} uses a less accurate formulation of the metric term to preserve the constant scalar
-for a divergence-free wind, while our new scheme may use a more accurate metric term formulation, since it does not have this preservation constraint.
-The results are essentially the same from Chapter \ref{chp-2d-fv},
-showing that our scheme is successfully extended from the plane to the cubed-sphere and is more accurate.
-We also show that our new scheme has smaller error at the corner compared to the scheme from \citet{putman:2007}.
+The dimension-splitting method on each cubed-sphere panel works as in the plane, 
+with the addition of metric terms due to the non-orthogonality of the grid and interpolation between panels to obtain ghost cell values needed for stencil computations. 
+We show that the scheme from \citet{putman:2007} uses a less accurate formulation of the metric term to preserve the constant scalar for a divergence-free wind,
+while our new scheme may use a more accurate formulation of the metric term, as it does not have this preservation constraint. 
+The results are essentially the same as those from Chapter \ref{chp-2d-fv}, 
+showing that our scheme successfully extends from the plane to the cubed-sphere and is more accurate. 
+We also demonstrate that our new scheme has smaller errors at the corners compared to the scheme from \citet{putman:2007}.
 \end{itemize}
-We give some future work perspectives in Chapter \ref{chp-conclusions}.
+
+In summary, the main contribution of this thesis is a modified version of the two-dimensional scheme proposed by \citet{putman:2007}, which exhibits improved accuracy.
+We give some final thoughts and future work perspectives in Chapter \ref{chp-conclusions}.
