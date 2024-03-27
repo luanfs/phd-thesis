@@ -1,14 +1,27 @@
 \chapter{Code availability and technical considerations}
 \label{anexo-code}
+The codes needed for this work have been openly built on GitHub. 
+The PPM implementation for the one-dimensional advection equation used in Chapter \ref{chp-1d-fv} is available at \url{https://github.com/luanfs/FV3_adv_1D}.
 
-The codes needed for this work have been built openly at GitHub. 
-The PPM implementation for the one-dimensional advection equation used in Chapter 
-\ref{chp-1d-fv} is available at \url{https://github.com/luanfs/FV3_adv_1D}.
+The dimension splitting method implementation used in Chapter \ref{chp-2d-fv} is available at \url{https://github.com/luanfs/FV3_adv_2D}.
 
-The dimension splitting method implementation used in Chapter 
-\ref{chp-2d-fv} is available at \url{https://github.com/luanfs/FV3_adv_2D}.
+The cubed-sphere code used in Chapter \ref{chp-cs-grids}, \ref{chp-cs-fv} and \ref{chp-cs-swm} is available at \url{https://github.com/luanfs/FV3_container}.
+This code was executed using Docker, utilizing the containerized version of the SHiELD model developed by \citet{cheng:2022}
+(\url{https://www.gfdl.noaa.gov/shield-in-a-box/}, last accessed on March 27th, 2024).
 
-All these code are written in Fortran and the output graphs were generated using Python3.
+The ENDGame shallow-water solver used in Chapter \ref{chp-cs-swm}  is available at \url{https://github.com/luanfs/endgame}.
 
-\url{https://labmap.ime.usp.br}
+All these codes are written in Fortran, and the output graphs were generated using Python3.
+
+The numerical experiments conducted in this study were primarily performed on the ybytu machine from Labmap 
+(\url{https://labmap.ime.usp.br}, last accessed on March 27th, 2024) with the following specifications:
+\begin{itemize}
+	\item Processor: 2x Intel Xeon Gold 6144 (8c/16t) 3.50 GHz;
+	\item Memory: 540 GB;
+	\item Disk: 4TB;
+	\item Operating System: Debian GNU/Linux.
+\end{itemize}
+
+
+
 
