@@ -88,25 +88,25 @@ centered at the origin of  $\mathbb{R}^3$ as:
 \end{equation*}
 We consider a parameter %$a = \frac{R}{\sqrt{3}}$ representing the half-length of the cube,and
 the family of maps
-$\boldsymbol{\Psi}_{p}: [-1,1] \times [-1,1] \to \mathbb{S}^2_R$, $p=1, \ldots, 6$,
+$\boldsymbol{\Gamma}_{p}: [-1,1] \times [-1,1] \to \mathbb{S}^2_R$, $p=1, \ldots, 6$,
 where:
 \begin{equation*}
-	\boldsymbol{\Psi}_{1}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(1, x, y), 
+	\boldsymbol{\Gamma}_{1}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(1, x, y), 
 \end{equation*}
 \begin{equation*}
-	\boldsymbol{\Psi}_{2}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(-x, 1, y), 
+	\boldsymbol{\Gamma}_{2}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(-x, 1, y), 
 \end{equation*}
 \begin{equation*}
-	\boldsymbol{\Psi}_{3}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(-1, -x, y), 
+	\boldsymbol{\Gamma}_{3}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(-1, -x, y), 
 \end{equation*}
 \begin{equation*}
-	\boldsymbol{\Psi}_{4}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(x, -1, y), 
+	\boldsymbol{\Gamma}_{4}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(x, -1, y), 
 \end{equation*}
 \begin{equation*}
-	\boldsymbol{\Psi}_{5}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(-y, x, 1), 
+	\boldsymbol{\Gamma}_{5}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(-y, x, 1), 
 \end{equation*}
 \begin{equation*}
-	\boldsymbol{\Psi}_{6}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(y, x, -1).
+	\boldsymbol{\Gamma}_{6}(x,y) = \frac{R}{\sqrt{1 + x^2 + y^2}}(y, x, -1).
 \end{equation*}
 
 
@@ -123,7 +123,7 @@ where:
 	\end{subfigure}
 	\caption{(a) Illustration of the resulting cube-to-sphere mapping and (b) illustration of the cube-to-sphere projection.\label{chp-cs-equidistant}}
 \end{figure}
-The set of 6 maps $\{\boldsymbol{\Psi}_{p}, p = 1, \ldots, 6\}$ allow us to cover the sphere (Figure \ref{chp-cs-equidistant}).
+The set of 6 maps $\{\boldsymbol{\Gamma}_{p}, p = 1, \ldots, 6\}$ allow us to cover the sphere (Figure \ref{chp-cs-equidistant}).
 Here $p$ denotes a panel, and they are defined and orientated as Figure \ref{chp-cs-panels}
 shows. Then, we can represent a point on the sphere using the cubed-sphere coordinates
 $(x,y,p)$.
@@ -135,9 +135,9 @@ $(x,y,p)$.
     Figure taken from \citet{jung:2019}.\label{chp-cs-panels}}
 \end{figure}
 
-The derivative of the maps $\boldsymbol{\Psi}_p$ are given by:
+The derivative of the maps $\boldsymbol{\Gamma}_p$ are given by:
 \begin{equation*}
-	d\boldsymbol{\Psi}_{1}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}
+	d\boldsymbol{\Gamma}_{1}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}
 	\begin{bmatrix}
 		-x & -y \\
 	 	 1+y^2  & -xy \\
@@ -145,7 +145,7 @@ The derivative of the maps $\boldsymbol{\Psi}_p$ are given by:
 	\end{bmatrix},
 \end{equation*}
 \begin{equation*}
-	d\boldsymbol{\Psi}_{2}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}
+	d\boldsymbol{\Gamma}_{2}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}
 	\begin{bmatrix}
 		-(1+y^2) & xy \\
 		 -x &  -y \\
@@ -153,7 +153,7 @@ The derivative of the maps $\boldsymbol{\Psi}_p$ are given by:
 	\end{bmatrix},
 \end{equation*}
 \begin{equation*}
-	d\boldsymbol{\Psi}_{3}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}
+	d\boldsymbol{\Gamma}_{3}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}
 	\begin{bmatrix}
 		 x &  y \\
 		-(1+y^2) & xy \\
@@ -161,7 +161,7 @@ The derivative of the maps $\boldsymbol{\Psi}_p$ are given by:
 	\end{bmatrix},
 \end{equation*}
 \begin{equation*}
-	d\boldsymbol{\Psi}_{4}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}	
+	d\boldsymbol{\Gamma}_{4}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}	
 	\begin{bmatrix}
 		 1+y^2 &  -xy \\
 		 x & y \\
@@ -169,7 +169,7 @@ The derivative of the maps $\boldsymbol{\Psi}_p$ are given by:
 	\end{bmatrix},
 \end{equation*}
 \begin{equation*}
-	d\boldsymbol{\Psi}_{5}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}	
+	d\boldsymbol{\Gamma}_{5}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}	
 	\begin{bmatrix}
 		 xy  & -(1+x^2) \\
 	 	 1+y^2  &  -xy \\
@@ -177,7 +177,7 @@ The derivative of the maps $\boldsymbol{\Psi}_p$ are given by:
 	\end{bmatrix},
 \end{equation*}
 \begin{equation*}
-	d\boldsymbol{\Psi}_{6}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}
+	d\boldsymbol{\Gamma}_{6}(x,y) = \frac{R}{{(1 + x^2 + y^2)}^{3/2}}
 	\begin{bmatrix}
 		 -xy  &  1+x^2 \\
 		 1+y^2  &  -xy \\
@@ -185,14 +185,14 @@ The derivative of the maps $\boldsymbol{\Psi}_p$ are given by:
 	\end{bmatrix}.
 \end{equation*}
 With the aid of the derivative, we may define a basis of tangent vectors 
-$\{{\partial_x \boldsymbol{\Psi}},  {\partial_y \boldsymbol{\Psi}}\}$ on each point on the sphere by:
+$\{{\partial_x \boldsymbol{\Gamma}},  {\partial_y \boldsymbol{\Gamma}}\}$ on each point on the sphere by:
 \begin{equation*}
-	{\partial_x \boldsymbol{\boldsymbol{\Psi}}}(x,y,p) = d\boldsymbol{\boldsymbol{\Psi}}_{p}(x,y) \cdot
+	{\partial_x \boldsymbol{\boldsymbol{\Gamma}}}(x,y,p) = d\boldsymbol{\boldsymbol{\Gamma}}_{p}(x,y) \cdot
 	\begin{bmatrix}
 		 1 \\
 		 0
 	\end{bmatrix}, \quad
-	{\partial_y \boldsymbol{\boldsymbol{\Psi}}}(x,y,p) = d\boldsymbol{\boldsymbol{\Psi}}_{p}(x,y) \cdot
+	{\partial_y \boldsymbol{\boldsymbol{\Gamma}}}(x,y,p) = d\boldsymbol{\boldsymbol{\Gamma}}_{p}(x,y) \cdot
 	\begin{bmatrix}
 		 0 \\
 		 1
@@ -200,9 +200,9 @@ $\{{\partial_x \boldsymbol{\Psi}},  {\partial_y \boldsymbol{\Psi}}\}$ on each po
 \end{equation*}
 Notice that the matrix
 \begin{equation*}
-	\label{chp-cs-eqdistant-Psitensor}
-	G_{\boldsymbol{\Psi}}(x,y) := 
-	[d\boldsymbol{\Psi}_{p}(x,y)]^Td\boldsymbol{\Psi}_{p}(x,y)
+	\label{chp-cs-eqdistant-Gammatensor}
+	G_{\boldsymbol{\Gamma}}(x,y) := 
+	[d\boldsymbol{\Gamma}_{p}(x,y)]^Td\boldsymbol{\Gamma}_{p}(x,y)
 	= \frac{R^2}{(1 + x^2 + y^2)^2}
 	\begin{bmatrix}
 		  1+ x^2 &  -xy \\
@@ -213,70 +213,70 @@ does not depend on $p$.
 This matrix is known as metric tensor.
 It is easy to see that:
 \begin{equation}
-	\label{chp-cs-eqdistant-Psi-metric-tensor}
-	G_{\boldsymbol{\Psi}}(x,y) = 
+	\label{chp-cs-eqdistant-Gamma-metric-tensor}
+	G_{\boldsymbol{\Gamma}}(x,y) = 
 	\begin{bmatrix}
-		\langle  {\partial_x \boldsymbol{\Psi}_p}, {\partial_x  \boldsymbol{\Psi}_p} \rangle & 
-		\langle  {\partial_x \boldsymbol{\Psi}_p}, {\partial_y  \boldsymbol{\Psi}_p} \rangle \\
-		\langle  {\partial_x  \boldsymbol{\Psi}_p}, {\partial_y  \boldsymbol{\Psi}_p} \rangle  &
-		\langle  {\partial_y  \boldsymbol{\Psi}_p}, {\partial_y  \boldsymbol{\Psi}_p} \rangle 
+		\langle  {\partial_x \boldsymbol{\Gamma}_p}, {\partial_x  \boldsymbol{\Gamma}_p} \rangle & 
+		\langle  {\partial_x \boldsymbol{\Gamma}_p}, {\partial_y  \boldsymbol{\Gamma}_p} \rangle \\
+		\langle  {\partial_x  \boldsymbol{\Gamma}_p}, {\partial_y  \boldsymbol{\Gamma}_p} \rangle  &
+		\langle  {\partial_y  \boldsymbol{\Gamma}_p}, {\partial_y  \boldsymbol{\Gamma}_p} \rangle 
 	\end{bmatrix},
 \end{equation}
 where $\langle \cdot, \cdot \rangle$ denotes 
 the standard inner product of $\mathbb{R}^3$,
-and that $G_{\Psi}(x,y)$ is positive-definite, 
+and that $G_{\Gamma}(x,y)$ is positive-definite, 
 $\forall (x,y) \in [-1,1]\times[-1,1]$.
-The Jacobian of the metric tensor $G_{\boldsymbol{\Psi}}(x,y)$, denoted by $\sqrt{\mathfrak{g}_{\boldsymbol{\Psi}}}$ and called metric term, is then given by:
+The Jacobian of the metric tensor $G_{\boldsymbol{\Gamma}}(x,y)$, denoted by $\sqrt{\mathfrak{g}_{\boldsymbol{\Gamma}}}$ and called metric term, is then given by:
 \begin{equation*}
-        \sqrt{\mathfrak{g}_{\boldsymbol{\Psi}}}(x,y) :=
-	\sqrt{|\det{G_{\boldsymbol{\Psi}}(x,y)}|} = \frac{R^2}{(1+x^2+y^2)^{3/2}},
+        \sqrt{\mathfrak{g}_{\boldsymbol{\Gamma}}}(x,y) :=
+	\sqrt{|\det{G_{\boldsymbol{\Gamma}}(x,y)}|} = \frac{R^2}{(1+x^2+y^2)^{3/2}},
 \end{equation*}
 Now let us assume that we have a function $\beta:[-\alpha,\alpha] \to [-1,1]$, for some positive $\alpha>0$,
 supposed to be bijective and $\mathcal{C}^1$ with inverse $\mathcal{C}^1$ as well.
 That is, $\beta$ is a change of coordinates.
-Let us consider $ \boldsymbol{\Phi}_p: [-\alpha,\alpha]\times [-\alpha,\alpha] \to \mathbb{S}^2_R$,
+Let us consider $ \boldsymbol{\Psi}_p: [-\alpha,\alpha]\times [-\alpha,\alpha] \to \mathbb{S}^2_R$,
 given by 
 \begin{equation*}
-	\boldsymbol{\Phi}_p(x,y) := \boldsymbol{\Psi}_p\big(\beta(x),\beta(y)\big).
+	\boldsymbol{\Psi}_p(x,y) := \boldsymbol{\Gamma}_p\big(\beta(x),\beta(y)\big).
 \end{equation*}
 It follows from the chain rule that:
 \begin{equation*}
-        d \boldsymbol{\Phi}_p(x,y) = d \boldsymbol{\Psi}_p\big(\beta(x),\beta(y)\big)\cdot\text{diag}\big(\beta'(x),\beta'(y)\big),
+        d \boldsymbol{\Psi}_p(x,y) = d \boldsymbol{\Gamma}_p\big(\beta(x),\beta(y)\big)\cdot\text{diag}\big(\beta'(x),\beta'(y)\big),
 \end{equation*}
 where $\text{diag}(\beta'(x),\beta'(y))$ is a diagonal $2\times 2$ matrix with diagonal entries given by $\beta'(x)$ and $\beta'(y)$.
-We also have that tangent vector basis $\{{\partial_x  \boldsymbol{\Phi}_p},  {\partial_y  \boldsymbol{\Phi}_p}\}$ satisfying
+We also have that tangent vector basis $\{{\partial_x  \boldsymbol{\Psi}_p},  {\partial_y  \boldsymbol{\Psi}_p}\}$ satisfying
 \begin{align*}
-	{\partial_x  \boldsymbol{\Phi}_p}(x,y) = \beta'(x) \cdot {\partial_x  \boldsymbol{\Psi}_p}\big(\beta(x),\beta(y)\big),\\
-	{\partial_y  \boldsymbol{\Phi}_p}(x,y) = \beta'(y) \cdot {\partial_y  \boldsymbol{\Psi}_p}\big(\beta(x),\beta(y)\big).
+	{\partial_x  \boldsymbol{\Psi}_p}(x,y) = \beta'(x) \cdot {\partial_x  \boldsymbol{\Gamma}_p}\big(\beta(x),\beta(y)\big),\\
+	{\partial_y  \boldsymbol{\Psi}_p}(x,y) = \beta'(y) \cdot {\partial_y  \boldsymbol{\Gamma}_p}\big(\beta(x),\beta(y)\big).
 \end{align*}
-The metric tensor of $\boldsymbol{\Phi}_p$ is defined as $G_{\Psi}$ in Equation \eqref{chp-cs-eqdistant-Psi-metric-tensor}:
+The metric tensor of $\boldsymbol{\Psi}_p$ is defined as $G_{\Gamma}$ in Equation \eqref{chp-cs-eqdistant-Gamma-metric-tensor}:
 \begin{equation*}
-	\label{chp-cs-eqdistant-Phi-metric-tensor}
+	\label{chp-cs-eqdistant-Psi-metric-tensor}
 	G(x,y) = 
 	\begin{bmatrix}
-		\langle  {\partial_x  \boldsymbol{\Phi}_p}, {\partial_x \boldsymbol{\Phi}_p} \rangle & 
-		\langle  {\partial_x  \boldsymbol{\Phi}_p}, {\partial_y \boldsymbol{\Phi}_p} \rangle \\
-		\langle  {\partial_x  \boldsymbol{\Phi}_p}, {\partial_y \boldsymbol{\Phi}_p} \rangle  &
-		\langle  {\partial_y  \boldsymbol{\Phi}_p}, {\partial_y \boldsymbol{\Phi}_p} \rangle 
+		\langle  {\partial_x  \boldsymbol{\Psi}_p}, {\partial_x \boldsymbol{\Psi}_p} \rangle & 
+		\langle  {\partial_x  \boldsymbol{\Psi}_p}, {\partial_y \boldsymbol{\Psi}_p} \rangle \\
+		\langle  {\partial_x  \boldsymbol{\Psi}_p}, {\partial_y \boldsymbol{\Psi}_p} \rangle  &
+		\langle  {\partial_y  \boldsymbol{\Psi}_p}, {\partial_y \boldsymbol{\Psi}_p} \rangle 
 	\end{bmatrix}.
 \end{equation*}
-Finally, the metric term $\sqrt{\mathfrak{g}}:= \sqrt{\det{G}}$ is expressed in terms of $\sqrt{\mathfrak{g}}_{\Psi}$ as
+Finally, the metric term $\sqrt{\mathfrak{g}}:= \sqrt{\det{G}}$ is expressed in terms of $\sqrt{\mathfrak{g}}_{\Gamma}$ as
 \begin{align*}
-    \sqrt{\mathfrak{g}}(x,y) &= \beta'(x)\beta'(y)\sqrt{\mathfrak{g}}_{\Psi}\big(\beta(x),\beta(y)\big)\\
+    \sqrt{\mathfrak{g}}(x,y) &= \beta'(x)\beta'(y)\sqrt{\mathfrak{g}}_{\Gamma}\big(\beta(x),\beta(y)\big)\\
     &= \beta'(x)\beta'(y)\frac{R^2}{\big(1+\beta(x)^2+\beta(y)^2\big)^{3/2}},
 \end{align*}
 which may also be expressed as
 \begin{equation}
 	\label{mt-sina}
 	\sqrt{\mathfrak{g}}(x,y) =	
-\|\partial_x  \boldsymbol{\Phi}_p \| \|\partial_y  \boldsymbol{\Phi}_p \| \sin \alpha(x,y,p),
+\|\partial_x  \boldsymbol{\Psi}_p \| \|\partial_y  \boldsymbol{\Psi}_p \| \sin \alpha(x,y,p),
 \end{equation}
-where $\alpha$ is the angle between $\partial_x \boldsymbol{\Phi}_p$ and $\partial_y \boldsymbol{\Phi}_p$ that
+where $\alpha$ is the angle between $\partial_x \boldsymbol{\Psi}_p$ and $\partial_y \boldsymbol{\Psi}_p$ that
 satisfies
 \begin{equation*}
 	\label{mt-cosa}
-\cos{\alpha(x,y,p)} = \frac{\langle  {\partial_x  \boldsymbol{\Phi}_p}, {\partial_x \boldsymbol{\Phi}_p} \rangle }
-{\|\partial_x \boldsymbol{\Phi}_p\|  \|\partial_y \boldsymbol{\Phi}_p\|}.
+\cos{\alpha(x,y,p)} = \frac{\langle  {\partial_x  \boldsymbol{\Psi}_p}, {\partial_x \boldsymbol{\Psi}_p} \rangle }
+{\|\partial_x \boldsymbol{\Psi}_p\|  \|\partial_y \boldsymbol{\Psi}_p\|}.
 \end{equation*}
 
 \newpage
@@ -288,7 +288,7 @@ we may introduce the cubed-sphere grids proposed in the literature.
 \subsection{Equidistant cubed-sphere}
 \label{cs-equidistant}
 The first cubed-sphere grid was proposed by \citet{sadourny:1972}. This grid is obtained by using
-$\beta(x) = x$, $\alpha=1$ in the $\boldsymbol{\Phi}_p$ mapping described in Section \ref{equidistant-cs}.
+$\beta(x) = x$, $\alpha=1$ in the $\boldsymbol{\Psi}_p$ mapping described in Section \ref{equidistant-cs}.
 This grid partitions the cube face into equally spaced points
 and projects them onto the sphere, as illustrated in Figure
 \ref{chp-cs-equidistant}, hence the name equidistant.
@@ -299,7 +299,7 @@ We shall denote this grid by \textbf{g1} since the parameter
 \label{cs-equiangular}
 Another cubed-sphere mapping is the equiangular mapping, 
 introduced by \citet{ronchi:1996}, which leads to a more uniform grid.
-This grid is obtained by considering the mapping $\boldsymbol{\Phi}_p$ described in Section \ref{equidistant-cs}
+This grid is obtained by considering the mapping $\boldsymbol{\Psi}_p$ described in Section \ref{equidistant-cs}
 with $\beta(x) = \tan{x}$ and $\alpha=\frac{\pi}{4}$.
 In this case, $\beta(x)$ represents the angular coordinates, and the cube-sphere is obtained by partitioning the angle between
 grid points equally, as illustrated in Figure \ref{chp-cs-equiangular}, hence the name equiangular.
@@ -353,7 +353,7 @@ $\Omega_{\Delta x, \Delta y} = (\Omega_{ij})_{i,j=-\nu+1,\ldots,N+\nu}$,
 where $\Delta x = \Delta y$, and it covers the domain $\Omega$. 
 A control volume of the cubed-sphere is denoted by $\Omega_{ijp}$, defined as follows:
 \begin{equation*}
-	\Omega_{ijp} = \Phi_p(\Omega_{ij})
+	\Omega_{ijp} = \Psi_p(\Omega_{ij})
 	\quad -\nu+1 \leq i, j \leq N+\nu, \quad 1 \leq p \leq 6.
 \end{equation*}
 The cubed-sphere grid refers to the collection of control volumes 
@@ -514,19 +514,19 @@ One possible approach is to use the cubed-sphere mapping to generate these point
 These points shall be denoted using a superscript 'c'.
 The B-grid points represent the corners of the control volume, namely
 \begin{equation}
-	\Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^c := \Phi_p(x_{i+\frac{1}{2}},y_{j+\frac{1}{2}}).
+	\Psi_{i+\frac{1}{2},j+\frac{1}{2},p}^c := \Psi_p(x_{i+\frac{1}{2}},y_{j+\frac{1}{2}}).
 \end{equation}
 Similarly, the A grid points are the cell centers:
 \begin{equation}
-	\Phi_{ijp}^c := \Phi_p(x_{i},y_{j}).
+	\Psi_{ijp}^c := \Psi_p(x_{i},y_{j}).
 \end{equation}
 The C-grid points are the midpoints of the edge in the $y$-direction, namely:
 \begin{equation}
-	\Phi_{i+\frac{1}{2},j,p}^c := \Phi_p(x_{i+\frac{1}{2}},y_{j}).
+	\Psi_{i+\frac{1}{2},j,p}^c := \Psi_p(x_{i+\frac{1}{2}},y_{j}).
 \end{equation}
 The D-grid points are the midpoints of the edge in the $x$-direction, namely:
 \begin{equation}
-	\Phi_{i,j+\frac{1}{2},p}^c := \Phi_p(x_{i},y_{j+\frac{1}{2}}).
+	\Psi_{i,j+\frac{1}{2},p}^c := \Psi_p(x_{i},y_{j+\frac{1}{2}}).
 \end{equation}
 The grids g0 and g2, formulated with these grid points, are denoted by \textbf{g0.c} and \textbf{g2.c}, respectively.
 We refer to this grid point formulation as cube midpoints, which is a common approach used in the literature \citep{guo:2014,katta:2015,katta:2015b,nair:2005,ullrich:2016}.
@@ -536,33 +536,33 @@ points using as before and obtain the A, C and D-grids using the spherical midpo
 These points shall be denoted using a superscript 's'.
 The B-grid points in this case are:
 \begin{equation}
-	\Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^s := \Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^c.
+	\Psi_{i+\frac{1}{2},j+\frac{1}{2},p}^s := \Psi_{i+\frac{1}{2},j+\frac{1}{2},p}^c.
 \end{equation}
 The A-grid points are computed by averaging the values of 4 B-grid points:
 \begin{equation}
-	\Phi_{ijp}^s :=
-	\frac{\Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Phi_{i+\frac{1}{2},j-\frac{1}{2},p}^s + \Phi_{i-\frac{1}{2},j+\frac{1}{2},p}^s + \Phi_{i-\frac{1}{2},j-\frac{1}{2},p}^s}
-         {\|\Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Phi_{i+\frac{1}{2},j-\frac{1}{2},p}^s + \Phi_{i-\frac{1}{2},j+\frac{1}{2},p}^s + \Phi_{i-\frac{1}{2},j-\frac{1}{2},p}^s\|}.
+	\Psi_{ijp}^s :=
+	\frac{\Psi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Psi_{i+\frac{1}{2},j-\frac{1}{2},p}^s + \Psi_{i-\frac{1}{2},j+\frac{1}{2},p}^s + \Psi_{i-\frac{1}{2},j-\frac{1}{2},p}^s}
+         {\|\Psi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Psi_{i+\frac{1}{2},j-\frac{1}{2},p}^s + \Psi_{i-\frac{1}{2},j+\frac{1}{2},p}^s + \Psi_{i-\frac{1}{2},j-\frac{1}{2},p}^s\|}.
 \end{equation}
 Similarly, the C-grid points are obtained by averaging the values of 2 B-grid points.
 \begin{equation}
-	\Phi_{i+\frac{1}{2},j,p}^s :=
-	\frac{\Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Phi_{i+\frac{1}{2},j-\frac{1}{2},p}^s}
-	   {\|\Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Phi_{i+\frac{1}{2},j-\frac{1}{2},p}^s\|}.
+	\Psi_{i+\frac{1}{2},j,p}^s :=
+	\frac{\Psi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Psi_{i+\frac{1}{2},j-\frac{1}{2},p}^s}
+	   {\|\Psi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Psi_{i+\frac{1}{2},j-\frac{1}{2},p}^s\|}.
 \end{equation}
 and the D-grid points are also  given by the average  the values of 2 B-grid points:
 \begin{equation}
-	\Phi_{i,j+\frac{1}{2},p}^s :=
-	\frac{\Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Phi_{i-\frac{1}{2},j+\frac{1}{2},p}^s}
-	     {\|\Phi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Phi_{i-\frac{1}{2},j+\frac{1}{2},p}^s\|}.
+	\Psi_{i,j+\frac{1}{2},p}^s :=
+	\frac{\Psi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Psi_{i-\frac{1}{2},j+\frac{1}{2},p}^s}
+	     {\|\Psi_{i+\frac{1}{2},j+\frac{1}{2},p}^s + \Psi_{i-\frac{1}{2},j+\frac{1}{2},p}^s\|}.
 \end{equation}
 The grids g0 and g2, formulated with these grid points, are denoted by \textbf{g0.s} and \textbf{g2.s}, respectively.
 We refer to this grid points formulation as spherical midpoints.
 One can easily see that:
 \begin{align}
-	\Phi_{i+\frac{1}{2},j,p}^s &= \Phi_{i+\frac{1}{2},j,p}^c+ \mathcal{O}(\Delta x^2),\\
-	\Phi_{i,j+\frac{1}{2},p}^s &= \Phi_{i,j+\frac{1}{2},p}^c+ \mathcal{O}(\Delta x^2),\\
-	\Phi_{i,j,p}^s &= \Phi_{i,j,p}^c + \mathcal{O}(\Delta x^2).
+	\Psi_{i+\frac{1}{2},j,p}^s &= \Psi_{i+\frac{1}{2},j,p}^c+ \mathcal{O}(\Delta x^2),\\
+	\Psi_{i,j+\frac{1}{2},p}^s &= \Psi_{i,j+\frac{1}{2},p}^c+ \mathcal{O}(\Delta x^2),\\
+	\Psi_{i,j,p}^s &= \Psi_{i,j,p}^c + \mathcal{O}(\Delta x^2).
 \end{align}
 Then, we should expect similar results when using different grid point formulations, especially when using a high-resolution grid.
 In g0.c or g2.c grids, the points are aligned along geodesics.
@@ -575,8 +575,8 @@ Hereafter, we are going to omit the superscripts 's' and 'c'.
 Finally, we introduce the following geodesic distances in $x$ and $y$ directions, respectively,
 \begin{align}
 	\label{distcube}
-	{\delta} x_{ij} &= d(\Phi_{i+\frac{1}{2},j,p},\Phi_{i-\frac{1}{2},j,p}) ,\\
-	{\delta} y_{ij} &= d(\Phi_{i,j+\frac{1}{2},p},\Phi_{i,j-\frac{1}{2},p}),
+	{\delta} x_{ij} &= d(\Psi_{i+\frac{1}{2},j,p},\Psi_{i-\frac{1}{2},j,p}) ,\\
+	{\delta} y_{ij} &= d(\Psi_{i,j+\frac{1}{2},p},\Psi_{i,j-\frac{1}{2},p}),
 \end{align}
 where $d(P,Q) = R\arccos{(\langle P, Q \rangle)}$, for $P,Q \in \mathbb{S}^2_R$, and we assume that $i$ and $j$ can be integers or half-integers.
 Notice that these distances do not depend on the panel due to the grid symmetry.
@@ -584,16 +584,16 @@ These distances may be represented in terms of the tangent vector norms as:
 \begin{align}
 	{\delta} x_{ij} &= 
 	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
-	\|\partial_x  \mathbf{\Phi}_{p}\|(x,y_j) \,dx ,\\
+	\|\partial_x  \mathbf{\Psi}_{p}\|(x,y_j) \,dx ,\\
 	{\delta} y_{ij} &=
 	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}
-	\|\partial_y \mathbf{\Phi}_{p}\|(x_i,y) \,dy.
+	\|\partial_y \mathbf{\Psi}_{p}\|(x_i,y) \,dy.
 \end{align}
 Hence, their midpoint approximations are defined as:
 \begin{align}
 	\label{distcube2}
-	\hat{\delta} x_{ij} &= \|\partial_x \mathbf{\Phi}_{ijp} \|\Delta x,\\
-	\hat{\delta} y_{ij} &= \|\partial_y \mathbf{\Phi}_{ijp} \|\Delta y,
+	\hat{\delta} x_{ij} &= \|\partial_x \mathbf{\Psi}_{ijp} \|\Delta x,\\
+	\hat{\delta} y_{ij} &= \|\partial_y \mathbf{\Psi}_{ijp} \|\Delta y,
 \end{align}
 which are second-order accurate (see Theorem \ref{prop-bound-midpoint1d}):
 \begin{align}
@@ -602,7 +602,7 @@ which are second-order accurate (see Theorem \ref{prop-bound-midpoint1d}):
 \end{align}
 \subsection{Duo-grid points}
 \label{duogrid-points}
-The B duo-grid points are generated by computing the mappings $\boldsymbol{\Phi}_p$ for the grid points 
+The B duo-grid points are generated by computing the mappings $\boldsymbol{\Psi}_p$ for the grid points 
 $(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}})$ where $i$ and $j$ out of the range $0$ to $N$. 
 When using the cube midpoint formulation, the A, C, and D-grid points are computed analogously.
 In Figure \ref{cs-duo}, we illustrate the duo-grid points obtained for both g0 and g2 grids.
@@ -676,7 +676,7 @@ $\boldsymbol{\Pi} = ({\Pi}_1,{\Pi}_2,{\Pi}_3)$, given by:
 \end{align}
 The derivative or Jacobian matrix of the mapping $\boldsymbol{\Pi}$ is given by:
 \begin{equation}
-	\label{dpsi}
+	\label{dGamma}
 	d\boldsymbol{\Pi} (\lambda,\phi) = 
 	R \begin{bmatrix}
 		-\cos \phi \sin \lambda &  -\sin \phi \cos \lambda \\
@@ -728,24 +728,24 @@ obtained by cubed-sphere coordinates:
 \begin{equation}
 	\label{contravariant-wind}
 	\boldsymbol{u}(x, y, p) = 
-	\mathfrak{u}(x, y, p) \partial_x\boldsymbol{\Phi}_p(x, y) + 
-	\mathfrak{v}(x, y, p) \partial_y\boldsymbol{\Phi}_p(x, y).
+	\mathfrak{u}(x, y, p) \partial_x\boldsymbol{\Psi}_p(x, y) + 
+	\mathfrak{v}(x, y, p) \partial_y\boldsymbol{\Psi}_p(x, y).
 \end{equation}
 This representation is known as contravariant representation.
 In order to relate the latitude-longitude representation
 with the contravariant representation, we notice that:
 \begin{align}
 	\label{basis-convertion1}
-	\partial_x\boldsymbol{\Phi}_p(x, y, p) &= 
-	\langle \partial_x\boldsymbol{\Phi}_p , \boldsymbol{e}_{\lambda}\rangle
+	\partial_x\boldsymbol{\Psi}_p(x, y, p) &= 
+	\langle \partial_x\boldsymbol{\Psi}_p , \boldsymbol{e}_{\lambda}\rangle
 	\boldsymbol{e}_{\lambda} (\lambda, \phi)  
-	+ \langle 	\partial_x\boldsymbol{\Phi}_p , \boldsymbol{e}_{\phi}\rangle
+	+ \langle 	\partial_x\boldsymbol{\Psi}_p , \boldsymbol{e}_{\phi}\rangle
 	\boldsymbol{e}_{\phi} (\lambda, \phi), \\
 	\label{basis-convertion2}
-	\partial_y\boldsymbol{\Phi}_p(x, y, p) &=  
-	\langle \partial_y\boldsymbol{\Phi}_p , \boldsymbol{e}_{\lambda}\rangle
+	\partial_y\boldsymbol{\Psi}_p(x, y, p) &=  
+	\langle \partial_y\boldsymbol{\Psi}_p , \boldsymbol{e}_{\lambda}\rangle
 	\boldsymbol{e}_{\lambda} (\lambda, \phi) 
-	+ \langle \partial_y\boldsymbol{\Phi}_p , \boldsymbol{e}_{\phi}\rangle
+	+ \langle \partial_y\boldsymbol{\Psi}_p , \boldsymbol{e}_{\phi}\rangle
 	\boldsymbol{e}_{\phi} (\lambda, \phi), 
 \end{align}
 which holds since the vectors $\boldsymbol{e}_{\lambda}(\lambda, \phi)$ and
@@ -762,10 +762,10 @@ as the following matrix equation:
 	\end{bmatrix}
 	=
 	\begin{bmatrix}
-		\langle 	\partial_x\boldsymbol{\Phi}_p, \boldsymbol{e}_\lambda \rangle 
-		& \langle 	\partial_y\boldsymbol{\Phi}_p, \boldsymbol{e}_\lambda \rangle \\
-		\langle 	\partial_x\boldsymbol{\Phi}_p, \boldsymbol{e}_\phi \rangle 
-		& \langle 	\partial_y\boldsymbol{\Phi}_p, \boldsymbol{e}_\phi \rangle \\
+		\langle 	\partial_x\boldsymbol{\Psi}_p, \boldsymbol{e}_\lambda \rangle 
+		& \langle 	\partial_y\boldsymbol{\Psi}_p, \boldsymbol{e}_\lambda \rangle \\
+		\langle 	\partial_x\boldsymbol{\Psi}_p, \boldsymbol{e}_\phi \rangle 
+		& \langle 	\partial_y\boldsymbol{\Psi}_p, \boldsymbol{e}_\phi \rangle \\
 	\end{bmatrix}
 	\begin{bmatrix}
 		\mathfrak{u}(x,y,p) \\
@@ -785,13 +785,13 @@ $({u},{v})$ given by:
 \end{equation}
 where $\boldsymbol{e}_x$ and $\boldsymbol{e}_y$ are the normalized cubed-sphere tangent vectors:
 \begin{equation}
-   \boldsymbol{e}_x(x,y,p)  = \frac{\partial_x\boldsymbol{\Phi}_p(x,y)}{\|\partial_x\boldsymbol{\Phi}_p(x,y)\|}, \quad
-   \boldsymbol{e}_y(x,y,p)  = \frac{\partial_y\boldsymbol{\Phi}_p(x,y)}{\|\partial_y\boldsymbol{\Phi}_p(x,y)\|}.
+   \boldsymbol{e}_x(x,y,p)  = \frac{\partial_x\boldsymbol{\Psi}_p(x,y)}{\|\partial_x\boldsymbol{\Psi}_p(x,y)\|}, \quad
+   \boldsymbol{e}_y(x,y,p)  = \frac{\partial_y\boldsymbol{\Psi}_p(x,y)}{\|\partial_y\boldsymbol{\Psi}_p(x,y)\|}.
 \end{equation}
 It is easy to see that:
 \begin{equation}
-	{u}(x,y,p)  = \frac{\mathfrak{u}(x,y,p)}{\|\partial_x\boldsymbol{\Phi}_p(x,y)\|}, \quad
-	{v}(x,y,p)  = \frac{\mathfrak{v}(x,y,p)}{\|\partial_y\boldsymbol{\Phi}_p(x,y)\|}.
+	{u}(x,y,p)  = \frac{\mathfrak{u}(x,y,p)}{\|\partial_x\boldsymbol{\Psi}_p(x,y)\|}, \quad
+	{v}(x,y,p)  = \frac{\mathfrak{v}(x,y,p)}{\|\partial_y\boldsymbol{\Psi}_p(x,y)\|}.
 \end{equation}
 The normalized contravariant form is used because it offers greater generality and flexibility when working with optimized cubed-sphere grids,
 as discussed in \citet{putman:2007}, and stretched grids \citep{harris:2016}, 
@@ -828,9 +828,9 @@ is given by Equation \eqref{contravariant-wind}.
 The covariant components $(\mathfrak{U},\mathfrak{V})$ are given by:
 \begin{align}
 	\label{covariant-u}
-	\mathfrak{U}(x,y,p) = \langle \boldsymbol{u}(x,y,p) , 	\partial_x\boldsymbol{\Phi}_p(x,y,p)  \rangle, \\
+	\mathfrak{U}(x,y,p) = \langle \boldsymbol{u}(x,y,p) , 	\partial_x\boldsymbol{\Psi}_p(x,y,p)  \rangle, \\
 	\label{covariant-v}
-	\mathfrak{V}(x,y,p) = \langle \boldsymbol{u}(x,y,p) , 	\partial_y\boldsymbol{\Phi}_p(x,y,p)  \rangle.
+	\mathfrak{V}(x,y,p) = \langle \boldsymbol{u}(x,y,p) , 	\partial_y\boldsymbol{\Psi}_p(x,y,p)  \rangle.
 \end{align}
 Replacing Equation \eqref{contravariant-wind} in 
 Equations \eqref{covariant-u} and \eqref{covariant-v} we obtain
@@ -844,10 +844,10 @@ contravariant terms:
 	\end{bmatrix}
 	=
 	\begin{bmatrix}
-		\langle 	\partial_x\boldsymbol{\Phi}_p, \partial_x\boldsymbol{\Phi}_p \rangle
-		& \langle 	\partial_x\boldsymbol{\Phi}_p, \partial_y\boldsymbol{\Phi}_p \rangle \\
-		\langle 	\partial_x\boldsymbol{\Phi}_p, \partial_y\boldsymbol{\Phi}_p \rangle 
-		& \langle   \partial_y\boldsymbol{\Phi}_p, \partial_y\boldsymbol{\Phi}_p \rangle \\
+		\langle 	\partial_x\boldsymbol{\Psi}_p, \partial_x\boldsymbol{\Psi}_p \rangle
+		& \langle 	\partial_x\boldsymbol{\Psi}_p, \partial_y\boldsymbol{\Psi}_p \rangle \\
+		\langle 	\partial_x\boldsymbol{\Psi}_p, \partial_y\boldsymbol{\Psi}_p \rangle 
+		& \langle   \partial_y\boldsymbol{\Psi}_p, \partial_y\boldsymbol{\Psi}_p \rangle \\
 	\end{bmatrix}
 	\begin{bmatrix}
 		{u} (x,y,p) \\
@@ -863,8 +863,8 @@ Like the contravariant component, FV3 works with the normalized covariant wind $
 \end{align}
 It is easy to see that:
 \begin{equation}
-	{U}(x,y,p)  = \frac{\mathfrak{U}(x,y,p)}{\|\partial_x\boldsymbol{\Phi}_p(x,y)\|}, \quad
-	{V}(x,y,p)  = \frac{\mathfrak{V}(x,y,p)}{\|\partial_y\boldsymbol{\Phi}_p(x,y)\|}.
+	{U}(x,y,p)  = \frac{\mathfrak{U}(x,y,p)}{\|\partial_x\boldsymbol{\Psi}_p(x,y)\|}, \quad
+	{V}(x,y,p)  = \frac{\mathfrak{V}(x,y,p)}{\|\partial_y\boldsymbol{\Psi}_p(x,y)\|}.
 \end{equation}
 Replacing Equation \eqref{norm-contravariant-wind} in 
 Equations \eqref{norm-covariant-u} and \eqref{norm-covariant-v} we obtain
