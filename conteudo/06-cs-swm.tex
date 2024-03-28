@@ -1,3 +1,379 @@
 \chapter{Cubed-sphere finite-volume shallow-water model}
 \label{chp-cs-swm}
 
+Even though the advection equation on the sphere plays a key role in the dynamical core development,
+since it models the advection of scalar fields on the sphere, important features captured by the shallow-water
+equations on the sphere, such as the Coriolis effect, inertia-gravity waves, geostrophic adjustment, Rossby waves,
+among others, are not captured by a simple advection model.
+Hence, shallow-water equations provide an excellent benchmark to assess dynamical cores in general,
+since it is only two-dimensional but is a complex enough geophysical model for atmosphere dynamics.
+\newpage
+\section{The shallow-water equations on the sphere}
+\label{sec:sweq}
+The shallow-water are expressed as:
+\begin{align}
+	\label{2d-sweq}
+	{\partial_t (\sqrt{\mathfrak{g}} {h})}(x, y, t) &= -
+	[{\partial_x (\mathfrak{u}\sqrt{\mathfrak{g}}{h}}
+	+ {\partial_y (\mathfrak{v}\sqrt{\mathfrak{g}}{h})}](x, y, t), \\
+	{\partial_t \mathfrak{U}}(x, y, t)&=
+	-[\partial_x K - \mathfrak{v}\sqrt{\mathfrak{g}}\xi +\partial_x \Psi] (x, y, t), \\
+	{\partial_t \mathfrak{V}}(x, y, t)&=
+	-[\partial_y K + \mathfrak{u}\sqrt{\mathfrak{g}}\xi + \partial_y \Psi](x, y, t), 
+\end{align}
+$\Psi = g(h+b)$ is the geopotential, $g$ is the gravity, $b$ is the bottom topography,
+\begin{equation}
+	\label{ke-eq}
+	K = \frac{\mathfrak{u}\mathfrak{U}+\mathfrak{v}\mathfrak{V}}{2},
+\end{equation}
+is the kinetic energy,
+\begin{equation}
+	\label{vort-eq}
+	\xi = f+ \zeta,
+\end{equation}
+is, where
+\begin{equation}
+	\label{coriolis-eq}
+	f  = 2 \Omega \sin{\phi},
+\end{equation}
+is the Coriolis parameter,
+$\phi$ is the latitude, $\Omega$ is the earth rotation speed,
+\begin{equation}
+	\label{vort2-eq}
+	\zeta = \frac{1}{\sqrt{\mathfrak{g}}}(\partial_x \mathfrak{V} - \partial_y\mathfrak{U}),
+\end{equation}
+is the relative vorticity.
+
+\begin{align}
+	\label{absvort-eq}
+	{\partial_t (\sqrt{\mathfrak{g}} {h})}_{ij}(t) & = 
+	-[{\partial_x (\mathfrak{u}\sqrt{\mathfrak{g}}{h}})
+	+ {\partial_y (\mathfrak{v}\sqrt{\mathfrak{g}}{h}})]_{ij}(t), 
+\end{align}
+
+\subsection{C-grid intermediate step}
+C-grid equation
+\begin{align}
+	\label{2d-sw-eq-Cgrid}
+	{\partial_t (\sqrt{\mathfrak{g}} {h})}_{ij}(t) & = 
+	-[{\partial_x (\mathfrak{u}\sqrt{\mathfrak{g}}{h}})
+	+ {\partial_y (\mathfrak{v}\sqrt{\mathfrak{g}}{h}})]_{ij}(t), \\
+	{\partial_t \mathfrak{U}}_{i+\frac{1}{2},j}(t)&=
+	-[\partial_x K -  \mathfrak{v}\sqrt{\mathfrak{g}}\xi +\partial_x \Phi ]_{i+\frac{1}{2},j} (t), \\
+	{\partial_t \mathfrak{V}}_{i,j+\frac{1}{2}}(t)&=
+	-[\partial_y K + \mathfrak{u}\sqrt{\mathfrak{g}}\xi +\partial_y \Phi ]_{i,j+\frac{1}{2}}(t), 
+\end{align}
+Integrate over time
+\begin{align}
+	\label{2d-sw-eq-Cgrid-int}
+	\mathfrak{U}_{i+\frac{1}{2},j}(t^{n+\frac{1}{2}})&=
+	\mathfrak{U}_{i+\frac{1}{2},j}(t^{n}) -
+	\int_{t^{n}}^{t^{n+\frac{1}{2}}}
+	[\partial_x K - \mathfrak{v}\sqrt{g}\xi +\partial_x \Phi]_{i+\frac{1}{2},j}(t)  \, dt, \\
+	\mathfrak{V}_{i,j+\frac{1}{2}}(t^{n+\frac{1}{2}})&=
+	\mathfrak{V}_{i,j+\frac{1}{2}}(t^{n}) 
+	-\int_{t^{n}}^{t^{n+\frac{1}{2}}}
+	[\partial_y K + \mathfrak{u}\sqrt{g}\xi+\partial_y \Phi]_{i,j+\frac{1}{2}}(t) \, dt, 
+\end{align}
+leads to the scheme
+\begin{align}
+	\label{2d-sw-scheme-Cgrid-u0}
+	\mathfrak{U}_{i+\frac{1}{2},j}^{n+\frac{1}{2}}&=
+	\mathfrak{U}_{i+\frac{1}{2},j}^{n} - \frac{\Delta t}{2}\bigg(
+	\frac{[\partial_x K]_{i+\frac{1}{2},j}(t)}{\Delta x} -
+	\mathcal{A}_{i+\frac{1}{2},j}^{y}
+	\mathcal{F}_{i+\frac{1}{2},j}^{y}[\xi^n,v^n] +
+	\frac{\delta_i \Phi^{n}_{ij}}{\Delta x}\bigg), \\
+	\label{2d-sw-scheme-Cgrid-v0}
+	\mathfrak{V}_{i,j+\frac{1}{2}}^{n+\frac{1}{2}}&=
+	\mathfrak{V}_{i,j+\frac{1}{2}}^{n} -\frac{\Delta t}{2}\bigg(
+	\frac{[\partial_y K ]_{i,j+\frac{1}{2}}(t)}{\Delta x} +
+	\mathcal{A}_{i,j+\frac{1}{2}}^{x}
+	\mathcal{F}_{i,j+\frac{1}{2}}^{x}[\xi^n,u^n] +
+	\frac{\delta_j \Phi^{n}_{ij}}{\Delta y}\bigg),
+\end{align}
+
+\begin{align}
+	\label{2d-sw-scheme-Cgrid-u}
+	{U}_{i+\frac{1}{2},j}^{n+\frac{1}{2}}&=
+	{U}_{i+\frac{1}{2},j}^{n} - \frac{\Delta t}{2}\bigg(
+	\frac{[\partial_x K]_{i+\frac{1}{2},j}(t)}{\hat{\delta} x_{i+\frac{1}{2},j}} -
+	\mathcal{A}_{i+\frac{1}{2},j}^{y}
+	\mathcal{F}_{i+\frac{1}{2},j}^{y}[\xi^n,v^n] +
+	\frac{\delta_i \Phi^{n}_{ij}}{\hat{\delta} x_{i+\frac{1}{2},j}}\bigg), \\
+	\label{2d-sw-scheme-Cgrid-v}
+	{V}_{i,j+\frac{1}{2}}^{n+\frac{1}{2}}&=
+	{V}_{i,j+\frac{1}{2}}^{n} -\frac{\Delta t}{2}\bigg(
+	\frac{[\partial_y K ]_{i,j+\frac{1}{2}}(t)}{\hat{\delta} y_{i,j+\frac{1}{2}}} +
+	\mathcal{A}_{i,j+\frac{1}{2}}^{x}
+	\mathcal{F}_{i,j+\frac{1}{2}}^{x}[\xi^n,u^n] +
+	\frac{\delta_j \Phi^{n}_{ij}}{\hat{\delta} y_{i,j+\frac{1}{2}}}\bigg),
+\end{align}
+\subsubsection{Wind interpolation}
+We are given  the normalized covariant wind components  on a D-grid
+that is, we have $V_{i,j+\frac{1}{2}}$ for $i=0,\ldots,N$, $j=1,\ldots,N$, 
+and $U_{i+\frac{1}{2},j}$ $j=0,\ldots,N$, $i=1,\ldots,N$.
+We may then use the duo-grid interpolation (Section \ref{cs-wind-interp}) to get the values on the duo-grid.
+After that, we have all the values 
+$V_{i,j+\frac{1}{2}}^n$ for $i=0,\ldots,N+\nu$, $j=1,\ldots,N+\nu$, 
+and $U_{i+\frac{1}{2},j}^n$ $j=0,\ldots,N+\nu$, $i=1,\ldots,N+\nu$.
+
+
+We define the average operator in the $x$ direction as:
+\begin{align}
+	\label{av-x}
+	\overline{q_{ij}}^x =
+	\begin{cases}
+	0.5(q_{i+\frac{1}{2},j}+q_{i-\frac{1}{2},j}), 
+	\quad &
+	\text{if } i=-\nu+1 \text{ or } i=N+\nu,\\
+	\frac{9}{16}(q_{i+\frac{1}{2},j}+q_{i-\frac{1}{2},j}) - \frac{1}{16}(q_{i+\frac{3}{2},j}+q_{i-\frac{3}{2},j}), 
+	\quad &
+	\text{otherwise},\\
+\end{cases}
+\end{align}
+for any integer $i$ and integer or half integer $j$, and
+\begin{align}
+	\label{av-xx}
+	\overline{q_{i+\frac{1}{2},j}}^x =
+	\begin{cases}
+		0.5(q_{i+1,j}+q_{ij}), 
+		\quad &
+		\text{if } i=-\nu+1 \text{ or } i=N+\nu,\\
+		\frac{9}{16}(q_{i+1,j}+q_{ij}) - \frac{1}{16}(q_{i+2,j}+q_{i-1,j}), 
+		\quad &
+		\text{otherwise},\\
+	\end{cases}
+\end{align}
+for any integer $i$ and integer or half integer $j$.
+The average operator $\overline{q_{ij}}^y$ in the $y$ direction is defined analogously.
+
+
+We may interpolate the normalized covariant component $U$ from the D-grid to A-grid by using the average in the $y$ direction:
+\begin{align}
+	\label{d2a-u}
+	 U_{ij}^n &= \overline{U_{ij}^n}^y,%\frac{U_{i,j+\frac{1}{2}}^n + U_{i,j-\frac{1}{2}}^n}{2},
+\end{align}
+for $i=-\nu+1,\ldots,N+\nu$, $j=-\nu+1,\ldots,N+\nu$, and similarly to the $V$ component:
+\begin{align}
+	\label{d2a-v}
+	V_{ij}^n &=\overline{V_{ij}^n}^x,
+\end{align}
+for $j=-\nu+1,\ldots,N+\nu$, $i=-\nu+1,\ldots,N+\nu$.
+
+Moreover, using the A-grid covariant wind, we may convert the wind from 
+covariant to contravariant on the A-grid representation using Equation \eqref{norm-contravariant-to-covariant}:
+\begin{align}
+	\label{a-c2c-u}
+	u_{ij}^n &= \frac{1}{\sin^2{\alpha}_{ij}}\bigg(U_{ij}^n - \cos{\alpha}_{ij}V_{ij}^n\bigg),
+\end{align}
+for $i=-\nu+1,\ldots,N+\nu$, $j=-\nu+1,\ldots,N+\nu$, and similarly to the $v$ component:
+\begin{align}
+	\label{a-c2c-v}
+	v_{ij}^n &= \frac{1}{\sin^2{\alpha}_{ij}}\bigg(V_{ij}^n - \cos{\alpha}_{ij}U_{ij}^n\bigg),
+\end{align}
+for $j=-\nu+1,\ldots,N+\nu$, $i=-\nu+1,\ldots,N+\nu$.
+
+Using the A-grid covariant wind, we may interpolate it to the C-grid covariant wind as:
+\begin{align}
+	\label{d2a-uu}
+	U_{i+\frac{1}{2},j}^n &= \overline{U_{i+\frac{1}{2},j}^n}^x,
+\end{align}
+for $i=-\nu+2,\ldots,N+\nu$, $j=-\nu+1,\ldots,N+\nu$, and similarly to the $V$ component:
+\begin{align}
+	\label{d2a-vv}
+	V_{i,j+\frac{1}{2}}^n &= \overline{V_{i,j+\frac{1}{2}}^n}^y,
+\end{align}
+for $i=-\nu+1,\ldots,N+\nu$, $j=-\nu+2,\ldots,N+\nu$.
+
+Then, the wind may be converted from covariant to contravariant using the original D-grid wind given:
+\begin{align}
+	\label{d2a-uuu}
+	u_{i+\frac{1}{2},j}^n &= \frac{1}{\sin^2{\alpha_{i+\frac{1}{2},j}}}
+	\bigg({U_{i+\frac{1}{2},j}^n} - \cos{\alpha_{i+\frac{1}{2},j}} {V_{i,j+\frac{1}{2},j}^n}\bigg),
+\end{align}
+for $i=-\nu+2,\ldots,N+\nu$, $j=-\nu+1,\ldots,N+\nu$, and similarly to the $v$ component:
+\begin{align}
+	\label{d2a-vvv}
+	v_{i,j+\frac{1}{2}}^n &= \frac{1}{\sin^2{\alpha_{i,j+\frac{1}{2}}}}
+	\bigg({V_{i,j+\frac{1}{2}}^n} - \cos{\alpha_{i,j+\frac{1}{2}}}{U_{i,j+\frac{1}{2}}^n}\bigg),
+\end{align}
+for $i=-\nu+1,\ldots,N+\nu$, $j=-\nu+2,\ldots,N+\nu$.
+\subsubsection{Continuity equation}
+The fluid depth is update using the upwind scheme, expressed as:
+\begin{equation}
+	\label{2d-continuity-eq-Cgrid}
+	h^{n+\frac{1}{2}}_{ij} =
+	h^{n}_{ij} + \mathbf{F}_{ij}^{UPW}[{h^n,{u}^{n}}]  + \mathbf{G}_{ij}^{UPW}[{h^n,{v}^{n}}],
+\end{equation}
+for $i,j=0,\ldots,N+1$,
+where the upwind update operators are given by
+\begin{align}
+	\mathbf{F}_{ij}^{UPW}[{h^n,u^{n}}] = 
+	-\frac{1}{|\hat{\Omega}_{ij}|}
+	\bigg(\mathcal{A}_{i+\frac{1}{2},j}^{x} \mathcal{F}_{i+\frac{1}{2},j}^{UPW,x}[h^n,{u}^{n}]-
+	      \mathcal{A}_{i-\frac{1}{2},j}^{x} \mathcal{F}_{i-\frac{1}{2},j}^{UPW,x}[h^n,{u}^{n}] \bigg),
+\end{align}
+and
+\begin{align}
+	\mathbf{G}_{ij}^{UPW}[{h^n,v^{n}}] = 
+	-\frac{1}{|\hat{\Omega}_{ij}|}
+	\bigg(\mathcal{A}_{i,j+\frac{1}{2}}^{y} \mathcal{F}_{i,j+\frac{1}{2}}^{UPW,y}[h^n,{v}^{n}]-
+          \mathcal{A}_{i,j-\frac{1}{2}}^{y} \mathcal{F}_{i,j-\frac{1}{2}}^{UPW,y}[h^n,{v}^{n}] \bigg),
+\end{align}
+where
+\begin{align}
+	%	\label{chp3-flux-xdir}
+	\mathcal{A}_{i+\frac{1}{2},j}^{x} = \frac{\Delta t}{2} \times
+	\begin{cases}
+		\Delta y
+		\sqrt{\mathfrak{g}}_{i+\frac{1}{2},j}
+		\mathfrak{u}_{i+\frac{1}{2},j}^n=
+		\hat{\delta} y_{i+\frac{1}{2},j}
+		\sin{\alpha_{i+\frac{1}{2},j}}
+		{u}_{i+\frac{1}{2},j}^n
+		\quad &
+		\text{for mt0},\\
+		\Delta y
+		\mathfrak{u}_{i+\frac{1}{2},j}^n
+		\quad &
+		\text{for mt1},\\
+	\end{cases}
+\end{align}
+and
+\begin{align}
+	\mathcal{F}_{i+\frac{1}{2},j}^{UPW,x} [{h}^n,u^n]= 
+	\begin{cases}
+		\mathfrak{F}_{i+\frac{1}{2},j}^{UPW,x}[{{\sqrt{\mathfrak{g}}h}^n},u^n],
+		\quad &\text{for mt0},\\
+		\mathfrak{F}_{i+\frac{1}{2},j}^{UPW,x}[{h}^n,u^n],
+		\quad &\text{for mt1},
+	\end{cases}
+\end{align}
+where the 1D upwind flux in the $x$ direction is defined by:
+\begin{align}
+	%	\label{chp3-flux-xdir}
+	\mathcal{F}_{i+\frac{1}{2},j}^{UPW,x} [{{\psi}^n},u^n]=
+	\begin{cases}
+		{\psi}_{ij}^n
+		\quad &\text{if} \quad 
+		{u}_{i+\frac{1}{2},j}^{n}>0,\\
+		{\psi}_{i+1,j}^n
+		\quad &\text{if} \quad 
+		\mathfrak{u}_{i+\frac{1}{2},j}^{n}\leq0,\\
+	\end{cases}
+\end{align}
+for $i=0, \ldots, N$, $j=-\nu+1, \ldots, N + \nu$.
+The terms, $\mathcal{A}_{i,j+\frac{1}{2}}^{y}$ and	$\mathcal{F}_{i,j+\frac{1}{2}}^{UPW,y}$ are defined similarly using $v$.
+
+\subsubsection{Geopotential gradient}
+Once we have computed $h^{n+\frac{1}{2}}_{ij}$, we are able to estimate the geopotential gradient
+in Equations  \eqref{2d-sw-scheme-Cgrid-u} and \eqref{2d-sw-scheme-Cgrid-v} by using centered differences:
+\begin{align}
+	\label{2d-sw-eq-Cgrid-geo-dx}
+	\delta_i \Phi^n_{i+\frac{1}{2},j} &= {g(h^{n+\frac{1}{2}}_{i+1,j} - h^{n+\frac{1}{2}}_{ij} + b_{i+1,j} - b_{ij})},\\
+	\label{2d-sw-eq-Cgrid-geo-dy}
+	\delta_j \Phi^n_{i,j+\frac{1}{2}} &= {g(h^{n+\frac{1}{2}}_{i,j+1} - h^{n+\frac{1}{2}}_{ij} + b_{i,j+1} - b_{ij})}.
+\end{align}
+We use $h^{n+\frac{1}{2}}_{ij}$ instead of $h^{n}_{ij}$ so the C-grid scheme becomes backward-forward;
+otherwise, the C-grid scheme would be unconditionally unstable \citep{lin:1997}.
+
+\subsubsection{Absolute vorticity fluxes}
+Using the C-grid covariant winds $(U_{i+\frac{1}{2},j}^n,V_{i,j+\frac{1}{2}}^n)$,
+we may compute the relative vorticity (Equation \eqref{vort2-eq}) at the B-grid points using a centered finite difference:
+\begin{align}
+	\label{2d-sw-rv-Cgrid}
+	\zeta_{i+\frac{1}{2},j+\frac{1}{2}}^n &= \frac{1}{\sqrt{\mathfrak{g}}_{i+\frac{1}{2},j+\frac{1}{2}}}\bigg[
+	\frac{\mathfrak{V}_{i+1,j+\frac{1}{2}}^n-\mathfrak{V}_{i,j+\frac{1}{2}}^n}{\Delta x} -
+	\frac{\mathfrak{U}_{i+\frac{1}{2},j+1}^n-\mathfrak{U}_{i+\frac{1}{2},j}^n}{\Delta y}
+\bigg]\nonumber\\
+	&= 
+    \frac{1}{|\hat{\Omega}_{i+\frac{1}{2},j+\frac{1}{2}}|}\bigg[
+         {\big({\hat{\delta}y_{i+1,j+\frac{1}{2}}{V}_{i+1,j+\frac{1}{2}}^n-
+    	   \hat{\delta}y_{i  ,j+\frac{1}{2}}{V}_{i  ,j+\frac{1}{2}}^n}\big)} -
+         {\big({\hat{\delta}x_{i+\frac{1}{2},j+1}{U}_{i+\frac{1}{2},j+1}^n-
+    	   \hat{\delta}x_{i+\frac{1}{2},j  }{U}_{i+\frac{1}{2},j}^n}\big)}
+    \bigg],
+\end{align}
+for $i,j=0, \ldots, N$ and assuming $\Delta x = \Delta y$.
+Then, we obtain the absolute vorticity on the B-grid as:
+\begin{align}
+	\label{2d-sw-av-Cgrid}
+	\xi_{i+\frac{1}{2},j+\frac{1}{2}}^n =
+	f_{i+\frac{1}{2},j+\frac{1}{2}} +
+	\zeta_{i+\frac{1}{2},j+\frac{1}{2}}^n,
+\end{align}
+for $i,j=0, \ldots, N$.
+Thus, it follows from Equation \eqref{absvort-eq} that absolute vorticity may be updated on the B-grid as follows using the upwind flux:
+\begin{equation}
+	\label{2d-avort-eq-Cgrid}
+	\xi^{n+1}_{i+\frac{1}{2},j+\frac{1}{2}}  =
+	\xi^{n}_{i+\frac{1}{2},j+\frac{1}{2}} + 
+	\mathbf{F}_{i+\frac{1}{2},j+\frac{1}{2}}^{UPW}[{\xi^n,{u}^{n}}]  + 
+	\mathbf{G}_{i+\frac{1}{2},j+\frac{1}{2}}^{UPW}[{\xi^n,{v}^{n}}],
+\end{equation}
+for $i,j=0, \ldots, N$.
+The upwind update operators on the B-grid are given by
+\begin{align}
+	\mathbf{F}_{i+\frac{1}{2},j+\frac{1}{2}}^{UPW}[{\xi^n,u^{n}}] = 
+	-\frac{1}{|\hat{\Omega}_{i+\frac{1}{2},j+\frac{1}{2}}|}
+	\bigg(\mathcal{A}_{i+1,j+\frac{1}{2}}^{x} \mathcal{F}_{i+1,j+\frac{1}{2}}^{UPW,x}[\xi^n,{u}^{n}]-
+          \mathcal{A}_{i  ,j+\frac{1}{2}}^{x} \mathcal{F}_{i  ,j+\frac{1}{2}}^{UPW,x}[\xi^n,{u}^{n}] \bigg),
+\end{align}
+and
+\begin{align}
+	\mathbf{G}_{i+\frac{1}{2},j+\frac{1}{2}}^{UPW}[{\zeta^n,v^{n}}] = 
+	-\frac{1}{|\hat{\Omega}_{i+\frac{1}{2},j+\frac{1}{2}}|}
+	\bigg(\mathcal{A}_{i+\frac{1}{2},j+1}^{y} \mathcal{F}_{i+\frac{1}{2},j+1}^{UPW,y}[\xi^n,{v}^{n}]-
+          \mathcal{A}_{i+\frac{1}{2},j  }^{y} \mathcal{F}_{i+\frac{1}{2},j  }^{UPW,y}[\xi^n,{v}^{n}] \bigg),
+\end{align}
+where
+\begin{align}
+	%	\label{chp3-flux-xdir}
+	\mathcal{A}_{i,j+\frac{1}{2}}^{x} = \frac{\Delta t}{2} \times
+	\begin{cases}
+		\Delta y
+		\sqrt{\mathfrak{g}}_{i,j+\frac{1}{2}}
+		\mathfrak{u}_{i,j+\frac{1}{2}}^n=
+		\hat{\delta} y_{i,j+\frac{1}{2}}
+		\sin{\alpha_{i,j+\frac{1}{2}}}
+		{u}_{i,j+\frac{1}{2}}^n
+		\quad &
+		\text{for mt0},\\
+		\Delta y
+		\mathfrak{u}_{i,j+\frac{1}{2}}^n
+		\quad &
+		\text{for mt1},\\
+	\end{cases}
+\end{align}
+and
+\begin{align}
+	\mathcal{F}_{i,j+\frac{1}{2}}^{UPW,x} [{\xi}^n,u^n]= 
+	\begin{cases}
+		\mathfrak{F}_{i,j+\frac{1}{2}}^{UPW,x}[{{\sqrt{\mathfrak{g}}\xi}^n},u^n],
+		\quad &\text{for mt0},\\
+		\mathfrak{F}_{i,j+\frac{1}{2}}^{UPW,x}[{\xi}^n,u^n],
+		\quad &\text{for mt1},
+	\end{cases}
+\end{align}
+where the 1D upwind flux in the $x$ direction is defined by:
+\begin{align}
+	%	\label{chp3-flux-xdir}
+	\mathcal{F}_{i,j+\frac{1}{2}}^{UPW,x} [{{\psi}^n},u^n]=
+	\begin{cases}
+		{\psi}_{i-\frac{1}{2},j+\frac{1}{2}}^n
+		\quad &\text{if} \quad 
+		{u}_{i,j+\frac{1}{2}}^{n}>0,\\
+		{\psi}_{i+\frac{1}{2},j+\frac{1}{2}}^n
+		\quad &\text{if} \quad 
+		{u}_{i,j+\frac{1}{2}}^{n}\leq0,\\
+	\end{cases}
+\end{align}
+The terms $\mathcal{A}_{i+\frac{1}{2},j}^{y}$ and	$\mathcal{F}_{i+\frac{1}{2},j}^{UPW,y}$ are defined similarly using $v$.
+Notice that the D-grid contravariant winds $(u_{i+\frac{1}{2},j}^n,v_{i,j+\frac{1}{2}}^n)$ are needed for the upwind flux on the B-grid.
+
+Finally we point out that we do not need to update the absolute vorticity using Equation \eqref{2d-avort-eq-Cgrid}, instead, 
+we only need to compute the terms and  $\mathcal{A}_{i,j+\frac{1}{2}}^{x}$ and $\mathcal{F}_{i,j+\frac{1}{2}}^{UPW,x}$
+for $i=0, \ldots, N$, $j=1,\ldots,N$, and $\mathcal{A}_{i+\frac{1}{2},j}^{y}$ and $\mathcal{F}_{i+\frac{1}{2},j}^{UPW,y}$
+for $i=1, \ldots, N$, $j=0,\ldots,N$, to update the C-grid winds using
+the momentum equations \eqref{2d-sw-scheme-Cgrid-u} and \eqref{2d-sw-scheme-Cgrid-v}.
