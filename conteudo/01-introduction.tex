@@ -28,7 +28,7 @@ with applications to weather, seasonal and climate forecasts.
 All these applications are essentially based on the same set of Partial Differential Equations
 (PDEs) but with distinct time scales \citep{stan:2008}. These PDEs are defined on the sphere
 and model the evolution of the atmospheric fluid given the initial conditions.
-One important component of global models is the dynamical core, which is responsible
+One important component of global models is the dynamical core (dycore), which is responsible
 for solving the PDEs that governs the atmosphere dynamics on grid-scale \citep{will:2007}. 
 The development of numerical methods for dynamical cores has been an active research area since the 1960s.
 
@@ -152,7 +152,7 @@ of dynamical cores are the cubed-sphere (Figure \ref{cs-grid}), icosahedral grid
 the pentagonal/hexagonal or Voronoi grid (Figure \ref{voronoi-grid}) and octahedral grid (Figure \ref{octg-grid}),
 which are based on the cube, icosahedron, dodecahedron and octahedron, respectively \citep{ullrich:2017}.
 
-\section{Motivations and the FV3 model}
+\section{Motivations and the FV3 dynamical core}
 The cubed-sphere became a popular quasi-uniform grid for the new generation of dynamical cores.
 It was originally proposed by \citet{sadourny:1972} and it was revisited by \citet{ronchi:1996}.
 Some of the cubed-sphere advantages are: uniformity; quadrilateral structure, 
@@ -174,7 +174,7 @@ Dynamics Laboratory (GFDL) and the National Oceanic and Atmospheric Administrati
 \citep{putman:2007,harris:2013} is another example
 of new generation dynamical core based on the cubed-sphere.
 
-The FV3 dynamical core is an extension of the Finite-Volume dynamical core (FVcore)
+The FV3 dycore is an extension of the Finite-Volume dycore (FVcore)
 from latitude-longitude grids to the cubed-sphere.
 The numerical methods from FVcore started to be developed with the advection scheme from the work \citet{lin:1994},
 which is based on the piecewise linear scheme from \citet{vanleer:1977}. 
@@ -188,11 +188,11 @@ The full global model was then presented by \citet{lin:2004}.
 A computational disadvantage of the FVcore is its Semi-Lagrangian formulation that creates more demand
 for MPI communication when computing the accumulated fluxes \citep{lin:1996}.
 The FVcore was then adapted to the cubed-sphere grid \citep{putmanthesis:2007, putman:2007}, 
-to reach better performance in parallel computers, leading to the FV3 model.
+to reach better performance in parallel computers, leading to the FV3 dycore.
 Later, the FV3 also was improved to allow locally refinement grids 
 through grid-nesting or grid-stretching \citep{harris:2013}.
 
-Currently, the FV3 model is capable of perfoming hydrostatic and non-hydrostatic atmospheric simulations 
+Currently, the FV3 dycore is capable of perfoming hydrostatic and non-hydrostatic atmospheric simulations 
 and it was chosen as the new US global weather prediction model, indeed, it replaced the spectral transform
 Global Forecast System (GFS) in June, 2019
 (\url{https://www.noaa.gov/media-release/noaa-upgrades-us-global-weather-forecast-model}, last access: 19th of March, 2024).
