@@ -850,12 +850,13 @@ For the 1D schemes, we will consider the FV-SL schemes \textbf{hord0} (Subsectio
 each tested with both departure point schemes \textbf{DP1} (Subsection \ref{chp-adv1d-sec-DP1}) and \textbf{DP2} (Subsection \ref{chp-adv1d-sec-DP2}).
 We employ $(\Delta x^{(k)},\Delta y^{(k)},\lambda)$-discretizations with $\Delta x^{(k)} = \Delta y^{(k)} = \frac{L}{N^{(k)}}$,
 $N^{(k)} = 48 \times 2^k$, $k=0,\ldots, 4$.
-We introduce the relative error in the maximum norm:
+We introduce the relative error in the $p$-norm:
 \begin{equation*}
 	E_k = 
-	\frac{\| Q^n - Q^0 \|_{\infty, \Delta x \times \Delta y}}
-	{\|Q^0\|_{\infty, \Delta x \times \Delta y}}.
+	\frac{\| Q^n - Q^0 \|_{p, \Delta x \times \Delta y}}
+	{\|Q^0\|_{p, \Delta x \times \Delta y}}.
 \end{equation*}
+We are going to consider $p=1$ and $p=\infty$.
 The convergence rate, as defined in Section \ref{chp-adv1d-sec-numerical-exp}, and the preservation of total mass variation with 
 machine precision are considered in all experiments presented here.
 It is worth noting that in error computation, we employ centroid values instead of exact average values to avoid 

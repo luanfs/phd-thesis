@@ -790,8 +790,9 @@ where $\boldsymbol{e}_x$ and $\boldsymbol{e}_y$ are the normalized cubed-sphere 
 \end{equation}
 It is easy to see that:
 \begin{equation}
-	{u}(x,y,p)  = \frac{\mathfrak{u}(x,y,p)}{\|\partial_x\boldsymbol{\Psi}_p(x,y)\|}, \quad
-	{v}(x,y,p)  = \frac{\mathfrak{v}(x,y,p)}{\|\partial_y\boldsymbol{\Psi}_p(x,y)\|}.
+	\label{contra-uv}
+	\mathfrak{u}(x,y,p)  = \frac{{u}(x,y,p)}{\|\partial_x\boldsymbol{\Psi}_p(x,y)\|}, \quad
+	\mathfrak{v}(x,y,p)  = \frac{{v}(x,y,p)}{\|\partial_y\boldsymbol{\Psi}_p(x,y)\|}.
 \end{equation}
 The normalized contravariant form is used because it offers greater generality and flexibility when working with optimized cubed-sphere grids,
 as discussed in \citet{putman:2007}, and stretched grids \citep{harris:2016}, 
@@ -863,6 +864,7 @@ Like the contravariant component, FV3 works with the normalized covariant wind $
 \end{align}
 It is easy to see that:
 \begin{equation}
+	\label{covari-uv}
 	{U}(x,y,p)  = \frac{\mathfrak{U}(x,y,p)}{\|\partial_x\boldsymbol{\Psi}_p(x,y)\|}, \quad
 	{V}(x,y,p)  = \frac{\mathfrak{V}(x,y,p)}{\|\partial_y\boldsymbol{\Psi}_p(x,y)\|}.
 \end{equation}
@@ -936,6 +938,15 @@ For a grid function $Q$ we also use the notations:
 \end{align*}
 In this work, we shall always approximate the average values since our schemes are expected to be at most second-order,
 this approximation does not deteriorate the convergence order.
+The $p$-norm for $q \in \mathcal{CS}^N$, is defined as:
+\begin{equation}
+	\label{chp-advcs-pnorm}
+	\|q\|_{p, \mathcal{CS}^N}=
+	\begin{cases}
+		\bigg( \sum_{k=1}^{6} \sum_{i=1}^{N} \sum_{j=1}^{M}|q_{ijk}|^p |\Omega_{ijk}|\bigg)^{\frac{1}{p}} & \text{if } 1\leq p < \infty,\\
+		\max_{i=1, \ldots, N,j=1,\ldots,M,k=1,\ldots,6}{|q_{ijk}|} & \text{otherwise }.
+	\end{cases}
+\end{equation}
 
 \subsection{Ghost cells scalar field interpolation}
 \label{cs-interp}

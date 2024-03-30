@@ -1230,11 +1230,12 @@ using a high-resolution ($N=768$), the hord8 scheme and the DP1 departure point 
 To investigate the error convergence, we employ $(\Delta x^{(k)}, \Delta t^{(k)}, \lambda)$-discretizations with $\Delta x^{(k)} = \frac{L}{N^{(k)}}$,
 $N^{(k)} = 48 \times 2^k$,
 $\Delta t^{(k)}=\frac{7200}{{2^{k}}}$, for $k = 0, \ldots, 4$.
-To measure the accuracy, we consider the relative error in the maximum norm as follows:
+To measure the accuracy, we consider the relative error in the $p$-norm as follows:
 \begin{equation*}
 	E_k = 
-	\frac{\| Q^{N_T} - Q^0 \|_{\infty, \Delta x}}{\|Q^0\|_{\infty, \Delta x}}.
+	\frac{\| Q^{N_T} - Q^0 \|_{p, \Delta x}}{\|Q^0\|_{p, \Delta x}}.
 \end{equation*}
+We are going to consider $p=1$ and $p=\infty$.
 The convergence rate is defined by
 \begin{equation*}
 	CR_k = \frac{\ln{\bigg(\frac{E_{k}}{E_{k-1}}}\bigg)}{\ln 2}, \quad \text{for} \quad k = 1, \ldots 4.

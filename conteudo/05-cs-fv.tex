@@ -563,11 +563,13 @@ Both equi-edge (g0, Section \ref{cs-equiedge}) and equiangular grids (g2, Sectio
 To compute the convergence, consider cubed-sphere grids with value of $N_k =  48\times2^{k}$,
 and $\Delta t^{(k)} = \frac{\Delta t^{(k)}}{2^k}$, $k=0, \ldots, 4$, where
 the value of $\Delta t^{(0)}$ in Table \ref{chp5-tab2} for each VF.
-The relative error in the maximum norm is computed as
+The relative error in the $p$-norm is computed as
 \begin{equation}
-	E_k = \frac{\max |q^{N_T} - q^0|}{\max {|q^0|}},
+	E_k = 
+	\frac{\| Q^{N_T} - q^0 \|_{p, \mathcal{CS}^N}}{\|q^0\|_{p,\mathcal{CS}^N}}.
 \end{equation}
-and the convergence rate is defined as
+We are going to consider $p=2$ and $p=\infty$.
+The convergence rate is defined as
 \begin{equation*}
 	CR_k = \frac{\ln{\bigg(\frac{E_{k}}{E_{k-1}}}\bigg)}{\ln 2}, \quad \text{for} \quad k = 1, \ldots 4.
 \end{equation*}
