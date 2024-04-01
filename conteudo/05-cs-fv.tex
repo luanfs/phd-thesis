@@ -137,7 +137,7 @@ Before that, we consider the following approximation, which follows from the mid
 	\label{midpoint-approx}
 	\overline{(\sqrt{\mathfrak{g}}q)}_{ijp}(t)  = \sqrt{\mathfrak{g}_{ij}} {q}_{ijp}(t) +\mathcal{O}(\Delta x^2).
 \end{equation}
-We use this approximation in Problem{chp5-prob2} and we obtain the following CS-FV scheme:
+We use this approximation in Problem \ref{chp5-prob2} and we obtain the following CS-FV scheme:
 \begin{prob}[CS-FV scheme]
 	\label{chp5-prob3}
 	Assume the framework defined in Problem \ref{chp5-prob2}.
@@ -289,6 +289,7 @@ for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and where
 recalling the term $|\hat{\Omega}_{ij}|$ from defined Equation \eqref{chp4-area},
 and following the discussion on the metric term, we have the coefficients
 \begin{align}
+	\label{ax-def}
 	\mathcal{A}_{i+\frac{1}{2},j}^x= 
 	\begin{cases}
 		\hat{\delta} x_{i+\frac{1}{2},j}  \hat{\delta} y_{i+\frac{1}{2},j} 
@@ -323,6 +324,7 @@ for $i=-\nu+1, \ldots, N + \nu$  $j=1, \ldots, N$.
 \end{align*}
 and
 \begin{align}
+	\label{ay-def}
 	\mathcal{A}_{i,j+\frac{1}{2}}^y= 
 	\begin{cases}
 		\hat{\delta} x_{i,j+\frac{1}{2}}  \hat{\delta} y_{i,j+\frac{1}{2}} 
@@ -393,23 +395,34 @@ The current implementation of FV3 and the advection schemes from \citet{lin:2004
 uses the DP1 scheme (Section \ref{chp-adv1d-sec-DP1}) and the following upwind CFL number introduced in \citet{lin:1994}:
 \begin{align}
 	\label{cfl_dp1-x}
-{c}_{i+\frac{1}{2},j}^{x,n} ={{u}}_{i+\frac{1}{2},j}^{x,n}{\Delta t} \times
-	\begin{cases}
-       \frac{1}{\hat{\delta} x_{ij}},
-        \quad &\text{if }{{{u}}_{i+\frac{1}{2},j}^{x,n} \ge 0},\\
-       \frac{1}{\hat{\delta} x_{i+1,j}}, 
-	 	\quad &\text{if }{{{u}}_{i+\frac{1}{2},j}^{x,n} < 0},
-	\end{cases}
+{c}_{i+\frac{1}{2},j}^{x,n} ={{u}}_{i+\frac{1}{2},j}^{x,n}\frac{{\Delta t}}
+{{\hat{\delta} x_{i+\frac{1}{2},j}^*}},
 \end{align}
 \begin{align}
 	\label{cfl_dp1-y}
-	{c}_{i,j+\frac{1}{2}}^{y,n} = {{v}}_{i,j+\frac{1}{2}}^{y,n}{\Delta t} \times
+	{c}_{i,j+\frac{1}{2}}^{y,n} = {{v}}_{i,j+\frac{1}{2}}^{y,n}\frac{{\Delta t}}
+	{{\hat{\delta} y_{i,j+\frac{1}{2}}^*}},
+\end{align}
+where
+\begin{align}
+	\label{cfl_dp1-dx}
+	\hat{\delta} x_{i+\frac{1}{2},j}^*  =
 	\begin{cases}
-		\frac{1}{\hat{\delta} y_{ij}},
-		\quad &\text{if }{{{v}}_{i,j+\frac{1}{2}}^{y,n} \ge 0},\\
-		\frac{1}{\hat{\delta} y_{i,j+1}},
-		\quad &\text{if }{{{v}}_{i,j+\frac{1}{2}}^{y,n} < 0}.
+		{\hat{\delta} x_{ij}},
+		\quad &\text{if }{{{u}}_{i+\frac{1}{2},j}^{x,n} \ge 0},\\
+		{\hat{\delta} x_{i+1,j}}, 
+		\quad &\text{if }{{{u}}_{i+\frac{1}{2},j}^{x,n} < 0},
 	\end{cases}
+\end{align}
+\begin{align}
+	\label{cfl_dp1-dy}
+	 \hat{\delta} y_{i,j+\frac{1}{2}}^*  =
+	\begin{cases}
+	{\hat{\delta} y_{ij}},
+	\quad &\text{if }{{{v}}_{i,j+\frac{1}{2}}^{y,n} \ge 0},\\
+	{\hat{\delta} y_{i,j+1}}, 
+	\quad &\text{if }{{{v}}_{i,j+\frac{1}{2}}^{y,n} < 0},
+\end{cases}
 \end{align}
 We point out that Equation \eqref{cfl_dp2-x} to \eqref{cfl_dp2-y} and Equations \eqref{cfl_dp1-x} to \eqref{cfl_dp1-y} 
 are equivalent when the metric term is constant and equal to one, as on the Cartesian grid on the plane.
@@ -417,6 +430,34 @@ Additionally, we could use Equations \eqref{cfl_dp1-x} to \eqref{cfl_dp1-y} for 
 but we observed that the results obtained on advection simulations using Equations \eqref{cfl_dp2-x} to \eqref{cfl_dp2-y} are much better, 
 while Equations \eqref{cfl_dp1-x} to \eqref{cfl_dp1-y} limit schemes with DP2 to first-order. 
 Finally, we stress that for DP1, both formulations of the CFL number yield very similar results, but we use the upwind CFL for DP1 since this is what is used in FV3.
+
+Finally, when using DP1, the upwind CFL requires reformulation of
+the terms $\mathcal{A}_{i+\frac{1}{2},j}^x$ (Equation \eqref{ax-def}) and $\mathcal{A}_{i,j`+\frac{1}{2}}^y$ (Equation \eqref{ay-def}) for mt0, namely:
+\begin{align}
+	\label{ax-def2}
+	\mathcal{A}_{i+\frac{1}{2},j}^x= 
+	\begin{cases}
+		\hat{\delta} x_{i+\frac{1}{2},j}^*  \hat{\delta} y_{i+\frac{1}{2},j} 
+		\sin{\alpha_{i+\frac{1}{2},j}}
+		{\tilde{c}}_{i+\frac{1}{2},j}^{x,n},
+		\quad &\text{for mt0},\\
+		{\Delta x}{\Delta y}{\tilde{c}}_{i+\frac{1}{2},j}^{x,n}
+		\quad &\text{for mt1},
+	\end{cases}
+\end{align}
+and
+\begin{align}
+	\label{ay-def2}
+	\mathcal{A}_{i,j+\frac{1}{2}}^y= 
+	\begin{cases}
+		\hat{\delta} x_{i,j+\frac{1}{2}}  \hat{\delta} y_{i,j+\frac{1}{2}}^*
+		\sin{\alpha_{i,j+\frac{1}{2}}}
+		{\tilde{c}}_{i,j+\frac{1}{2}}^{y,n},
+		\quad &\text{for mt0},\\
+		{\Delta x}{\Delta y}{\tilde{c}}_{i,j+\frac{1}{2}}^{y,n},
+		\quad &\text{for mt1}.
+	\end{cases}
+\end{align}
 
 \subsection{Flux at edges treatment}
 As in Section \ref{sec:fv-2d}  we introduce the notion of discrete divergence,
@@ -486,15 +527,23 @@ When we are using flux averaging, we shall use the label \textbf{mf1}. When no m
 \label{chp-cs-numexpadv}
 This Section is dedicated to present the numerical experiments for the
 advection equation on the sphere. In Table \ref{chp5-tab1} we present
-the initial conditions (IC) and in Table \ref{chp5-tab2} we present
+the initial conditions (IC) and in Table \ref{chp5-vf} we present
 the velocity fields (VF) considered.
+In this section, we denote by $r$ the geodesic distance from any point $(\phi, \lambda)$ to a fixed point $(\phi_0, \lambda_0)$, expressed as
+\begin{equation}
+r=2R \arcsin{\bigg(
+	\sqrt{\sin^2{\bigg(\frac{\phi-\phi_0}{2}\bigg)} + \cos{\phi}\cos{\phi_0}\cos^2{\bigg(\frac{\lambda-\lambda_0}{2}\bigg)}}\bigg)},
+\end{equation}
+where $R$ is the Earth radius. 
+We shall made usage of the characteristic function $\chi_S$,  where $\chi_{S}(s)=1$ if $s \in S$, and $\chi_{S}(s)=0$ otherwise.
 \begin{table}[!ht]
 	\begin{tabular}{|c|l|l|}
 		\hline
 		IC name & \multicolumn{1}{c|}{$q_0$} \\ \hline
 		IC1   & $\exp(b_0((X-X_0)^2+ (Y-Y_0)^2 + (Z-Z_0)^2))$ \\ \hline
-		IC2   & $0.5+0.5(1+\cos{\frac{\pi r}{r_0}})\chi_{r<r_0}(r)$, where $\chi_{r<r_0}(r)=1$ if $r<r0$, and $\chi_{r<r_0}(r)=0$ otherwise.  \\ \hline
-		IC3   & $\exp(b_0[(X-X_1)^2+ (Y-Y_1)^2 + (Z-Z_1)^2]) + \exp(b_0[(X-X_2)^2+ (Y-Y_2)^2 + (Z-Z_2)^2])$ \\ \hline
+		IC2   & $0.5+0.5(1+\cos{\frac{\pi r}{r_0}})\chi_{r<r_0}(r)$  \\ \hline
+		IC3   & $0.1+0.9\chi_{r<r_0}(r)$ \\ \hline
+		IC4   & $\exp(b_0[(X-X_1)^2+ (Y-Y_1)^2 + (Z-Z_1)^2]) + \exp(b_0[(X-X_2)^2+ (Y-Y_2)^2 + (Z-Z_2)^2])$ \\ \hline
 	\end{tabular}
 	\caption{Initial conditions considered in the numerical experiments (Figure \ref{chp5-ic}).}
 	\label{chp5-tab1} 
@@ -506,14 +555,14 @@ the velocity fields (VF) considered.
 		VF name & \multicolumn{1}{c|}{$u_\lambda(\lambda,\phi,t)$} & \multicolumn{1}{c|}{$v_\phi(\lambda,\phi,t)$}
 		& \multicolumn{1}{c|}{$\Delta t^{(0)}$}	& \multicolumn{1}{c|}{CFL} \\ \hline
 		VF1   & $u_0(\cos(\phi)\cos(\alpha) + \sin(\phi)\cos(\lambda)\sin(\alpha))$ 
-		& $-u_0\sin(\lambda)\sin(\alpha)$ & 3600 & 0.5 \\ \hline
+		& $-u_0\sin(\lambda)\sin(\alpha)$ & 3600 & 0.95 \\ \hline
 		VF2   & $u_0\sin^2(\lambda_p)\sin(2\phi)\cos(\frac{\pi t}{T})+u_0\cos\phi$ 
-		& $u_0\sin(2\lambda_p)\cos(\phi)\cos(\frac{\pi t}{T})$& 1600 &0.6 \\ \hline
+		& $u_0\sin(2\lambda_p)\cos(\phi)\cos(\frac{\pi t}{T})$& 1600 &0.73 \\ \hline
 		VF3   & $-u_0\sin^2(\frac{\lambda+\pi}{2})\sin(2\phi)\cos^2(\phi)\cos(\frac{\pi t}{T})$ 
-		& $\frac{u_0}{2}\sin(\lambda+\pi)\cos^3(\phi)\cos(\frac{\pi t}{T})$ & 7200 &0.6 \\ \hline
+		& $\frac{u_0}{2}\sin(\lambda+\pi)\cos^3(\phi)\cos(\frac{\pi t}{T})$ & 6400 &0.91 \\ \hline
 	\end{tabular}
 	\caption{Velocity fields considered in the numerical experiments and their initial time step $\Delta t^{(0)}$ and CFL number.}
-	\label{chp5-tab2}
+	\label{chp5-vf}
 \end{table}
 
 \begin{figure}[!htb]
@@ -525,9 +574,20 @@ the velocity fields (VF) considered.
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{h_tc-5_t0_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
-		\caption{IC3. \label{chp5-IC3}}
+		\includegraphics[width=1\linewidth]{h_tc1_t0_alpha45_C192_g2_dg2_adv2_hord8_mf1_tf12}
+		\caption{IC2. \label{chp5-ic2}}
 	\end{subfigure}
+
+	\begin{subfigure}{0.45\textwidth}
+	\centering
+	\includegraphics[width=1\linewidth]{h_tc-7_t0_alpha45_C192_g2_dg2_adv2_hord8_mf1_tf12}
+	\caption{IC3. \label{chp5-ic3}}
+    \end{subfigure}
+    \begin{subfigure}{0.45\textwidth}
+	\centering
+	\includegraphics[width=1\linewidth]{h_tc-5_t0_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
+	\caption{IC4. \label{chp5-ic4}}
+    \end{subfigure}
 	\caption{ Illustration of the initial conditions considered in this chapter (Table \ref{chp5-tab1}).\label{chp5-ic}}
 \end{figure}
 
@@ -537,21 +597,24 @@ $(X_1,Y_1,Z_1)$ and $(X_2,Y_2,Z_2)$ are the Cartesian coordinates of the latitud
 $(\lambda_1,\phi_1) = (-\frac{\pi}{4},0)$ and
 $(\lambda_2,\phi_2) = ( \frac{\pi}{4},0)$, respectively.
 IC1 represents a Gaussian hill centered at a cube corner and we set $b_0 = -10$.
-IC3 represents two Gaussian hills as suggested by \citet{nair:2010} and we set $b_0 = -5$.
 IC2 represent a cosine bell centered at a cube corner, where $r_0 = \frac{R}{3}$, 
-$r=2R \arcsin{\bigg(
-\sqrt{\sin^2{\big(\frac{\phi-\phi_0}{2}\big)} + \cos{\phi}\cos{\phi_0}\cos^2{\big(\frac{\lambda-\lambda_0}{2}\big)}}\bigg)}$
-is the geodesic distance,
-for $\lambda_0=\frac{\pi}{4}$ and $\phi = \frac{\pi}{2}-\arccos{\frac{1}{\sqrt{3}}}$
-The initial conditions are shown in Figure \ref{chp5-ic}, expect by IC2 which is very similar to IC1.
+for $\lambda_0=\frac{\pi}{4}$ and $\phi = \frac{\pi}{2}-\arccos{\big(\frac{1}{\sqrt{3}}\big)}$.
+IC3 represent a cylinder where $r_0 = \frac{R}{3}$, 
+for $\lambda_0=\frac{\pi}{4}$ and $\phi = \frac{\pi}{2}-\arccos{\big(\frac{1}{\sqrt{3}}\big)}$,
+and therefore the cylinder is also centered at a cube corner.
+IC4 represents two Gaussian hills as suggested by \citet{nair:2010} and we set $b_0 = -5$.
+The initial conditions are shown in Figure \ref{chp5-ic}.
 
-For the velocities provided in Table \ref{chp5-tab2}, we adopt the following parameter values: 
+For the velocities provided in Table \ref{chp5-vf}, we adopt the following parameter values: 
 $\alpha=-\frac{45\pi}{180}$, $\lambda_p=\lambda-\frac{2\pi t}{T}$, $T=12$ days (12$\times$86400 seconds) and $R$ is the Earth radius.
 For VF1 and VF2, we use $u_0 = \frac{2\pi R}{T}$, while for VF3, we use $u_0 = \frac{\pi R}{2T}$.
 In this context, VF1 represents the non-divergent rotated zonal field introduced in \citet{will:1992}.
 VF2 corresponds to the non-divergent deformational flow described in \citet{nair:2010},
 and VF3 represents the divergent flow also presented in \citet{nair:2010}.
 For all velocity fields presented here, the initial condition is equal to the final solution after 12 days.
+Furthermore, for VF1, we can compute the exact solution at any time instant for any initial condition.
+Therefore, we can analyze the temporal evolution of the error.
+For an expression of the exact solution when using VF1 and a general initial condition, refer to \citet[Theorem, p. 155]{brachet:2018}.
 
 We are going to consider the schemes LT-DP2 and PL-DP1 since these schemes yield better results on planar simulations (Section \ref{sec-ds-exp}).
 For a shorter notation, we shall denote LT-DP2 and PL-DP1 by \textbf{LT} and \textbf{PL} advection schemes. 
@@ -569,7 +632,7 @@ Both equi-edge (g0, Section \ref{cs-equiedge}) and equiangular grids (g2, Sectio
 
 To compute the convergence, consider cubed-sphere grids with value of $N_k =  48\times2^{k}$,
 and $\Delta t^{(k)} = \frac{\Delta t^{(k)}}{2^k}$, $k=0, \ldots, 4$, where
-the value of $\Delta t^{(0)}$ in Table \ref{chp5-tab2} for each VF.
+the value of $\Delta t^{(0)}$ in Table \ref{chp5-vf} for each VF.
 The relative error in the $p$-norm is computed as
 \begin{equation}
 	E_k = 
@@ -621,7 +684,7 @@ eventually returning to its initial position.
 		\includegraphics[width=1\linewidth]{h_tc-3_t12_alpha45_C384_g2_dg2_adv2_hord8_mf1_tf12}
 		\caption{$t=12$ days.\label{chp-advcs-sec-exp-adv2-f}}
 	\end{subfigure}
-	\caption{Advection experiment  results using IC1 and VF1 from Table \ref{chp5-ic}.
+	\caption{Advection experiment  results using IC1 (Table \ref{chp5-ic}) and VF1 (Table \ref{chp5-vf}).
 		These figures show the advected profile at
 		2 \eqref{chp-advcs-sec-exp-adv2-a}, 
 		4  \eqref{chp-advcs-sec-exp-adv2-b},
@@ -650,7 +713,7 @@ on the g0 grid when using the PL scheme, which is not very pronounced in the LT 
 	\centering
 	\includegraphics[width=1\linewidth]{tc-3_C384_linf_errors}
 	\caption{
-		$L_{\infty}$ error evolution for IC1 and VF1 from Table \ref{chp5-ic} on the g0 (left) and g2 (right) grids for 12 days and $N=384$.
+		$L_{\infty}$ error evolution for IC1 (Table \ref{chp5-ic}) and VF1 (Table \ref{chp5-vf}) on the g0 (left) and g2 (right) grids for 12 days and $N=384$.
 		Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme.
 		Solid lines represent the results with the hord8 scheme, whereas dashed lines represent the results with hord8.
 		Light colors show the result without mass fixer (mf0), whereas dark colors show the results with flux averaging (mf1).
@@ -687,7 +750,7 @@ indicating that g0 is less sensitive to the corner for the LT scheme.
 		\caption{LT scheme.\label{chp-advcs-sec-exp-adv2-errors-0b}}
 	\end{subfigure}
 	\caption{
-		Advection experiment errors at a cube corner using IC1 and VF1 from Table \ref{chp5-ic} after 12 days, using hord8
+		Advection experiment errors at a cube corner using IC1 (Table \ref{chp5-ic}) and VF1 (Table \ref{chp5-vf}) after 12 days, using hord8
 		with PL (left) and LT schemes (right) on the g0 grid with $N=384$. 
 		\label{chp-advcs-sec-exp-adv2-errors-0}}
 \end{figure}
@@ -718,7 +781,7 @@ In general, the errors of g0 are slightly smaller than those of g2.
 	\centering
 	\includegraphics[width=1\linewidth]{linferror_tc-3_alpha45}
 	\caption{
-$L_{\infty}$ error convergence for IC1 and VF1 from Table \ref{chp5-ic} on the g0 (left) and g2 (right) grids after 12 days.
+$L_{\infty}$ error convergence for IC1 (Table \ref{chp5-ic}) and VF1 (Table \ref{chp5-vf}) on the g0 (left) and g2 (right) grids after 12 days.
 Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme.
 Solid lines represent the results with the hord8 scheme, whereas dashed lines represent the results with hord8.
 Light colors show the result without mass fixer (mf0), whereas dark colors show the results with flux averaging (mf1).\label{chp-advcs-sec-exp-adv2-linf}}
@@ -731,7 +794,7 @@ Light colors show the result without mass fixer (mf0), whereas dark colors show 
 \end{figure}
 
 \newpage
-\subsection{Advection of cosine bell hill through the rotated zonal wind}
+\subsection{Advection of a cosine bell hill through the rotated zonal wind}
 As the second test case, we consider the advection of the cosine bell given by IC2 using the rotated zonal wind VF1.
 The cosine bell is advected and passes over 4 cube corners, very similarly to the Gaussian hill, as shown in Figure \ref{chp-advcs-sec-exp-adv2}.
 The major difference between IC1 and IC2 is that IC1 is a smooth function while IC2 is only continuous.
@@ -751,7 +814,7 @@ For $N=384$, the temporal evolution of the errors is very similar to that of IC1
 		\caption{LT scheme.\label{chp-advcs-sec-exp-adv5-errors-0b}}
 	\end{subfigure}
 	\caption{
-		Advection experiment errors at a cube corner using IC2 and VF1 from Table \ref{chp5-ic} after 12 days, using hord8
+		Advection experiment errors at a cube corner using IC2 (Table \ref{chp5-ic}) and VF1 (Table \ref{chp5-vf}) after 12 days, using hord8
 		with PL (left) and LT schemes (right) on the g0 grid with $N=384$. 
 		\label{chp-advcs-sec-exp-adv5-errors-0}}
 \end{figure}
@@ -786,7 +849,7 @@ Finally, the $L_2$ errors are very similar (Figure \ref{chp-advcs-sec-exp-adv5-l
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=1\linewidth]{linferror_tc1_alpha45}
-	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-linf} but using IC2 and VF1 from Table \ref{chp5-ic}.\label{chp-advcs-sec-exp-adv5-linf}}
+	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-linf} but using IC2 (Table \ref{chp5-ic}) and VF1 (Table \ref{chp5-vf}).\label{chp-advcs-sec-exp-adv5-linf}}
 \end{figure}
 
 \begin{figure}[!htb]
@@ -796,8 +859,92 @@ Finally, the $L_2$ errors are very similar (Figure \ref{chp-advcs-sec-exp-adv5-l
 \end{figure}
 
 \newpage
+\subsection{Advection of a cylinder through the rotated zonal wind}
+The third test case here is the cylinder advection, given by IC3 from Table \ref{chp5-ic} and using again the rotated zonal wind VF1 (Table \ref{chp5-vf}).
+We show how the solution evolves with time in Figure \ref{chp-advcs-sec-exp-adv6}.
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc-7_t2_alpha45_C192_g2_dg2_adv2_hord8_mf1_tf12}
+		\caption{$t=2$ days.\label{chp-advcs-sec-exp-adv6-a}}
+	\end{subfigure}
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc-7_t4_alpha45_C192_g2_dg2_adv2_hord8_mf1_tf12}
+		\caption{$t=4$ days.\label{chp-advcs-sec-exp-adv6-b}}
+	\end{subfigure}
+	
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc-7_t6_alpha45_C192_g2_dg2_adv2_hord8_mf1_tf12}
+		\caption{$t=6$ days.\label{chp-advcs-sec-exp-adv6-c}}
+	\end{subfigure}	
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc-7_t8_alpha45_C192_g2_dg2_adv2_hord8_mf1_tf12}
+		\caption{$t=8$ days.\label{chp-advcs-sec-exp-adv6-d}}
+	\end{subfigure}
+	
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc-7_t10_alpha45_C192_g2_dg2_adv2_hord8_mf1_tf12}
+		\caption{$t=10$ days.\label{chp-advcs-sec-exp-adv6-e}}
+	\end{subfigure}
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc-7_t12_alpha45_C192_g2_dg2_adv2_hord8_mf1_tf12}
+		\caption{$t=12$ days.\label{chp-advcs-sec-exp-adv6-f}}
+	\end{subfigure}
+	\caption{Similar to Figure \ref{chp-advcs-sec-exp-adv2} but using IC3 (Table \ref{chp5-ic})
+	and VF1 (Table \ref{chp5-vf}) with $N=192$. \label{chp-advcs-sec-exp-adv6}}
+\end{figure}
+
+The goal of this test is to assess the qualitative behavior of the solution, 
+especially to see if the limiter prevents oscillations that are expected since the cylinder has a discontinuous profile.
+Also, as the cylinder is located at a cube corner, we would like to see if the corner affects the solution.
+In Figure \ref{chp-advcs-sec-exp-adv7}, we present the final solutions for $N=192$ as well the reference solution.
+It is evident that all the schemes yield similar results, and we cannot observe any interference of the corner despite using a discontinuous initial condition.
+\newpage
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc-7_t12_alpha45_C192_g0_dg2_adv1_hord8_mf1_tf12}
+		\caption{PL-hord8 at g0.\label{chp-advcs-sec-exp-adv7-b}}
+	\end{subfigure}
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc-7_t12_alpha45_C192_g0_dg2_adv2_hord8_mf1_tf12}
+		\caption{LT-hord8 at g0.\label{chp-advcs-sec-exp-adv7-c}}
+	\end{subfigure}
+	
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc-7_t12_alpha45_C192_g2_dg2_adv1_hord8_mf1_tf12}
+		\caption{PL-hord8 at g2.\label{chp-advcs-sec-exp-adv7-d}}
+	\end{subfigure}
+	\begin{subfigure}{0.3\textwidth}
+	\centering
+	\includegraphics[width=1\linewidth]{h_tc-7_t12_alpha45_C192_g2_dg2_adv2_hord8_mf1_tf12a}
+	\caption{PL-hord8 at g2.\label{chp-advcs-sec-exp-adv7-e}}
+    \end{subfigure}
+
+	\begin{subfigure}{0.3\textwidth}
+	\centering
+	\includegraphics[width=1\linewidth]{h_tc-7_t0_alpha45_C192_g0_dg2_adv1_hord8_mf1_tf12}
+	\caption{IC and exact solution at day 12.\label{chp-advcs-sec-exp-adv7-a}}
+    \end{subfigure}
+	\caption{Cylinder at corner test with $N=192$ after 12 days for the schemes 
+	PL-hord8 at g0 a(a),	LT-hord8 at g0 (b), PL-hord8 at g2 (c) and LT-hord8 at g2 (d).
+	(e) depicts the reference solution.
+	\label{chp-advcs-sec-exp-adv7}}
+\end{figure}
+
+\newpage
 \subsection{Non-divergent deformational flow}
-The third test case considers the divergence free wind VF2 from Table \ref{chp5-tab2}, along with the initial condition IC3 from Table \ref{chp5-tab1}, 
+The fourth test case considers the divergence free wind VF2 from Table \ref{chp5-vf}, along with the initial condition IC4 from Table \ref{chp5-tab1}, 
 where the velocity is time-dependent.
 This test is suggested by \citet{nair:2010}, and Figure \ref{chp-advcs-sec-exp-adv3} shows how the solution evolves over time.
 Since the wind is divergence free, we observe that it deforms the two Gaussian hills, without creating new extrema.
@@ -837,7 +984,7 @@ This test is the spherical analogous of the planar divergence free deformational
 		\includegraphics[width=1\linewidth]{h_tc-5_t12_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
 		\caption{$t=12$ days.\label{chp-advcs-sec-exp-adv3-f}}
 	\end{subfigure}
-	\caption{Similar to Figure \ref{chp-advcs-sec-exp-adv2} but using IC3 and VF2 from Table \ref{chp5-ic}.\label{chp-advcs-sec-exp-adv3}}
+	\caption{Similar to Figure \ref{chp-advcs-sec-exp-adv2} but using IC4 (Table \ref{chp5-ic}) and VF2 (Table \ref{chp5-vf}).\label{chp-advcs-sec-exp-adv3}}
 \end{figure}
 
 Figures \ref{chp-advcs-sec-exp-adv3-errors-0} and \ref{chp-advcs-sec-exp-adv3-errors-2} show the final error at a cube face for the g0 and g2 grids, respectively.
@@ -857,7 +1004,7 @@ We can observe that the errors for both PL and LT are very similar, and also the
 		\caption{LT scheme.\label{chp-advcs-sec-exp-adv3-errors-0b}}
 	\end{subfigure}
 	\caption{
-		Advection experiment errors using IC3 and VF2 from Table \ref{chp5-ic} after 12 days, using hord8
+		Advection experiment errors using IC4 (Table \ref{chp5-ic}) and VF2 (Table \ref{chp5-vf}) after 12 days, using hord8
 		with PL (left) and LT schemes (right) on the g0 grid with $N=384$. 
 		 \label{chp-advcs-sec-exp-adv3-errors-0}}
 \end{figure}
@@ -884,7 +1031,7 @@ We also notice that the mass fixer does not impact the errors.
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=1\linewidth]{linferror_tc-5_alpha0}
-	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-linf} but using  IC3 and VF2 from Table \ref{chp5-ic}.\label{chp-advcs-sec-exp-adv3-linf}}
+	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-linf} but using  IC4 (Table \ref{chp5-ic}) and VF2 (Table \ref{chp5-vf}).\label{chp-advcs-sec-exp-adv3-linf}}
 \end{figure}
 
 \begin{figure}[!htb]
@@ -896,7 +1043,7 @@ We also notice that the mass fixer does not impact the errors.
 
 \newpage
 \subsection{Divergent deformational flow}
-The fourth and last test case considers the divergent wind VF3 from Table \ref{chp5-tab2}, along with the initial condition IC3 from Table \ref{chp5-tab1}, 
+The fifth and last test case considers the divergent wind VF3 from Table \ref{chp5-vf}, along with the initial condition IC4 from Table \ref{chp5-tab1}, 
 where the velocity is time-dependent.
 This test is also suggested by \citet{nair:2010}, and Figure \ref{chp-advcs-sec-exp-adv4} shows how the solution evolves over time.
 Since the wind is divergent, we observe that it deforms the two Gaussian hills, creating new extrema.
@@ -936,7 +1083,7 @@ This test is the spherical analogous of the planar divergent deformational flow 
 		\includegraphics[width=1\linewidth]{h_tc-6_t12_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
 		\caption{$t=12$ days.\label{chp-advcs-sec-exp-adv4-f}}
 	\end{subfigure}
-	\caption{Similar to Figure \ref{chp-advcs-sec-exp-adv2} but using IC3 and VF3 from Table \ref{chp5-ic}.\label{chp-advcs-sec-exp-adv4}}
+	\caption{Similar to Figure \ref{chp-advcs-sec-exp-adv2} but using IC4 (Table \ref{chp5-ic}) and VF3 (Table \ref{chp5-vf}).\label{chp-advcs-sec-exp-adv4}}
 \end{figure}
 
 Figures \ref{chp-advcs-sec-exp-adv4-errors-0} and \ref{chp-advcs-sec-exp-adv4-errors-2} show the final error at a cube face for the g0 and g2 grids, respectively.
@@ -956,7 +1103,7 @@ We can observe that the errors for PL are much larger, with significant errors p
 		\caption{LT scheme.\label{chp-advcs-sec-exp-adv4-errors-0b}}
 	\end{subfigure}
 	\caption{
-	 Advection experiment errors using IC3 and VF3 from Table \ref{chp5-ic} after 12 days, using hord8
+	 Advection experiment errors using IC4 and VF3 from Table \ref{chp5-ic} after 12 days, using hord8
 	 with PL (left) and LT schemes (right) on the g0 grid with $N=384$.
 	 \label{chp-advcs-sec-exp-adv4-errors-0}}
 \end{figure}
@@ -989,7 +1136,7 @@ Finally, these results are similar to the planar divergent deformational flow te
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=1\linewidth]{linferror_tc-6_alpha0}
-	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-linf} but using  IC3 and VF3 from Table \ref{chp5-ic}.\label{chp-advcs-sec-exp-adv4-linf}}
+	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-linf} but using  IC4 (Table \ref{chp5-ic}) and VF3 (Table \ref{chp5-vf}).\label{chp-advcs-sec-exp-adv4-linf}}
 \end{figure}
 
 \begin{figure}[!htb]
