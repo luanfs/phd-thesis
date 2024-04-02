@@ -1,16 +1,50 @@
 \chapter{Cubed-sphere finite-volume shallow-water model}
 \label{chp-cs-swm}
 
-Even though the advection equation on the sphere plays a key role in the dynamical core development,
-since it models the advection of scalar fields on the sphere, important features captured by the shallow-water
-equations on the sphere, such as the Coriolis effect, inertia-gravity waves, geostrophic adjustment, Rossby waves,
-among others, are not captured by a simple advection model.
-Hence, shallow-water equations provide an excellent benchmark to assess dynamical cores in general,
-since it is only two-dimensional but is a complex enough geophysical model for atmosphere dynamics.
-\newpage
+Now that we have described how to solve the advection equation on the cubed-sphere in Chapter \ref{chp-cs-fv},
+we are able to introduce the method of \citet{lin:1997} for solving the shallow-water equations (SWE) on the cubed-sphere.
+In fact, this scheme considers the SWE in the vector invariant form, and therefore, 
+the flux operators discussed in Chapter \ref{chp-cs-fv} are used to update the fluid depth,
+as well as the time-averaged relative vorticity and kinetic energy fluxes.
+This scheme first solves the SWE for a half time-step to obtain covariant C-grid winds and 
+then utilizes this new information to advance the covariant D-grid winds for a full time step.
+The C-grid half-step employs upwind flux operators, which are computationally inexpensive, 
+while the D-grid uses PPM-based fluxes, providing higher accuracy. 
+We note that other flux operators could be employed here, but the choice presented is what is utilized in FV3.
+
+Although the advection equation on the sphere plays a crucial role in the development of dynamical cores by modeling the advection of scalar fields on the sphere, 
+it does not capture important features present in the shallow-water equations on the sphere, 
+such as the Coriolis effect, inertia-gravity waves, geostrophic adjustment, Rossby waves, among others. 
+Therefore, shallow-water equations serve as an excellent benchmark for assessing dynamical cores in general,
+as they are only two-dimensional but represent a complex geophysical model for atmosphere dynamics.
+Furthermore, the 3D non-hydrostatic solver of FV3 utilizes a vertical Lagrangian coordinate system,
+requiring the solution of the shallow-water equations on the Lagrangian surfaces \citep{lin:2004, harris:2021}.
+
+The goal of this Chapter is to provide a detailed description of the SWE solver from \citet{lin:1997}.
+Since this scheme uses advection operators to update the variables, 
+we are going to incorporate the new advection scheme LT introduced in Chapter \ref{chp-cs-fv} and compare it with the PL advection scheme from \citep{putman:2007},
+which is currently employed in FV3. 
+Thus, we will extend the comparisons made in Chapter \ref{chp-cs-fv} to the context of shallow-water equations (SWE).
+
+This Chapter is outlined as follows:
+In Section \ref{sec:sweq}, we introduce the shallow-water equations and some of its properties, and then we discuss
+the C-grid and D-grid discretization proposed by \citep{lin:1997}.
+Following that, in Section \ref{sec:numerical_results}, 
+we present numerical results using classical tests from the literature. 
+Finally, in Section \ref{sec:conclusions}, we provide concluding remarks.
+
 \section{The shallow-water equations on the sphere}
 \label{sec:sweq}
-The shallow-water are expressed as:
+In this Section, we introduce the shallow-water equations (SWE) on the sphere using a cubed-sphere mapping 
+(equi-edge or equiangular) as discussed in Section \ref{sec-cs-grids}.
+All the notation from Sections \ref{cs-mappings} and \ref{sec-cs-grids} is utilized here.
+For simplicity, we omit the dependence on $p$ since it does not affect the description across cube faces.
+Additionally, we assume that the ghost cells are filled using the duo-grid interpolation scheme outlined in Sections \ref{cs-interp} and \ref{cs-wind-interp}.
+The shallow-water equations (SWE) are a set of hyperbolic partial differential equations describing how the fluid depth, 
+denoted by $h$, and the wind $\boldsymbol{u}$ evolve with time.
+Since the cubed-sphere system is non-orthogonal, the SWEs will feature the covariant winds $\mathfrak{U}, \mathfrak{V}$ and
+contravariant winds $\mathfrak{u}, \mathfrak{v}$, as discussed in Section \ref{cs-tgvectors}.
+The SWE on the a cubed-sphere panel are expressed as in its vector invariant form as \citep{rancic:1996, nair:2005b}:
 \begin{align}
 	\label{2d-sweq-h}
 	{\partial_t (\sqrt{\mathfrak{g}} {h})}(x, y, t) &= -
@@ -39,12 +73,16 @@ is the relative vorticity, where
 	f  = 2 \Omega \sin{\phi},
 \end{equation}
 is the Coriolis parameter,
-$\phi$ is the latitude, $\Omega = 7.2921 \times 10^{-5}$ is the earth rotation speed, and
+$\phi$ is the latitude, $\Omega = 7.2921 \times 10^{-5}$ is the Earth rotation speed, and
 \begin{equation}
 	\label{vort2-eq}
 	\zeta = \frac{1}{\sqrt{\mathfrak{g}}}(\partial_x \mathfrak{V} - \partial_y\mathfrak{U}),
 \end{equation}
 is the relative vorticity.
+
+%\section{Elementary properties of the SWE}
+%\label{sec:sweq-prop}
+Now, let us describe some elementary properties of the SWE.
 By taking $\partial_y$ in Equation \eqref{2d-sweq-u} and $\partial_x$ in Equation \eqref{2d-sweq-v} and
 subtracting the obtained results, we get that the relative vorticity satisfies:
 \begin{align}
@@ -53,26 +91,44 @@ subtracting the obtained results, we get that the relative vorticity satisfies:
 	-[{\partial_x (\mathfrak{u}\sqrt{\mathfrak{g}}{\zeta}})
 	+ {\partial_y (\mathfrak{v}\sqrt{\mathfrak{g}}{\zeta}})](x,y,t).
 \end{align}
-By replacing Equations \eqref{contra-uv} and \eqref{covari-uv} in Equation \ref{ke-eq}, 
+Then, in the SWE, the  relative vorticity.
+One can also easily show (as described in Section \ref{chp-cs-adv}) that the total mass of $h$ and $\zeta$ is preserved.
+
+By replacing Equations \eqref{contra-uv} and \eqref{covari-uv} in Equation \eqref{ke-eq}, 
 it follows that the kinetic energy may be rewritten in terms of the normalized contravariant and covariant components as:
 \begin{equation}
 	\label{ke-eq2}
 	K = \frac{{u}{U}+{v}{V}}{2}.
 \end{equation}
 
-\newpage
+The total energy is defined as:
+\begin{equation}
+	\label{energy}
+	E = g\frac{h^2}{2} + gb + hK.
+\end{equation}
+One can deduce an equation for the time evolution of the total energy (see, for example, \citet{ringler:2010}) 
+and observe that its integral over the sphere is preserved; that is, the total energy is conserved.
+%The total entrosphy is defined as
+%\begin{equation}
+%	\label{enstrophy}
+%	E = g\frac{h^2}{2} + gb + hK,
+%\end{equation}
 
 \subsection{Momentum equation discretization}
-The continuity Equation \eqref{2d-sweq-h} has the exact form as the advection equation when written in its conservative form.
-Then, this equation can be solved on the A-grid using C-grid winds,
-as explored in Chapters \ref{chp-2d-fv} and \ref{chp-cs-fv}.
+The continuity equation \eqref{2d-sweq-h} has the exact same form as the advection equation when written in its conservative form.
+Therefore, this equation can be solved on the A-grid using C-grid winds, as explored in Chapters \ref{chp-2d-fv} and \ref{chp-cs-fv}.
 This is how the continuity equation is solved in FV3.
-As we shall see later, this equation is solved using the 2D upwind flux and the dimension-splitting method from Chapter \ref{chp-cs-fv} with PPM.
+As we shall see later, this equation is solved twice: 
+once using the 2D upwind flux and another using the dimension-splitting method from Chapter \ref{chp-cs-fv} with PPM.
+
 Therefore, we need to describe how we can solve the momentum equations \eqref{2d-sweq-u} and \eqref{2d-sweq-v}. 
 The method of \citet{lin:1997} employs two types of approaches on their shallow-water solver: one using a C-grid wind and the other using a D-grid.
 The C-grid method serves as an intermediate step utilized by the D-grid method.
+Our goal now is to describe a general discretization of the momentum equations for the C-grid and D-grid winds.
+The full description of the C-grid and D-grid solvers proposed by 
+\citet{lin:1997} will be provided in Sections \ref{csw-grid} and \ref{dsw-grid}, respectively.
 
-\subsection{D-grid discretization of momentum equation }
+\subsubsection{D-grid discretization of momentum equation }
 We introduce the following average operators for the covariant components in $x$ and $y$ directions, respectively:
 \begin{align}
 	\label{2d-sweq-int_u}
@@ -80,153 +136,169 @@ We introduce the following average operators for the covariant components in $x$
 	\label{2d-sweq-int_v}
 	\overline{\mathfrak{V}^y_{i+\frac{1}{2},j}}(t)&= \frac{1}{\Delta y} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} \mathfrak{V}(x_{i+\frac{1}{2}}, y, t) \,dy,  \quad i=0,\ldots,N,j=1,\ldots, N.
 \end{align}
+We shall also use the notation $q_{ij}(t) = q(x_i,y_j,t)$ for any function $q$ and integer or half-integer indices $i$ and $j$.
+We also use the centered difference notations $\delta _i q_{ij}(t) =q_{i+\frac{1}{2},j}(t) -q_{i-\frac{1}{2},j}(t)$ and 
+$\delta _j q_{ij}(t) = q_{i,j+\frac{1}{2}}(t) -q_{i,j-\frac{1}{2}}(t)$ for any integer or half-integer indices $i$ and $j$.
+
 By integrating Equation \eqref{2d-sweq-u} with respect to $x$ on $[x_{i-\frac{1}{2}},x_{i+\frac{1}{2}}]$ and Equation \eqref{2d-sweq-v} with respect to $y$ on $[y_{j-\frac{1}{2}},y_{j+\frac{1}{2}}]$, we get the following equations:
 \begin{align}
 	\label{2d-sweq-int_equ}
 	\frac{d}{dt}\overline{\mathfrak{U}^x_{i,j+\frac{1}{2}}}
-	(t)&= -\frac{\delta_x K(x_i,y_{j+\frac{1}{2}},t)}{\Delta x}-\frac{\delta_x \Phi(x_i,y_{j+\frac{1}{2}},t)}{\Delta x} + 
+	(t)&= -\frac{\delta_i K_{i,j+\frac{1}{2}}(t)}{\Delta x}-\frac{\delta_i \Phi_{i,j+\frac{1}{2}}(t)}{\Delta x} + 
 	\frac{1}{\Delta x}
 	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
-	\mathfrak{v}\sqrt{\mathfrak{g}}\xi(x_i, y_{j+\frac{1}{2}}, t) \,dx, \\
+	(\mathfrak{v}\sqrt{\mathfrak{g}}\xi)(x_i, y_{j+\frac{1}{2}}, t) \,dx, \\
 	\label{2d-sweq-int_eqv}
-	\frac{d}{dt} \overline{\mathfrak{V}^y_{i+\frac{1}{2},j}}(t)&= -\frac{\delta_y K(x_{i+\frac{1}{2}},y_j,t)}{\Delta y}-\frac{\delta_y
-		\Phi(x_{i+\frac{1}{2}},y_{j},t)}{\Delta y}
+	\frac{d}{dt} \overline{\mathfrak{V}^y_{i+\frac{1}{2},j}}(t)&= -\frac{\delta_j K_{i+\frac{1}{2},j}(t)}{\Delta y}-
+	\frac{\delta_j \Phi_{i+\frac{1}{2},j}(t)}{\Delta y}
 	- \frac{1}{\Delta y}
 	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
-	\mathfrak{u}\sqrt{\mathfrak{g}}\xi(x_{i+\frac{1}{2}},
-	y_j, t) \,dy,
+	(\mathfrak{u}\sqrt{\mathfrak{g}}\xi)(x_{i+\frac{1}{2}}, y, t) \,dy.
 \end{align}
 Integrating Equations \eqref{2d-sweq-int_equ} and \eqref{2d-sweq-int_eqv} on time over $[t^n,t^{n+1}]$, we obtain:
 \begin{align}
 	\label{2d-sweq-int_equt}
 	\overline{\mathfrak{U}^x_{i,j+\frac{1}{2}}}(t^{n+1})&=
-	\overline{\mathfrak{U}^x_{i,j+\frac{1}{2}}}(t^{n}) -\Delta t \bigg[\frac{1}{\Delta t}
-	\int_{t_{n}}^{t_{n+1}}\bigg(
-	\frac{\delta_x K(x_i,y_{j+\frac{1}{2}},t)}{\Delta x}
-	+\frac{\delta_x \Phi(x_i,y_{j+\frac{1}{2}},t)}{\Delta x} -
+	\overline{\mathfrak{U}^x_{i,j+\frac{1}{2}}}(t^{n}) -
+	\int_{t_{n}}^{t_{n+1}}\bigg[
+	\frac{\delta_i K_{i,j+\frac{1}{2}}(t)}{\Delta x}
+	+\frac{\delta_i \Phi_{i,j+\frac{1}{2}}(t)}{\Delta x} - \bigg(
 	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
-	\frac{\mathfrak{v}\sqrt{\mathfrak{g}}\xi(x_i, y_{j+\frac{1}{2}}, t)}{\Delta x}
-	\,dx \bigg)
-	\,dt \bigg],\\
+	\frac{(\mathfrak{v}\sqrt{\mathfrak{g}}\xi)(x_i, y_{j+\frac{1}{2}}, t)}{\Delta x}
+	\,dx \bigg)\bigg]
+	\,dt ,\\
 	\label{2d-sweq-int_eqvt}
 	\overline{\mathfrak{V}^y_{i+\frac{1}{2},j}}(t^{n+1})&=
-	\overline{\mathfrak{V}^y_{i+\frac{1}{2},j}}(t^{n}) -\Delta t \bigg[\frac{1}{\Delta t}
-	\int_{t_{n}}^{t_{n+1}}\bigg(
-	\frac{\delta_y K(x_{i+\frac{1}{2}},y_j,t)}{\Delta y}+\frac{\delta_y
-		\Phi(x_{i+\frac{1}{2}},y_j,t)}{\Delta y}
-	+
+	\overline{\mathfrak{V}^y_{i+\frac{1}{2},j}}(t^{n}) -
+	\int_{t_{n}}^{t_{n+1}}\bigg[
+	\frac{\delta_j K_{i+\frac{1}{2},j}(t)}{\Delta y}+\frac{\delta_j\Phi_{i+\frac{1}{2},j}(t)}{\Delta y}+ \bigg(
 	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
-	\frac{\mathfrak{u}\sqrt{\mathfrak{g}}\xi(x_{i+\frac{1}{2}}, y, t)}{\Delta y}
-	\,dy \bigg)\,dt\bigg],
+	\frac{(\mathfrak{u}\sqrt{\mathfrak{g}}\xi)(x_{i+\frac{1}{2}}, y, t)}{\Delta y}
+	\,dy \bigg)\bigg]\,dt .
 \end{align}
 Using the midpoint rule and using the normalized covariant winds in Equations \eqref{2d-sweq-int_equt} and \eqref{2d-sweq-int_eqvt}, we derive a general scheme
 to update the normalized covariant D-grid winds:
 \begin{align}
 	\label{2d-sweq-dscheme-u}
 	{U}_{i,j+\frac{1}{2}}^{n+1}&=
-	{U}_{i,j+\frac{1}{2}}^{n} -\Delta t \bigg[
+	{U}_{i,j+\frac{1}{2}}^{n} - \bigg(
 	\frac{\delta_i K_{i,j+\frac{1}{2}}^n}{\hat{\delta} x_{i,j+\frac{1}{2}}}
-	+\frac{\delta_i \Phi_{i,j+\frac{1}{2}}^n}{\hat{\delta} x_{i,j+\frac{1}{2}}} -
-	\frac{1}{\Delta t}
-	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
-	\frac{\mathfrak{v}\sqrt{\mathfrak{g}}\xi(x_i, y_{j+\frac{1}{2}}, t)}{\Delta x}
-	\,dx \bigg)
-	\,dt \bigg],\\
+	+\frac{\delta_i \Phi_{i,j+\frac{1}{2}}^n}{\hat{\delta} x_{i,j+\frac{1}{2}}}
+	- \frac{G_{i,j+\frac{1}{2}}}{{\hat{\delta} x_{i,j+\frac{1}{2}}}}[\xi, v^n]\bigg)
+	,\\
 	\label{2d-sweq-dscheme-v}
 	{V}_{i+\frac{1}{2},j}^{n+1}&=
-	{V}_{i+\frac{1}{2},j}^{n} -\Delta t \bigg[
+	{V}_{i+\frac{1}{2},j}^{n} - \bigg(
 	\frac{\delta_j K_{i+\frac{1}{2},j}}{\hat{\delta} y_{i+\frac{1}{2},j}}+
 	\frac{\delta_j \Phi_{{i+\frac{1}{2}},j}^n}{\hat{\delta} y_{i+\frac{1}{2},j}}
-	+
-	\frac{1}{\Delta t}
-	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
-	\frac{\mathfrak{u}\sqrt{\mathfrak{g}}\xi(x_{i+\frac{1}{2}}, y, t)}{\Delta y}
-	\,dy \bigg)\,dt\bigg],
+	+ \frac{F_{i+\frac{1}{2},j}[\xi, u^n]}{\hat{\delta} y_{i+\frac{1}{2},j}} \bigg).
 \end{align}
-Then, this schemes requires an approximation of the time-averaged kinetic energy at the B-grid
+Then, this schemes requires an approximation of the time-averaged kinetic energy at the B-grid:
 \begin{equation}
+	\label{ke-bgrid}
 	K_{i+\frac{1}{2},j+\frac{1}{2}}^n \approx \frac{1}{2}\bigg[
-	\frac{1}{\Delta t}
-	\int_{t_{n}}^{t_{n+1}} {u}{U}
-	(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}}, t) \,dt +
-	\frac{1}{\Delta t}
-	\int_{t_{n}}^{t_{n+1}} {v}{V}
-	(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}}, t) \,dt)\bigg],
+	\int_{t_{n}}^{t_{n+1}} ({u}{U})(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}}, t) \,dt +
+	\int_{t_{n}}^{t_{n+1}} ({v}{V})(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}}, t) \,dt\bigg],
 \end{equation}
-an approximation of the time-averaged geopotential on B-grid points:
+and an approximation of the time-averaged geopotential on B-grid points:
 \begin{equation}
+	\label{geop-bgrid}
 	\Phi_{i+\frac{1}{2},j+\frac{1}{2}}^n \approx
-	\frac{1}{\Delta t}
 	\int_{t_{n}}^{t_{n+1}} \Phi
 	(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}}, t) \,dt,
 \end{equation}
-and an approximation of the time-average vorticity fluxes
-\begin{equation}
-	\Phi_{i+\frac{1}{2},j+\frac{1}{2}}^n \approx
-	\frac{1}{\Delta t}
-	\int_{t_{n}}^{t_{n+1}} \Phi
-	(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}}, t) \,dt.
-\end{equation}
-These approximations are described in Section \ref{csw-grid}.
-and an approximation of the time-average vorticity fluxes
-\begin{equation}
-	\Phi_{i+\frac{1}{2},j+\frac{1}{2}}^n \approx
-	\frac{1}{\Delta t}
-	\int_{t_{n}}^{t_{n+1}} \Phi
-	(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}}, t) \,dt.
-\end{equation}
-\subsection{C-grid discretization of momentum equation }
-to update the normalized covariant D-grid winds:
+The terms should $F_{i+\frac{1}{2},j}[\xi^{n}, u^n]$ and $G_{i,j+\frac{1}{2}}[\xi^{n}, v^n] $ should approximate the time-averaged absolute vorticity fluxes:
+\begin{align}
+	F_{i+\frac{1}{2},j}[\xi^{n}, u^n] \approx
+	\int_{t^n}^{t^{n+1}} 
+	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
+	{(\mathfrak{u}\sqrt{\mathfrak{g}}\xi)(x_{i+\frac{1}{2}}, y, t)}
+	\,dy \,dt \\
+	G_{i,j+\frac{1}{2}}[\xi^{n}, v^n] \approx
+	\int_{t^n}^{t^{n+1}} 
+    \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+    {(\mathfrak{v}\sqrt{\mathfrak{g}}\xi)(x, y_{j+\frac{1}{2}}, t)}
+    \,dx \,dt.
+\end{align}
+Notice that since $\xi$ satisfies the advection equation \eqref{absvort-eq}, 
+these integrals may be approximated using finite-volume fluxes assuming that $\xi$ may be advected on the A-grid.
+Indeed, this is possible because, as we shall see soon, the D-grid facilitates the estimation of $\xi$ on the A-grid by using centered finite differences.
+All these approximations needed for the D-grid scheme are described in Section \ref{dsw-grid}.
+
+
+\subsubsection{C-grid discretization of momentum equation }
+Similar to the derivation of the D-grid wind scheme, we may deduce the following C-grid scheme for a half-time step:
 \begin{align}
 	\label{2d-sweq-cscheme-u}
 	{U}_{i+\frac{1}{2},j}^{n+1}&=
-	{U}_{i+\frac{1}{2},j}^{n} -\Delta t \bigg[
+	{U}_{i+\frac{1}{2},j}^{n} - \bigg(
 	\frac{\delta_i K_{i+\frac{1}{2},j}^n}{\hat{\delta} x_{i+\frac{1}{2},j}}
 	+\frac{\delta_i \Phi_{i+\frac{1}{2},j}^n}{\hat{\delta} x_{i+\frac{1}{2},j}} -
-	\frac{1}{\Delta t}
-	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
-	\frac{\mathfrak{v}\sqrt{\mathfrak{g}}\xi(x_{i+\frac{1}{2}}, y_j, t)}{\Delta x}
-	\,dx \bigg)
-	\,dt \bigg],\\
+    \frac{G_{i+\frac{1}{2},j}[\xi^{n}, v^n]}{\hat{\delta} x_{i+\frac{1}{2},j}}\bigg),\\
 	\label{2d-sweq-cscheme-v}
 	{V}_{i,j+\frac{1}{2}}^{n+1}&=
-	{V}_{i,j+\frac{1}{2}}^{n} -\Delta t \bigg[
+	{V}_{i,j+\frac{1}{2}}^{n} - \bigg(
 	\frac{\delta_j K_{i,j+\frac{1}{2}}}{\hat{\delta} y_{i,j+\frac{1}{2}}}+
 	\frac{\delta_j \Phi_{{i,j+\frac{1}{2}}}^n}{\hat{\delta} y_{i,j+\frac{1}{2}}}
 	+
-	\frac{1}{\Delta t}
-	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
-	\frac{\mathfrak{u}\sqrt{\mathfrak{g}}\xi(x_{i+\frac{1}{2}}, y, t)}{\Delta y}
-	\,dy \bigg)\,dt\bigg],
+   \frac{F_{i,j+\frac{1}{2}}[\xi, u^n]}{\hat{\delta} y_{i,j+\frac{1}{2}}}\bigg).
 \end{align}
-Then, this schemes requires an approximation of the time-averaged kinetic energy at the B-grid
+Then, this schemes requires an approximation of the time-averaged kinetic energy at the A-grid
 \begin{equation}
-	K_{i+\frac{1}{2},j+\frac{1}{2}}^n \approx \frac{1}{2}\bigg[
-	\frac{1}{\Delta t}
-	\int_{t_{n}}^{t_{n+1}} {u}{U}
-	(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}}, t) \,dt +
-	\frac{1}{\Delta t}
-	\int_{t_{n}}^{t_{n+1}} {v}{V}
-	(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}}, t) \,dt)\bigg],
+	\label{ke-agrid}
+	K_{ij}^n \approx \frac{1}{2}\bigg[
+	\int_{t_{n}}^{t_{n+\frac{1}{2}}} ({u}{U})
+	(x_{i}, y_{j}, t) \,dt +
+	\int_{t_{n}}^{t_{n+\frac{1}{2}}} ({v}{V})
+	(x_{i}, y_{j}, t) \,dt\bigg],
 \end{equation}
-an approximation of the time-averaged geopotential on B-grid points:
+and an approximation of the time-averaged geopotential on A-grid points:
 \begin{equation}
-	\Phi_{i+\frac{1}{2},j+\frac{1}{2}}^n \approx
-	\frac{1}{\Delta t}
-	\int_{t_{n}}^{t_{n+1}} \Phi
-	(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}}, t) \,dt,
+	\label{geop-agrid}
+	\Phi_{ij}^n \approx
+	\int_{t_{n}}^{t_{n+\frac{1}{2}}} \Phi
+	(x_{i}, y_{j}, t) \,dt.
 \end{equation}
-and an approximation of the time-average vorticity fluxes
-\begin{equation}
-	\Phi_{i+\frac{1}{2},j+\frac{1}{2}}^n \approx
-	\frac{1}{\Delta t}
-	\int_{t_{n}}^{t_{n+1}} \Phi
-	(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}}, t) \,dt.
-\end{equation}
-These approximations are described in Section \ref{dsw-grid}.
+The terms should $F_{i,j+\frac{1}{2}}[\xi^{n}, u^n]$ and $G_{i+\frac{1}{2},j}[\xi^{n}, v^n] $ should approximate the time-averaged absolute vorticity fluxes:
+\begin{align}
+	F_{i,j+\frac{1}{2}}[\xi^{n}, u^n] \approx
+	\int_{t^n}^{t^{n+\frac{1}{2}}} 
+	\int_{y_{j}}^{y_{j+1}} 
+	{(\mathfrak{u}\sqrt{\mathfrak{g}}\xi)(x_{i}, y, t)}
+	\,dy \,dt \\
+	G_{i+\frac{1}{2},j}[\xi^{n}, v^n] \approx
+	\int_{t^n}^{t^{n+\frac{1}{2}}} 
+	\int_{x_{i}}^{x_{i+1}} 
+	{(\mathfrak{v}\sqrt{\mathfrak{g}}\xi)(x, y_{j}, t)}
+	\,dx \,dt.
+\end{align}
+Once again, since $\xi$ satisfies the advection equation \eqref{absvort-eq}, 
+these integrals may be approximated using finite-volume fluxes assuming that $\xi$ may be advected on the B-grid.
+Indeed, this is possible because, as we shall see soon, the C-grid facilitates the estimation of $\xi$ on the B-grid by using centered finite differences.
+All these approximations are described in Section \ref{csw-grid}.
+
+\section{The FV3 shallow-water solver}
+This Section is dedicated to presenting all the details of the shallow-water solver proposed by \citet{lin:1997} on the cubed-sphere. 
+The C-grid intermediate step is described in Section \ref{csw-grid}, while the D-grid step is detailed in Section \ref{dsw-grid}.
+
 \subsection{C-grid intermediate step}
 \label{csw-grid}
-C-grid equation
+The C-grid intermediate step serves to provide the contravariant C-grid winds centered at time 
+${u}^{n+\frac{1}{2}}_{i+\frac{1}{2},j}$ and ${v}^{n+\frac{1}{2}}_{i,j+\frac{1}{2}}$
+that are required by the advection fluxes when using PPM, as discussed in Chapters \ref{chp-2d-fv} and \ref{chp-cs-fv}. 
+One could utilize second-order extrapolation to obtain these centered at time C-grid winds, using two time levels, namely:
+\begin{align}
+{u}^{n+\frac{1}{2}}_{i+\frac{1}{2},j} = \frac{3}{2} {u}^{n}_{i,j+\frac{1}{2}} - \frac{1}{2} {u}^{n-1}_{i,j+\frac{1}{2}}, \\
+{v}^{n+\frac{1}{2}}_{i,j+\frac{1}{2}} = \frac{3}{2} {v}^{n}_{i,j+\frac{1}{2}} - \frac{1}{2} {v}^{n-1}_{i,j+\frac{1}{2}}.
+\end{align}
+This approach is very popular in Semi-Lagrangian methods.
+However, as pointed out by \citet{lin:1997}, this extrapolation introduces 2$\Delta x$ numerical noise, which may degrade the solution in presence
+of sharp bottom topography. 
+Therefore, \citet{lin:1997} proposes solving the SWE on a C-grid for a half-time step to provide the winds centered at time $n+\frac{1}{2}$. 
+To make this half-time step cheaper, upwind fluxes are going to be used.
+Our goal now is to describe the details of this C-grid wind solver.
+We are going to describe everything that is needed to advance the 
+C-grid winds given by Equations \eqref{2d-sweq-cscheme-u} and \eqref{2d-sweq-cscheme-v}.
 
 \subsubsection{Wind interpolation}
 We are given  the normalized covariant wind components  on a D-grid
@@ -399,10 +471,10 @@ for $i=0, \ldots, N$, $j=-\nu+1, \ldots, N + \nu$.
 The terms, $\mathcal{A}_{i,j+\frac{1}{2}}^{y}$ and	$\mathcal{F}_{i,j+\frac{1}{2}}^{UPW,y}$ are defined similarly using $v$.
 
 \subsubsection{Geopotential gradient}
-Once we have computed $h^{n+\frac{1}{2}}_{ij}$, we are able to estimate the geopotential on the A-grid as:
+Once we have computed $h^{n+\frac{1}{2}}_{ij}$, we are able to estimate the time-averaged geopotential (Equation \eqref{geop-agrid}) on the A-grid as:
 \begin{align}
 	\label{2d-sw-eq-Cgrid-geo}
-	 \Phi^n_{ij} &= {g(h^{n+\frac{1}{2}}_{ij} + b_{ij})},
+	 \Phi^n_{ij} &= \Delta t {g(h^{n+\frac{1}{2}}_{ij} + b_{ij})},
 \end{align}
 for $i,j=0, \ldots, N+1$.
 We use $h^{n+\frac{1}{2}}_{ij}$ instead of $h^{n}_{ij}$ so the C-grid scheme becomes backward-forward in time;
@@ -410,10 +482,10 @@ otherwise, the C-grid scheme would be unconditionally unstable \citep{lin:1997}.
 Following that, we estimate the geopotential gradient on the C-grid and D-grid points, respectively, by using centered differences:
 \begin{align}
 	\label{2d-sw-eq-Cgrid-geo-dx}
-	\delta_i \Phi^n_{i+\frac{1}{2},j} &= {g(h^{n+\frac{1}{2}}_{i+1,j} - h^{n+\frac{1}{2}}_{ij} + b_{i+1,j} - b_{ij})},
+	\delta_i \Phi^n_{i+\frac{1}{2},j} &= \Phi^{n}_{i+1,j} - \Phi^{n}_{ij},
 	\quad i=0,\ldots,N, j=1,\ldots,N,\\
 	\label{2d-sw-eq-Cgrid-geo-dy}
-	\delta_j \Phi^n_{i,j+\frac{1}{2}} &= {g(h^{n+\frac{1}{2}}_{i,j+1} - h^{n+\frac{1}{2}}_{ij} + b_{i,j+1} - b_{ij})},
+	\delta_j \Phi^n_{i,j+\frac{1}{2}} &= \Phi^{n}_{i,j+1} - \Phi^{n}_{ij},
 	\quad i=1,\ldots,N, j=0,\ldots,N.
 \end{align}
 \subsubsection{Absolute vorticity fluxes}
@@ -433,7 +505,7 @@ we may compute the relative vorticity (Equation \eqref{vort2-eq}) at the B-grid 
     	   \hat{\delta}x_{i+\frac{1}{2},j  }{U}_{i+\frac{1}{2},j}^n}\big)}
     \bigg],
 \end{align}
-for $i,j=0, \ldots, N$.
+for $i,j=-1, \ldots, N+1$.
 Then, we obtain the absolute vorticity on the B-grid as:
 \begin{align}
 	\label{2d-sw-av-Cgrid}
@@ -441,7 +513,7 @@ Then, we obtain the absolute vorticity on the B-grid as:
 	f_{i+\frac{1}{2},j+\frac{1}{2}} +
 	\zeta_{i+\frac{1}{2},j+\frac{1}{2}}^n,
 \end{align}
-for $i,j=0, \ldots, N$.
+for $i,j=-1, \ldots, N+1$.
 Thus, it follows from Equation \eqref{absvort-eq} that absolute vorticity may be updated on the B-grid as follows using the upwind flux:
 \begin{equation}
 	\label{2d-avort-eq-Cgrid}
@@ -504,7 +576,7 @@ where the 1D upwind flux in the $x$ direction is defined by:
 		{u}_{i,j+\frac{1}{2}}^{n}>0,\\
 		{\psi}_{i+\frac{1}{2},j+\frac{1}{2}}^n
 		\quad &\text{if} \quad 
-		{u}_{i,j+\frac{1}{2}}^{n}\leq0,\\
+		{u}_{i,j+\frac{1}{2}}^{n}\leq0.\\
 	\end{cases}
 \end{align}
 The terms $\mathcal{A}_{i+\frac{1}{2},j}^{y}$ and	$\mathcal{F}_{i+\frac{1}{2},j}^{UPW,y}$ are defined similarly using $v$.
@@ -515,11 +587,32 @@ we only need to compute the terms and  $\mathcal{A}_{i,j+\frac{1}{2}}^{x}$ and $
 for $i=0, \ldots, N$, $j=1,\ldots,N$, and $\mathcal{A}_{i+\frac{1}{2},j}^{y}$ and $\mathcal{F}_{i+\frac{1}{2},j}^{UPW,y}$
 for $i=1, \ldots, N$, $j=0,\ldots,N$, to update the C-grid winds using
 the momentum equations \eqref{2d-sweq-cscheme-u} and \eqref{2d-sweq-cscheme-v}.
+That is, we only need to compute the terms:
+\begin{align}
+F_{i,j+\frac{1}{2}}[\xi^{n}, u^n] = \mathcal{A}_{i,j+\frac{1}{2}}^{x}\mathcal{F}_{i,j+\frac{1}{2}}^{UPW,x}[\xi^{n}, u^n],\\
+G_{i+\frac{1}{2},j}[\xi^{n}, v^n] = \mathcal{A}_{i+\frac{1}{2},j}^{y}\mathcal{F}_{i+\frac{1}{2},j}^{UPW,y}[\xi^{n}, v^n].
+\end{align}
+
 
 \subsubsection{Kinetic energy fluxes}
-The time-averaged kinetic on the A-grid is computed using the formula:
+To estimate the kinetic energy fluxes, we need to estimate the temporal integrals in Equation \eqref{ke-agrid}.
+In \citet{lin:1997} and in the current FV3 implementation, it is assumed that the $u$ and $U$ obeys:
 \begin{equation}
-	K_{ij}^n = \frac{1}{2}\bigg(
+	\label{eq_du}
+	{\partial_t U} + {\partial_x (uU)}(x, y_j, t) = 0,
+\end{equation}
+then, using an 1D finite-volume numerical flux $F_{i+\frac{1}{2},j}^x$ (recall Problem \ref{chp-adv1d-sec2-prob4}), we may approximate 
+\begin{equation}
+	F_{i+\frac{1}{2},j}^x[U^n,u^n]\approx 
+	\frac{1}{0.5\Delta t} \int_{t_{n}}^{t_{n+\frac{1}{2}}} {u}{U}
+	(x_{i+\frac{1}{2}}, y_{j}, t) \,dt
+\end{equation}
+Similarly for $v$ and $V$, we use	$F_{i,j+\frac{1}{2}}^y[V^n,v^n]$ an then we have an estimation for the time-averaged kinetic energy.
+Of course, Equation \eqref{eq_du} is not true, but it is used to advected the wind on a upwind direction.
+
+Therefore, the time-averaged kinetic on the A-grid is computed using the formula:
+\begin{equation}
+	K_{ij}^n = \frac{0.5\Delta t}{2}\bigg(
 	{u}_{ij}^{n}\mathfrak{F}_{ij}^{UPW,x} [{{U}^n},u^n] +
     {v}_{ij}^{n}\mathfrak{F}_{ij}^{UPW,y} [{{V}^n},v^n]\bigg),
 \end{equation}
@@ -559,20 +652,14 @@ Thus, we estimate the kinetic energy gradient using a centered difference:
 	\delta_j K^n_{i,j+\frac{1}{2}} &= K_{i,j+1}^n - K_{ij}^n,
 	\quad i=1,\ldots,N, j=0,\ldots,N.
 \end{align}
+Hence, we have completed the description of the C-grid wind update on a half-step using Equations \eqref{2d-sweq-cscheme-u} and \eqref{2d-sweq-cscheme-v}.
+
 
 \subsection{D-grid step}
 \label{dsw-grid}
-D-grid equation
-\begin{align}
-	\label{2d-sw-eq-Dgrid}
-	{\partial_t (\sqrt{\mathfrak{g}} {h})}_{ij}(t) & = 
-	-[{\partial_x (\mathfrak{u}\sqrt{\mathfrak{g}}{h}})
-	+ {\partial_y (\mathfrak{v}\sqrt{\mathfrak{g}}{h}})]_{ij}(t), \\
-	{\partial_t \mathfrak{U}}_{i,j+\frac{1}{2}}(t)&=
-	-[\partial_x K -  \mathfrak{v}\sqrt{\mathfrak{g}}\xi +\partial_x \Phi ]_{i,j+\frac{1}{2}} (t), \\
-	{\partial_t \mathfrak{V}}_{i+\frac{1}{2},j}(t)&=
-	-[\partial_y K + \mathfrak{u}\sqrt{\mathfrak{g}}\xi +\partial_y \Phi ]_{i+\frac{1}{2},j}(t), 
-\end{align}
+Now we are going to describe how we can advance the D-grid scheme,
+given by Equations \eqref{2d-sweq-dscheme-u} and \eqref{2d-sweq-dscheme-v},
+using the C-grid winds $U_{i+\frac{1}{2},j}^{n+\frac{1}{2}}$ and $V_{i,j+\frac{1}{2}}^{n+\frac{1}{2}}$ centered at time obtained by the C-grid solver.
 
 \subsubsection{Wind interpolation}
 We are given  the normalized covariant wind components on a C-grid
@@ -643,70 +730,117 @@ for $i=-1,\ldots,N+2, j=-\nu+1,\ldots,N+\nu$, and similarly to the contravariant
 	V_{i+\frac{1}{2},j+\frac{1}{2}}^{n+\frac{1}{2}} - \cos{\alpha_{i+\frac{1}{2},j+\frac{1}{2}}}U_{i+\frac{1}{2},j+\frac{1}{2}}^{n+\frac{1}{2}}\bigg).
 \end{equation}
 
+\subsubsection{Fluid depth}
+The fluid depth is updated using the dimension-splitting method with PPM, as given by Equations \eqref{q-split}. 
+This yields the values of $h_{ij}^{n+1}$ for $i,j=1, \ldots, N$.
+Then, we may generate its ghost cell values using the duo-grid interpolation.
+
+\subsubsection{Geopotential gradient}
+Once we have computed $h^{n+1}_{ij}$, we are able to estimate the time-averaged geopotential on the A-grid as:
+\begin{align}
+	\label{2d-sw-eq-Dgrid-geo}
+	\Phi^n_{ij} &= \Delta t{g(h^{n+1}_{ij} + b_{ij})},
+\end{align}
+for $i,j=-\nu+1, \ldots, N+\nu$.
+Then, the  time-averaged geopotential on the B-grid (Equation \eqref{geop-bgrid}) may be using interpolation:
+
+Again, we use $h^{n+1}_{ij}$ instead of $h^{n}_{ij}$ so the D-grid scheme also becomes backward-forward in time; avoiding numerical instability.
+Following that, we estimate the geopotential gradient on the C-grid and D-grid points, respectively, by using centered differences:
+\begin{align}
+	\label{2d-sw-eq-Dgrid-geo-dx}
+	\delta_i \Phi^n_{i,j+\frac{1}{2}} &= 
+	\Phi^{n}_{i+\frac{1}{2},j+\frac{1}{2}} - \Phi^{n+1}_{i-\frac{1}{2},j+\frac{1}{2}},
+	\quad i=1,\ldots,N, j=0,\ldots,N,\\
+	\label{2d-sw-eq-Dgrid-geo-dy}
+	\delta_j \Phi^n_{i+\frac{1}{2},j} &=
+	\Phi^{n}_{i+\frac{1}{2},j+\frac{1}{2}} - \Phi^{n}_{i+\frac{1}{2},j-\frac{1}{2}},
+	\quad i=0,\ldots,N, j=1,\ldots,N.
+\end{align}
+
+\subsubsection{Absolute vorticity fluxes}
+Using the D-grid covariant winds $(U_{i,j+\frac{1}{2}}^n,V_{i+\frac{1}{2},j}^n)$,
+we may compute the relative vorticity (Equation \eqref{vort2-eq}) at the A-grid points using a centered finite difference:
+\begin{align}
+	\label{2d-sw-rv-Dgrid}
+	\zeta_{ij}^n &= \frac{1}{\sqrt{\mathfrak{g}}_{ij}}\bigg[
+	\frac{\mathfrak{V}_{i+\frac{1}{2},j}^n-\mathfrak{V}_{i-\frac{1}{2},j}^n}{\Delta x} -
+	\frac{\mathfrak{U}_{i,j+\frac{1}{2}}^n-\mathfrak{U}_{i,j-\frac{1}{2}}^n}{\Delta y}
+	\bigg]\nonumber\\
+	&= 
+	\frac{1}{|\hat{\Omega}_{ij}|}\bigg[
+	{\big({\hat{\delta}y_{i+\frac{1}{2},j}{V}_{i+\frac{1}{2},j}^n-
+		   \hat{\delta}y_{i-\frac{1}{2},j}{V}_{i-\frac{1}{2},j}^n}\big)} -
+	{\big({\hat{\delta}x_{i,j+\frac{1}{2}}{U}_{i,j+\frac{1}{2}}^n-
+		   \hat{\delta}x_{i,j-\frac{1}{2}}{U}_{i,j-\frac{1}{2}}^n}\big)}
+	\bigg],
+\end{align}
+for $i,j=-\nu+1, \ldots, N+\nu$.
+Then, we obtain the absolute vorticity on the A-grid as:
+\begin{align}
+	\label{2d-sw-av-Dgrid}
+	\xi_{ij}^n =
+	f_{ij} +
+	\zeta_{ij}^n,
+\end{align}
+for $i,j=-\nu+1, \ldots, N+\nu$.
+Using again that the relative vorticity is advected, we may use the PPM fluxes
+$\mathcal{F}_{i+\frac{1}{2},j}^{PPM,x}, \mathcal{F}_{i,j+\frac{1}{2}}^{PPM,y}$
+(Equations \eqref{ppmx-flux} and \eqref{ppmy-flux}) to compute the relative vorticity fluxes at the edges.
+Then, its follows from Equation \eqref{q-split} that we need to compute the terms:
+\begin{align}
+	F_{i+\frac{1}{2},j}[\xi^{n}, u^n] &= 
+	\frac{1}{2}
+    \mathcal{A}_{i+\frac{1}{2},j}^{x} \bigg( \mathcal{F}_{i,j+\frac{1}{2}}^{PPM,x}[\xi^{n}, \tilde{c}^{x,n}]+
+	\mathcal{F}_{i,j+\frac{1}{2}}^{PPM,x}[\xi^{n} + \mathbf{g}(\xi^{n},\tilde{c}^{y,n}), \tilde{c}^{x,n}] \bigg),\\
+	G_{i,j+\frac{1}{2}}[\xi^{n}, v^n] &= 
+	\frac{1}{2}
+	\mathcal{A}_{i,j+\frac{1}{2}}^{y}\bigg( \mathcal{F}_{i+\frac{1}{2},j}^{PPM,y}[\xi^{n}, \tilde{c}^{y,n}]+
+	\mathcal{F}_{i+\frac{1}{2},j}^{PPM,y}[\xi^{n} + \mathbf{f}(\xi^{n},\tilde{c}^{x,n}), \tilde{c}^{y,n}] \bigg),
+\end{align}
+where $\mathcal{A}_{i+\frac{1}{2},j}^{x}$ and $\mathcal{A}_{i,j+\frac{1}{2}}^{y}$ are given by Equations \eqref{ax-def} and \eqref{ay-def}, respectively.
+The inner operators $\mathbf{f}$ and $\mathbf{g}$ are given in \eqref{chp-csfv-tab1}
+and the terms $\tilde{c}^{x,n}$ and $\tilde{c}^{y,n}$ are the time-averaged CFL numbers described in Section \ref{sec-cfl}.
+When using the duo-grid, these fluxes are computed twice. 
+However, we do not employ flux averaging at the cube interfaces (Section \ref{flux-av}) as we achieved better results without it.
+
 \subsubsection{Kinetic energy fluxes}
-We also need to estimate the time-averaged kinetic energy on the B-grid, denoted as:
-\begin{equation}
-	K_{i+\frac{1}{2},j+\frac{1}{2}} = \frac{1}{2}\bigg[
-	\frac{1}{\Delta x}
-	\int_{t_{n}}^{t_{n+1}} {u}{U}
-	(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}}, t) \,dt +
-	\frac{1}{\Delta t}
-	\int_{t_{n}}^{t_{n+1}} {v}{V}
-	(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}}, t) \,dt)\bigg]
-\end{equation}
-In \citet{lin:1996} and in the current FV3 implementation, it is assumed that the $u$ and $U$ obeys:
+To estimate the integrals in Equation \eqref{ke-bgrid}, we assume again that:
 \begin{equation}
 	\label{eq_duu}
 	{\partial_t U} + {\partial_x (uU)}(x, y_{j+\frac{1}{2}}, t) = 0,
 \end{equation}
-then, using an 1D finite-volume numerical flux $F_{i+\frac{1}{2},j+\frac{1}{2}}$ (recall Problem \ref{chp-adv1d-sec2-prob4}), we may approximate 
+and a similar equation is assumed to hold for $v$ and $V$, and therefore the integrals 
+of Equation may estimated again using finite-volume fluxes.
+In this case, we are going to consider the PPM fluxes
+$\mathfrak{F}_{i+\frac{1}{2},j+\frac{1}{2}}^{PPM,x}$ and $\mathfrak{F}_{i+\frac{1}{2},j+\frac{1}{2}}^{PPM,y}$ (Equation \eqref{chp5-flux-xdir}), and
+the kinetic energy on B-grid is given by:
 \begin{equation}
-	F_{i+\frac{1}{2},j+\frac{1}{2}}[U^n,u^n]\approx 
-	\frac{1}{\Delta t}	\int_{t_{n}}^{t_{n+1}} {u}{U}
-	(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}}, t) \,dt
+	K_{i+\frac{1}{2},j+\frac{1}{2}}^n = \frac{\Delta t}{2}\bigg(
+	\tilde{u}_{i+\frac{1}{2},j+\frac{1}{2}}^{n+\frac{1}{2}}\mathfrak{F}_{i+\frac{1}{2},j+\frac{1}{2}}^{PPM,x} [{{U}^n},\tilde{u}^{n}] +
+	\tilde{v}_{i+\frac{1}{2},j+\frac{1}{2}}^{n+\frac{1}{2}}\mathfrak{F}_{i+\frac{1}{2},j+\frac{1}{2}}^{PPM,y} [{{V}^n},\tilde{v}^{n}]\bigg),
 \end{equation}
-Similarly for $v$ and $V$, we use	$F_{i+\frac{1}{2},j+\frac{1}{2}}[V^n,v^n]$ an then we have an estimation for the time-averaged kinetic energy. Equation \eqref{eq_duu} is not true.
-The time-averaged kinetic on the A-grid is computed using the formula:
-\begin{equation}
-	K_{i+\frac{1}{2},j+\frac{1}{2}}^n = \frac{1}{2}\bigg(
-	{u}_{i+\frac{1}{2},j+\frac{1}{2}}^{n+\frac{1}{2}}\mathfrak{F}_{i+\frac{1}{2},j+\frac{1}{2}}^{PPM,x} [{{U}^n},u^{n+\frac{1}{2}}] +
-	{v}_{i+\frac{1}{2},j+\frac{1}{2}}^{n+\frac{1}{2}}\mathfrak{F}_{i+\frac{1}{2},j+\frac{1}{2}}^{PPM,y} [{{V}^n},v^{n+\frac{1}{2}}]\bigg),
-\end{equation}
-for $i,j=0,\ldots,N$,
-where we have the 1D upwind flux in the $x$ direction
-\begin{align}
-	\mathfrak{F}_{i+\frac{1}{2},j+\frac{1}{2}}^{PPM,x} [{{U}^n},u^{n+\frac{1}{2}}]=
-	\begin{cases}
-		{U}_{i,j+\frac{1}{2}}^n
-		\quad &\text{if} \quad 
-		{u}_{i+\frac{1}{2},j+\frac{1}{2}}^{n+\frac{1}{2}}>0,\\
-		{U}_{i+1,j+\frac{1}{2}}^n
-		\quad &\text{if} \quad 
-		{u}_{i+\frac{1}{2},j+\frac{1}{2}}^{n+\frac{1}{2}}\leq0,\\
-	\end{cases}
-\end{align}
-and the 1D upwind flux in the $y$ direction
-\begin{align}
-	\mathfrak{F}_{i+\frac{1}{2},j+\frac{1}{2}}^{PPM,y} [{{V}^n},v^{n+\frac{1}{2}}]=
-	\begin{cases}
-		{V}_{i+\frac{1}{2},j}^n
-		\quad &\text{if} \quad 
-		{v}_{i+\frac{1}{2},j+\frac{1}{2}}^{n+\frac{1}{2}}>0,\\
-		{V}_{i+\frac{1}{2},j+1}^n
-		\quad &\text{if} \quad 
-		{v}_{i+\frac{1}{2},j+1}^{n+\frac{1}{2}}\leq0.\\
-	\end{cases}
-\end{align}
+for $i,j=0,\ldots,N$.
+
+The time-averaged winds $\tilde{u}^{n}$ and $\tilde{v}^{n}$ are computed using the DP1 scheme or the scheme DP2.
 In this step, we use the B-grid contravariant winds 
 ${u}_{i+\frac{1}{2},j+\frac{1}{2}}^{n+\frac{1}{2}},{v}_{i+\frac{1}{2},j+\frac{1}{2}}^{n+\frac{1}{2}}$
-obtained in Equations \eqref{a-c2c-u} and \eqref{a-c2c-v}.
-We also use the C-grid covariant winds obtained in Equations \eqref{d2a-uu} and \eqref{d2a-vv}.
+obtained in Equations \eqref{bgrid-UU} and \eqref{bgrid-VV}.
+If we use the DP2 scheme, we need ${u}_{i+\frac{1}{2},j+\frac{1}{2}}^{n},{v}_{i+\frac{1}{2},j+\frac{1}{2}}^{n}$,
+which may obtained just as Equations \eqref{bgrid-UU} and \eqref{bgrid-VV}.
+We also utilize the D-grid covariant winds obtained at time level $n$. 
+
+Finally, on the cubed-sphere using the duo-grid, these PPM fluxes are computed twice. 
+Therefore, we average them at the cube interfaces to obtain a unique value, as described in Section \ref{flux-av}.
 Thus, we estimate the kinetic energy gradient using a centered difference:
 \begin{align}
 	\label{2d-sw-eq-Dgrid-ke-dx}
-	\delta_i K^n_{i+\frac{1}{2},j} &= K_{i+1,j}^n - K_{ij}^n,
-	\quad i=0,\ldots,N, j=1,\ldots,N,\\
+	\delta_i K^n_{i,j+\frac{1}{2}} &= K_{i+\frac{1}{2},j+\frac{1}{2}}^n - K_{i-\frac{1}{2},j+\frac{1}{2}}^n,
+	\quad i=1,\ldots,N, j=0,\ldots,N,\\
 	\label{2d-sw-eq-Dgrid-ke-dy}
-	\delta_j K^n_{i,j+\frac{1}{2}} &= K_{i,j+1}^n - K_{ij}^n,
-	\quad i=1,\ldots,N, j=0,\ldots,N.
+	\delta_j K^n_{i+\frac{1}{2},j} &= K_{i+\frac{1}{2},j+\frac{1}{2}}^n - K_{i+\frac{1}{2},j-\frac{1}{2}}^n,
+	\quad i=0,\ldots,N, j=1,\ldots,N.
 \end{align}
+Hence, we have completed the description of the D-grid wind update using Equations \eqref{2d-sweq-dscheme-u} and \eqref{2d-sweq-dscheme-v}.
+
+\subsection{Divergence damping}
+\label{dd-cs}
