@@ -17,7 +17,7 @@ In particular, we explore different treatments for the cube edges. Section \ref{
 \label{chp-cs-adv}
 Given a tangent velocity field $\boldsymbol{u}$ on the sphere, we denote its
 contravariant components by $\mathfrak{u}$ and $\mathfrak{v}$.
-We shall use all the notations introduced in Section \ref{cs-notation}.
+We shall use all the notations introduced in Sections \ref{cs-mappings} and \ref{sec-cs-grids}.
 The advection equation on panel the $p$ of the cubed-sphere with initial condition $q_0$ is given by:
 \begin{equation}
 	\begin{cases}
@@ -303,6 +303,7 @@ and following the discussion on the metric term, we have the coefficients
 where we have made use of Equation \eqref{distcube2} and Equation \eqref{mt-sina}, 
 and the PPM fluxes are
 \begin{align}
+	\label{ppmx-flux}
 	\mathcal{F}_{i+\frac{1}{2},j}^{PPM,x} [{{q}^n;\tilde{c}^{x,n}}] = 
 	\begin{cases}
 		\mathfrak{F}_{i+\frac{1}{2},j}^{PPM,x}[{{\sqrt{\mathfrak{g}}q}^n;\tilde{c}^{x,n}}]
@@ -337,6 +338,7 @@ and
 \end{align}
 and the PPM fluxes are
 \begin{align}
+	\label{ppmy-flux} 
 	\mathcal{F}_{i,j+\frac{1}{2}}^{PPM,y} [{{q}^n;\tilde{c}^{y,n}}]= 
 	\begin{cases}
 		\mathfrak{F}_{i,j+\frac{1}{2}}^{PPM,y}[{{\sqrt{\mathfrak{g}}q}^n;\tilde{c}^{y,n}}]
@@ -460,6 +462,7 @@ and
 \end{align}
 
 \subsection{Flux at edges treatment}
+\label{flux-av}
 As in Section \ref{sec:fv-2d}  we introduce the notion of discrete divergence,
 which allow us to check the consistency of CS-FV schemes.
 \begin{definition}[Discrete divergence]
@@ -626,9 +629,10 @@ we do not have the constraint of eliminating the splitting error for a constant 
 Furthermore, this formulation makes the LT scheme much more accurate, while \textbf{mt1} for LT makes it first-order.
 We are also going to consider the simulations without mass fixer (\textbf{mf0}) and with flux averaging at
 cube edges (\textbf{mf1}) to investigate the impact of flux averaging on accuracy.
-Additionally, we are using the duo-grid to fill the ghost cell values.
+Additionally, we are using the duo-grid to fill the ghost cell values using cubic polynomials.
 The reader may refer to \citet{mouallem:2023} for a comparison between results on the duo-grid versus the kinked grid.
-Both equi-edge (g0, Section \ref{cs-equiedge}) and equiangular grids (g2, Section \ref{cs-equiangular}) are going to be consider in this Section.
+Both equi-edge (g0, Section \ref{cs-equiedge}) and equiangular grids (g2, Section \ref{cs-equiangular})
+using the spherical midpoints formulation (Section \ref{cs-geo}) are going to be consider in this Section.
 
 To compute the convergence, consider cubed-sphere grids with value of $N_k =  48\times2^{k}$,
 and $\Delta t^{(k)} = \frac{\Delta t^{(k)}}{2^k}$, $k=0, \ldots, 4$, where
