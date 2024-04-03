@@ -13,22 +13,23 @@ while the D-grid uses PPM-based fluxes, providing higher accuracy.
 We note that other flux operators could be employed here, but the choice presented is what is utilized in FV3.
 
 Although the advection equation on the sphere plays a crucial role in the development of dynamical cores by modeling the advection of scalar fields on the sphere, 
-it does not capture important features present in the shallow-water equations on the sphere, 
+it does not capture important features present in the SWE on the sphere, 
 such as the Coriolis effect, inertia-gravity waves, geostrophic adjustment, Rossby waves, among others. 
-Therefore, shallow-water equations serve as an excellent benchmark for assessing dynamical cores in general,
+Therefore, SWE serve as an excellent benchmark for assessing dynamical cores in general,
 as they are only two-dimensional but represent a complex geophysical model for atmosphere dynamics.
 Furthermore, the 3D non-hydrostatic solver of FV3 utilizes a vertical Lagrangian coordinate system,
 requiring the solution of the shallow-water equations on the Lagrangian surfaces \citep{lin:2004, harris:2021}.
 
 The goal of this Chapter is to provide a detailed description of the SWE solver from \citet{lin:1997}.
 Since this scheme uses advection operators to update the variables, 
-we are going to incorporate the new advection scheme LT introduced in Chapter \ref{chp-cs-fv} and compare it with the PL advection scheme from \citep{putman:2007},
+we are going to incorporate the new advection scheme LT introduced in Chapter \ref{chp-cs-fv} and compare it with the PL advection scheme from \citet{putman:2007},
 which is currently employed in FV3. 
-Thus, we will extend the comparisons made in Chapter \ref{chp-cs-fv} to the context of shallow-water equations (SWE).
+Thus, we will extend the comparisons made in Chapter \ref{chp-cs-fv} to the context of the SWE.
 
 This Chapter is outlined as follows:
-In Section \ref{sec:sweq}, we introduce the shallow-water equations and some of its properties, and then we discuss
-the C-grid and D-grid discretization proposed by \citep{lin:1997}.
+In Section \ref{sec:sweq}, we introduce the SWE and some of its properties, and then we discuss
+the C-grid and D-grid discretization proposed by \citet{lin:1997} in Section \ref{sw:fv3solver}.
+Our modifications for their scheme are presented in Section \ref{sw-modf}.
 Following that, in Section \ref{sec:numerical_results}, 
 we present numerical results using classical tests from the literature. 
 Finally, in Section \ref{sec:conclusions}, we provide concluding remarks.
@@ -278,6 +279,7 @@ Indeed, this is possible because, as we shall see soon, the C-grid facilitates t
 All these approximations are described in Section \ref{csw-grid}.
 
 \section{The FV3 shallow-water solver}
+\label{sw:fv3solver}
 This Section is dedicated to presenting all the details of the shallow-water solver proposed by \citet{lin:1997} on the cubed-sphere. 
 The C-grid intermediate step is described in Section \ref{csw-grid}, while the D-grid step is detailed in Section \ref{dsw-grid}.
 
@@ -469,6 +471,9 @@ where the 1D upwind flux in the $x$ direction is defined by:
 \end{align}
 for $i=0, \ldots, N$, $j=-\nu+1, \ldots, N + \nu$.
 The terms, $\mathcal{A}_{i,j+\frac{1}{2}}^{y}$ and	$\mathcal{F}_{i,j+\frac{1}{2}}^{UPW,y}$ are defined similarly using $v$.
+
+We recall the metric term discussion of PPM presented in Section \ref{sec-metricppm} is also valid for the upwind flux,
+and therefore the same methods of metric term formulation, mt0 and mt1, presented there are valid in this context.
 
 \subsubsection{Geopotential gradient}
 Once we have computed $h^{n+\frac{1}{2}}_{ij}$, we are able to estimate the time-averaged geopotential (Equation \eqref{geop-agrid}) on the A-grid as:
@@ -743,9 +748,11 @@ Once we have computed $h^{n+1}_{ij}$, we are able to estimate the time-averaged 
 \end{align}
 for $i,j=-\nu+1, \ldots, N+\nu$.
 Then, the  time-averaged geopotential on the B-grid (Equation \eqref{geop-bgrid}) may be using interpolation:
-
-Again, we use $h^{n+1}_{ij}$ instead of $h^{n}_{ij}$ so the D-grid scheme also becomes backward-forward in time; avoiding numerical instability.
-Following that, we estimate the geopotential gradient on the C-grid and D-grid points, respectively, by using centered differences:
+\begin{align}
+	\Phi^n_{i+\frac{1}{2},j+\frac{1}{2}} = \frac{\overline{\overline{\Phi^n_{ij}}^x}^y +  \overline{\overline{\Phi^n_{ij}}^y}^x}{2}.
+\end{align}
+Again, we use $h^{n+1}_{ij}$ instead of $h^{n}_{ij}$ so the D-grid scheme also becomes backward-forward in time, avoiding numerical instability.
+Following that, we estimate the geopotential gradient on the D-grid and C-grid points, respectively, by using centered differences:
 \begin{align}
 	\label{2d-sw-eq-Dgrid-geo-dx}
 	\delta_i \Phi^n_{i,j+\frac{1}{2}} &= 
@@ -788,14 +795,16 @@ $\mathcal{F}_{i+\frac{1}{2},j}^{PPM,x}, \mathcal{F}_{i,j+\frac{1}{2}}^{PPM,y}$
 (Equations \eqref{ppmx-flux} and \eqref{ppmy-flux}) to compute the relative vorticity fluxes at the edges.
 Then, its follows from Equation \eqref{q-split} that we need to compute the terms:
 \begin{align}
+	\label{absvort1}
 	F_{i+\frac{1}{2},j}[\xi^{n}, u^n] &= 
 	\frac{1}{2}
     \mathcal{A}_{i+\frac{1}{2},j}^{x} \bigg( \mathcal{F}_{i,j+\frac{1}{2}}^{PPM,x}[\xi^{n}, \tilde{c}^{x,n}]+
 	\mathcal{F}_{i,j+\frac{1}{2}}^{PPM,x}[\xi^{n} + \mathbf{g}(\xi^{n},\tilde{c}^{y,n}), \tilde{c}^{x,n}] \bigg),\\
+	\label{absvort2}
 	G_{i,j+\frac{1}{2}}[\xi^{n}, v^n] &= 
 	\frac{1}{2}
-	\mathcal{A}_{i,j+\frac{1}{2}}^{y}\bigg( \mathcal{F}_{i+\frac{1}{2},j}^{PPM,y}[\xi^{n}, \tilde{c}^{y,n}]+
-	\mathcal{F}_{i+\frac{1}{2},j}^{PPM,y}[\xi^{n} + \mathbf{f}(\xi^{n},\tilde{c}^{x,n}), \tilde{c}^{y,n}] \bigg),
+	\mathcal{A}_{i,j+\frac{1}{2}}^{y}\bigg( \mathcal{F}_{i,j+\frac{1}{2}}^{PPM,y}[\xi^{n}, \tilde{c}^{y,n}]+
+	\mathcal{F}_{i,j+\frac{1}{2}}^{PPM,y}[\xi^{n} + \mathbf{f}(\xi^{n},\tilde{c}^{x,n}), \tilde{c}^{y,n}] \bigg),
 \end{align}
 where $\mathcal{A}_{i+\frac{1}{2},j}^{x}$ and $\mathcal{A}_{i,j+\frac{1}{2}}^{y}$ are given by Equations \eqref{ax-def} and \eqref{ay-def}, respectively.
 The inner operators $\mathbf{f}$ and $\mathbf{g}$ are given in \eqref{chp-csfv-tab1}
@@ -810,18 +819,19 @@ To estimate the integrals in Equation \eqref{ke-bgrid}, we assume again that:
 	{\partial_t U} + {\partial_x (uU)}(x, y_{j+\frac{1}{2}}, t) = 0,
 \end{equation}
 and a similar equation is assumed to hold for $v$ and $V$, and therefore the integrals 
-of Equation may estimated again using finite-volume fluxes.
+of Equation \eqref{ke-bgrid} may estimated again using finite-volume fluxes.
 In this case, we are going to consider the PPM fluxes
 $\mathfrak{F}_{i+\frac{1}{2},j+\frac{1}{2}}^{PPM,x}$ and $\mathfrak{F}_{i+\frac{1}{2},j+\frac{1}{2}}^{PPM,y}$ (Equation \eqref{chp5-flux-xdir}), and
 the kinetic energy on B-grid is given by:
 \begin{equation}
+	\label{ke-flux-bgrid}
 	K_{i+\frac{1}{2},j+\frac{1}{2}}^n = \frac{\Delta t}{2}\bigg(
 	\tilde{u}_{i+\frac{1}{2},j+\frac{1}{2}}^{n+\frac{1}{2}}\mathfrak{F}_{i+\frac{1}{2},j+\frac{1}{2}}^{PPM,x} [{{U}^n},\tilde{u}^{n}] +
 	\tilde{v}_{i+\frac{1}{2},j+\frac{1}{2}}^{n+\frac{1}{2}}\mathfrak{F}_{i+\frac{1}{2},j+\frac{1}{2}}^{PPM,y} [{{V}^n},\tilde{v}^{n}]\bigg),
 \end{equation}
 for $i,j=0,\ldots,N$.
 
-The time-averaged winds $\tilde{u}^{n}$ and $\tilde{v}^{n}$ are computed using the DP1 scheme or the scheme DP2.
+The time-averaged B-grid winds $\tilde{u}^{n}$ and $\tilde{v}^{n}$ are computed using the DP1 scheme or the scheme DP2.
 In this step, we use the B-grid contravariant winds 
 ${u}_{i+\frac{1}{2},j+\frac{1}{2}}^{n+\frac{1}{2}},{v}_{i+\frac{1}{2},j+\frac{1}{2}}^{n+\frac{1}{2}}$
 obtained in Equations \eqref{bgrid-UU} and \eqref{bgrid-VV}.
@@ -844,3 +854,91 @@ Hence, we have completed the description of the D-grid wind update using Equatio
 
 \subsection{Divergence damping}
 \label{dd-cs}
+
+
+\section{Proposed modifications}
+\label{sw-modf}
+As we have seen in Section \ref{csw-grid}, there are two options for using the upwind fluxes, 
+which depend on the treatment of the metric term to be considered, namely, mt0 or mt1.
+FV3 utilizes mt0. We are going to use the same option, and the C-grid solver is not modified.
+This choice is made because no significant improvements were observed when using mt1.
+Therefore, we are going to propose modifications only to the D-grid scheme.
+
+Notice that, for the D-grid solver, the kinetic energy flux computed in Equation \eqref{ke-flux-bgrid} using PPM may be computed using DP1 or DP2. 
+Also, observe that this term does not have the metric term $\sqrt{\mathfrak{g}}$ to be considered.
+However, we find that using DP2 does not improve the results; actually, they get worse.
+We believe that the DP2 scheme does not improve the kinetic energy flux because the advection hypotheses 
+assumed by FV3 for the wind components (Equation \eqref{eq_duu}) are not true.
+Therefore, improving the advection flux in this step does not necessarily improve the kinetic energy flux computation.
+Thus, we are going to use the DP1 scheme for the kinetic energy flux (Equation \eqref{ke-flux-bgrid}).
+
+There are two parts of the D-grid scheme where we may use the LT advection scheme from Chapter \ref{chp-cs-fv}:
+the fluid depth update and the vorticity fluxes (Equations \eqref{absvort1} and \eqref{absvort2}).
+Currently, this part is solved using the PL advection scheme, and we propose assessing the impact of using the LT advection scheme.
+The shallow-water solver that uses PL for these fluxes is referred to simply as the PL scheme, and when LT is used, we refer to it as the LT scheme.
+
+\section{Numerical experiments}
+\label{sec:numerical_results}
+In this Section, we are going to compare the PL and LT shallow-water schemes described \eqref{sw-modf} using classical
+shallow-water tests presented in the literature.
+These schemes shall be testes with the 1D hord0 and hord8 schemes.
+
+The D-grid output $(U_{i,j+\frac{1}{2}}^n,V_{i+\frac{1}{2},j}^n)$ is interpolated to the A-grid as
+\begin{align}
+U_{ij}^n &= \frac{(U_{i,j+\frac{1}{2}}^n+U_{i,j-\frac{1}{2}}^n)}{2},\\
+V_{ij}^n &= \frac{(V_{i+\frac{1}{2},j}^n+V_{i-\frac{1}{2},j}^n)}{2},
+\end{align}
+and then converted to latitude-longitude winds using Equations \eqref{norm-contravariant-to-covariant} and \eqref{ll-to-normcontravariant},
+where we obtain $(u_{\lambda})_{ij}^n,(v_{\phi})_{ij}^n$ on the A-grid.
+This facilitates plotting and reference solution calculation. 
+We point out that this does not impact the error check, 
+provided our schemes are at best-case second-order, 
+as this averaging is second-order accurate and the wind conversion is an exact transformation.
+
+Then, the errors are computed using a reference solution on the A-grid, denoted by $(h^{REF})^n$, $(u_{\lambda}^{REF})^n$ and $(v_{\phi}^{REF})^n$. 
+The reference solution shall be assumed to be computed exactly or we follow the approach of \citet{peixoto:2016} and use
+the ENDGame (Even Newer Dynamics for General atmospheric modelling of the environment) shallow-water solver developed by \citet{thuburn:2010},
+which is the current UK MetOffice operational dynamical core 
+(\url{https://www.metoffice.gov.uk/research/foundation/dynamics/endgame}, last accessed on April 3rd, 2024).
+This model is semi-Lagrangian and semi-implicit on a latitude-longitude grid.
+As suggested by \citet{peixoto:2016}, we use a grid size of 2048$\times$1024 with a time step of 50 seconds whenever we employ it.
+This grid has a 20km resolution at the equator.
+The outputs of ENDGame are interpolated to the cubed-sphere A-grid from the latitude-longitude grid using cubic interpolation,
+giving us the reference solutions $(h^{REF})^n$, $(u_{\lambda}^{REF})^n$, and $(v_{\phi}^{REF})^n$.
+
+The relative errors in the $p$-norm ($p=2$ or $p=\infty$)
+are defined as in this Section as well for the variables $h^n$, $u_{\lambda}^n$, and $v_{\phi}^n$.
+The duo-grid is used to fill all ghost cell information using cubic polynomials.
+In FV3, we need to input the atmospheric time-step, denoted by \textit{dt\textunderscore atmos}.
+We also need to give the number \textit{k\textunderscore split}, which represents the number of vertical remappings, 
+and the number of substeps denoted by \textit{n\textunderscore split}, 
+which defines the number of times that the horizontal dynamics is solved on each remapping step \citep{mouallem:2023}.
+Since we are considering only the SWE, we have \textit{k\textunderscore split}=1.
+Hence, the actual time step for the shallow-water model is $\Delta t = \frac{\textit{dt\textunderscore atmos}}{\textit{n\textunderscore split}}$.
+
+All the test cases (TCs) that we are going to consider are presented in Table \ref{sw-tc}.
+To compute the convergence, we consider cubed-sphere grids with values of
+$N_k = 48\times2^{k}$, and \textit{dt\textunderscore atmos}$^{(k)} = \frac{dt\textunderscore atmos^{(0)}}{2^k}$ for 
+$k=0, \ldots, 4$, where the value of \textit{dt\textunderscore atmos}$^{(0)}$ is taken from Table \ref{chp5-vf} for each TC.
+The value of n\_split is the same regardless of the value of $N_k$. 
+We are going to consider both the g0 and g2 grids with the spherical midpoint formulation,
+and it will always be made clear whether the divergence damping (\textbf{dd}) is being used or not (Section \ref{dd-cs}).
+\begin{table}[!ht]
+	\begin{tabular}{|l|l|l|l|l|}
+		\hline
+		Test case & Description            & Reference & \textit{dt\textunderscore atmos$^{(0)}$} & n\_split \\ \hline
+		TC2       & Geostrophic balance    & \citet{will:1992}       & 3600                & 7        \\ \hline
+		TC5       & Flow over a mountain   & \citet{will:1992}        & 1800                & 7        \\ \hline
+		TC7       & Barotropic instability & \citet{galewsky:2004}      & 1800                & 8        \\ \hline
+	\end{tabular}
+	\caption{The test cases considered in the numerical experiments, including descriptions, references, 
+		initial atmospheric time step \textit{dt\textunderscore atmos}$^{(0)}$, 
+		and the number of times that the horizontal dynamics are solved on each atmospheric time step (n\_split).}
+\label{sw-tc}
+\end{table}
+
+\subsection{Global steady geostrophic flow}
+%\subsection{Flow over a mountain}
+%\subsection{Barotropically unstable jet with perturbation}
+\section{Conclusions}
+\label{sec:conclusions}
