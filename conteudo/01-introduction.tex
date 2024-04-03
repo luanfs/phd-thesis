@@ -263,6 +263,12 @@ while our new scheme may use a more accurate formulation of the metric term, as 
 The results are essentially the same as those from Chapter \ref{chp-2d-fv}, 
 showing that our scheme successfully extends from the plane to the cubed-sphere and is more accurate. 
 We also demonstrate that our new scheme has smaller errors at the corners compared to the scheme from \citet{putman:2007}.
+
+\item In Chapter \ref{chp-cs-swm}, we present in detail the shallow-water solver of FV3
+based on the extension of the solver by \citet{lin:1997} to the cubed-sphere.
+This solver uses finite-volume advection fluxes to compute all operators.
+Then, we may use our advection scheme introduced in Chapter \ref{chp-cs-fv} 
+to compute the fluxes and compare the results with the scheme by \citet{putman:2007}.
 \end{itemize}
 
 In summary, the main contribution of this thesis is a modified version of the two-dimensional scheme proposed by \citet{putman:2007}, which exhibits improved accuracy.
