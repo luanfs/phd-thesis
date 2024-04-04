@@ -854,7 +854,50 @@ Hence, we have completed the description of the D-grid wind update using Equatio
 
 \subsection{Divergence damping}
 \label{dd-cs}
+The divergence on B-grid points may be computed using the D-grid contravariant winds, using centered finite-differences as:
+\begin{align*}
+	\label{2d-sw-divdamp}
+	D_{i+\frac{1}{2},j+\frac{1}{2}}[u^n,v^n] &=
+	\frac{1}{\sqrt{\mathfrak{g}}_{i+\frac{1}{2},j+\frac{1}{2}}}\bigg[
+	\frac{(\sqrt{\mathfrak{g}}\mathfrak{u})_{i+1,j+\frac{1}{2}}^n-(\sqrt{\mathfrak{g}}\mathfrak{u})_{i,j-\frac{1}{2}}^n}{\Delta x}+
+	\frac{(\sqrt{\mathfrak{g}}\mathfrak{v})_{i+\frac{1}{2},j+1}^n-(\sqrt{\mathfrak{g}}\mathfrak{v})_{i+\frac{1}{2},j}^n}{\Delta y}
+	\bigg]\nonumber\\
+	&= 
+	\frac{1}{|\hat{\Omega}_{i+\frac{1}{2},j+\frac{1}{2}}|}\bigg[
+	{\hat{\delta}y_{i+1,j+\frac{1}{2}}{u}_{i+1,j+\frac{1}{2}}^n\sin{\alpha}_{i+1,j+\frac{1}{2}}-
+	 \hat{\delta}y_{i  ,j+\frac{1}{2}}{u}_{i  ,j+\frac{1}{2}}^n\sin{\alpha}_{i  ,j+\frac{1}{2}}}\\
+	&+{\hat{\delta}x_{i+\frac{1}{2},j+1}{v}_{i+\frac{1}{2},j+1}^n\sin{\alpha}_{i+\frac{1}{2},j+1}-
+ 	   \hat{\delta}x_{i+\frac{1}{2},j  }{v}_{i+\frac{1}{2},j  }^n\sin{\alpha}_{i+\frac{1}{2},j  }}
+	\bigg].
+\end{align*}
+This is straightforward from the definition of divergence in terms of cubed-sphere mapping (Equation \eqref{advcs:eqdiv}).
+We may then compute the gradient of this divergence at D-grid wind positions, namely:
+\begin{align}
+	D^u_{i,j+\frac{1}{2}}[u^n,v^n] &= \frac{D_{i+\frac{1}{2},j+\frac{1}{2}}[u^n,v^n]- D_{i-\frac{1}{2},j+\frac{1}{2}}[u^n,v^n]}{\hat{\delta}x_{i,j+\frac{1}{2}}},
+	\quad i=1,\ldots,N, j=0,\ldots,N,\\
+	D^v_{i+\frac{1}{2},j}[u^n,v^n] &= \frac{D_{i+\frac{1}{2},j+\frac{1}{2}}[u^n,v^n]- D_{i+\frac{1}{2},j-\frac{1}{2}}[u^n,v^n]}{\hat{\delta}y_{i+\frac{1}{2},j}},
+	\quad i=0,\ldots,N, j=1,\ldots,N.
+\end{align}
+Notice that we can apply the divergence operator $D_{i+\frac{1}{2},j+\frac{1}{2}}$
+again to the inputs $D^u_{i,j+\frac{1}{2}}$ and $D^v_{i+\frac{1}{2},j}$.
+We may apply this procedure as many times as we want.
+This process results in divergence damping (dd) which is a explicit dissipation mechanism.
+Dissipation mechanisms are commonly used in dynamical cores to ensure numerical stability and avoid accumulation of energy at small scales.
+There are many other ways of introducing dissipation besides divergence damping (see \citet{jablonowski:2011} for a review)
+For an comprehensive analysis of the divergence damping, refer to \citet{whitehead:2011}. 
 
+In FV3, the number of times we apply the divergence operator is denoted by \textit{nord} \citep{harris:2021}.
+We are considering a divergence damping coefficient $\nu_D > 0$:
+\begin{equation}
+	\nu_D = (d_4 \min_{i,j} |\Omega_{ij}|)^{nord+1},
+\end{equation}
+where $d_4$ is a given constant.
+The obtained results of after applying the divergence operator $nord$ times
+are multiplied by $\nu_D$ and added in Equations \eqref{2d-sweq-dscheme-u} and \eqref{2d-sweq-dscheme-v}.
+
+We point out that there are other numerical dissipation mechanisms available in FV3, such as vorticity damping and frictional heating \citep{harris:2021}. 
+We are considering only the divergence damping for simplicity.
+We also point out that limited scheme that we are using (hord8) has implicit diffusion.
 
 \section{Proposed modifications}
 \label{sw-modf}
@@ -922,7 +965,9 @@ $N_k = 48\times2^{k}$, and \textit{dt\textunderscore atmos}$^{(k)} = \frac{dt\te
 $k=0, \ldots, 4$, where the value of \textit{dt\textunderscore atmos}$^{(0)}$ is taken from Table \ref{chp5-vf} for each TC.
 The value of n\_split is the same regardless of the value of $N_k$. 
 We are going to consider both the g0 and g2 grids with the spherical midpoint formulation,
-and it will always be made clear whether the divergence damping (\textbf{dd}) is being used or not (Section \ref{dd-cs}).
+and it will always be made clear whether the divergence damping is being used or not (Section \ref{dd-cs}).
+Whenever we use divergence damping, we consider $d_4 = 0.12$ and $nord=2$, as used in \citet{mouallem:2023}.
+In this case, the dissipation is a fourth-order operator and therefore is more scale selective.
 \begin{table}[!ht]
 	\begin{tabular}{|l|l|l|l|l|}
 		\hline
@@ -937,8 +982,9 @@ and it will always be made clear whether the divergence damping (\textbf{dd}) is
 \label{sw-tc}
 \end{table}
 
-\subsection{Global steady geostrophic flow}
+\subsection{Global steady geostrophic flow - to be written}
+Equation \eqref{duo-tc1}, Figure \ref{cs-duo-tc1}, Equation \eqref{duo-wind1}, $\alpha=\frac{\pi}{4}$.
 %\subsection{Flow over a mountain}
 %\subsection{Barotropically unstable jet with perturbation}
-\section{Conclusions}
+\section{Conclusions - to be written}
 \label{sec:conclusions}
