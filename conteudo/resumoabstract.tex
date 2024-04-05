@@ -1,4 +1,4 @@
-\palavrachave{Núcleo dinâmico da atmosfera, esfera cubada, volumes finitos, dimension splitting, ponto de partida, corretor de massa, advecção, água rasa}
+\palavrachave{Núcleo dinâmico da atmosfera, esfera cubada, volumes finitos, dimension splitting, ponto de partida, corretor de massa, equação de advecção, equação de águas rasas}
 
 \keyword{Dynamical core, cubed-sphere, finite-volume, dimension splitting, departure point, mass fixer, advection equation, shallow-water equations}
 
@@ -19,7 +19,7 @@ Conseguimos sugerir pequenas modificações no esquema de advecção do FV3 que 
 Realizamos várias simulações numéricas usando as equações de advecção e águas rasas.
 Como o esquema de advecção do FV3 consiste na combinação de operadores de fluxo de volume finitos 1D,
 nossas melhorias foram obtidas ao melhorar o cálculo do ponto de partida para os operadores de fluxo 1D e
-modificar a forma como o termo métrico da esfera cubica é tratado ao calcular os fluxos 1D.
+modificar a forma como o termo métrico da esfera cubada é tratado ao calcular os fluxos 1D.
 Através de simulações, demonstramos que o esquema de advecção atual do FV3 é apenas de primeira ordem para ventos divergentes,
 enquanto nosso esquema é sempre de segunda ordem.
 Uma grande dificuldade em trabalhar na esfera cubada é lidar com a descontinuidade das coordenadas ao longo das faces do cubo,
