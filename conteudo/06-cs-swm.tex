@@ -749,7 +749,8 @@ Once we have computed $h^{n+1}_{ij}$, we are able to estimate the time-averaged 
 for $i,j=-\nu+1, \ldots, N+\nu$.
 Then, the  time-averaged geopotential on the B-grid (Equation \eqref{geop-bgrid}) may be using interpolation:
 \begin{align}
-	\Phi^n_{i+\frac{1}{2},j+\frac{1}{2}} = \frac{\overline{\overline{\Phi^n_{ij}}^x}^y +  \overline{\overline{\Phi^n_{ij}}^y}^x}{2}.
+	\Phi^n_{i+\frac{1}{2},j+\frac{1}{2}} = 
+	\frac{\overline{\overline{\Phi^n_{i+\frac{1}{2},j+\frac{1}{2}}}^x}^y +  \overline{\overline{\Phi^n_{i+\frac{1}{2},j+\frac{1}{2}}}^y}^x}{2}.
 \end{align}
 Again, we use $h^{n+1}_{ij}$ instead of $h^{n}_{ij}$ so the D-grid scheme also becomes backward-forward in time, avoiding numerical instability.
 Following that, we estimate the geopotential gradient on the D-grid and C-grid points, respectively, by using centered differences:
