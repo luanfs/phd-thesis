@@ -1,14 +1,46 @@
-\palavrachave{Núcleo dinâmico da atmosfera, esfera cubada, volumes finitos, dimension splitting, ponto de partida, corretor de massa}
+\palavrachave{Núcleo dinâmico da atmosfera, esfera cubada, volumes finitos, dimension splitting, ponto de partida, corretor de massa, advecção, água rasa}
 
-\keyword{Dynamical core, cubed-sphere, finite-volume, dimension splitting, departure point, mass fixer}
+\keyword{Dynamical core, cubed-sphere, finite-volume, dimension splitting, departure point, mass fixer, advection equation, shallow-water equations}
 
 % O resumo é obrigatório, em português e inglês. Estes comandos também
 % geram automaticamente a referência para o próprio documento, conforme
 % as normas sugeridas da USP.
 \resumo{
-TBW
+O núcleo dinâmico FV3 do GFDL-NOAA-EUA, originalmente projetado para grades de latitude e longitude, 
+foi adaptado à esfera cubada para melhorar a escalabilidade em supercomputadores massivamente paralelos. 
+Desde então, o FV3 tornou-se popular para modelagem atmosférica global e serve como núcleo dinâmico para muitos modelos.
+Além disso, em 2019, o FV3 foi selecionado como o núcleo dinâmico oficial para
+o novo Sistema Global de Previsão do Serviço Nacional de Meteorologia dos EUA, substituindo o modelo espectral. 
+O FV3 emprega uma esfera cubada com discretização de volume finitos para resolver equações que modelam a dinâmica atmosférica.
+A abordagem de volume finitos do FV3 para resolver a dinâmica horizontal consiste na aplicação de fluxos de advecção para diversas variáveis;
+assim, o esquema de advecção desempenha um papel fundamental no modelo.
+Portanto, nesta tese, propomos investigar os detalhes do esquema de advecção do FV3.
+Conseguimos sugerir pequenas modificações no esquema de advecção do FV3 que melhoraram significativamente a advecção com apenas um pequeno esforço computacional adicional.
+Realizamos várias simulações numéricas usando as equações de advecção e águas rasas.
+Como o esquema de advecção do FV3 consiste na combinação de operadores de fluxo de volume finitos 1D,
+nossas melhorias foram obtidas ao melhorar o cálculo do ponto de partida para os operadores de fluxo 1D e
+modificar a forma como o termo métrico da esfera cubica é tratado ao calcular os fluxos 1D.
+Através de simulações, demonstramos que o esquema de advecção atual do FV3 é apenas de primeira ordem para ventos divergentes,
+enquanto nosso esquema é sempre de segunda ordem.
+Uma grande dificuldade em trabalhar na esfera cubada é lidar com a descontinuidade das coordenadas ao longo das faces do cubo,
+o que pode levar a erros maiores nessas regiões.
+No entanto, demonstramos através de simulações numéricas que o esquema de advecção proposto apresenta uma sensibilidade reduzida aos cantos do cubo.
 }
 
 \abstract{
-TBW
+The dynamical core FV3 from GFDL-NOAA-USA, originally designed for latitude-longitude grids, 
+was adapted to the cubed-sphere to improve scalability on massively parallel supercomputers.
+FV3 has become popular for global atmospheric modeling and serves as the dynamical core for many models worldwide.
+Additionally, in 2019, FV3 was selected as the official dynamical core for the new Global Forecast System of the National Weather Service in the USA,
+replacing the spectral model. FV3 employs a cubed-sphere with finite-volume discretization to solve equations modeling atmospheric dynamics.
+The finite-volume approach of FV3 for solving horizontal dynamics involves applying advection fluxes for different variables; thus, the advection scheme plays a key role in the model. 
+Therefore, in this thesis, we propose to investigate the details of the advection scheme of FV3.
+We were able to suggest minor modifications to FV3 advection scheme that significantly improved advection with only a small extra computational effort.
+We conducted numerous numerical simulations using the advection and shallow-water equations.
+As the FV3 advection scheme consists of combining 1D finite-volume flux operators,
+our improvements were obtained by improving the departure point computation for the 1D flux operators
+and modifying the way the metric term of the cubed-sphere is treated when computing the 1D fluxes.
+Through simulations, we demonstrate that the current FV3 advection scheme is only first-order for divergent winds, while our scheme is always second-order.
+One major difficulty in working on the cubed-sphere is handling coordinate discontinuity along the cube faces, which may lead to larger errors in these regions. 
+However, we demonstrate through numerical simulations that the proposed advection scheme exhibits reduced sensitivity to the cube corners.
 }
