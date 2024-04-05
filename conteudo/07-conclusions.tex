@@ -1,3 +1,57 @@
 \chapter{Conclusions}
 \label{chp-conclusions}
+The FV3 dynamical core has become very popular in the atmospheric modeling community.
+It has received more attention, especially after being adopted as the new Global Forecast System (GFS) of the USA.
+The objective of this thesis is to investigate all the details of the FV3 advection scheme,
+as the horizontal dynamics of FV3 are solved using only advection finite-volume fluxes, thus playing a key role in FV3.
+The major outcome of this thesis is a more accurate 2D advection scheme than the current FV3 advection scheme, as demonstrated in numerous numerical simulations.
 
+The motivation for the new advection scheme method started in Chapter \ref{chp-1d-fv}, 
+where we provide a proof that the time-averaged fluxes of 1D finite-volume methods for the 1D advection equation require two tasks: 
+a departure point calculation and the reconstruction of the solution using the average values.
+The average values are reconstructed using PPM, just as in FV3.
+We note that the FV3 scheme uses a first-order departure point scheme. 
+We demonstrate how we can compute the departure point using a second-order Runge-Kutta scheme, which provides us with second-order accuracy.
+Then, we observed in numerical tests that this scheme improves accuracy significantly,  even with monotonicity constraints,
+with only minor extra computational efforts.
+Namely, we only need to perform one linear interpolation for each edge per time step.
+We could only observe this improvement because we considered a  variable wind test for the 1D linear advection equation. 
+Most 1D tests in the literature use a constant wind, and therefore a first-order departure point is exact.
+This oversimplifies matters, as the departure point issue does not arise.
+
+Next, we moved to the 2D advection equation on the plane in Chapter \ref{chp-2d-fv}.
+The 2D advection scheme of FV3 consists of combining 1D flux PPM operators.
+This combination is made in such a way that when the scalar field is constant and the wind is divergence-free, the scheme is exact.
+We observed that this scheme is second-order for divergence-free winds;
+however, in a numerical simulation for a non-divergence-free wind, we showed that the FV3 scheme is only first-order.
+We then demonstrated how we may modify the FV3 scheme to achieve second-order accuracy for both divergence-free and non-divergence-free winds. 
+This modification involves a slight change of the inner 1D flux operators,
+as well as the incorporation of the second-order departure point scheme outlined in Chapter \ref{chp-1d-fv}.
+Although we lost the preservation of a constant scalar field, the error is only second-order accurate for this case.
+We show that the new scheme has slightly improved performance for divergence-free winds, but for non-divergence-free winds, the results are significantly better.
+Then, we proposed a scheme that is second-order in general, whereas the FV3 scheme is second-order only for divergence-free winds.
+
+Following that, our next objective was to study the advection equation on the sphere. 
+We provided all the tools needed in Chapter \ref{chp-cs-grids}, 
+where we presented the duo-grid, which consists of extending the gridlines of the cubed sphere mapping. 
+We may then use 1D Lagrangian interpolation to fill the ghost cell values.
+In this Chapter, we also introduce the equiangular cubed sphere, which is the most uniform cubed-sphere available in the literature.
+We also introduce the equi-edge grid, which is less uniform than the equiangular grid in general but offers more uniformity near to the cube edges,
+aiming to avoid grid imprinting in these regions.
+Additionally, we show that Lagrange interpolation based on geodesic distances 
+is much less accurate than using Lagrange interpolation based on local cubed sphere mapping coordinates.
+
+Using all these tools, we could solve the advection equation on the sphere in Chapter \ref{chp-cs-fv}.
+We presented the advection scheme of FV3 and introduced our new scheme. We observed that our new scheme
+requires a different treatment of the metric terms in the flux 1D computation.
+Essentially, we extended the results from the plane to the cubed-sphere.
+Our scheme is second-order accurate on the cubed-sphere, 
+while the FV3 scheme is second-order only for divergence-free winds and first-order for non-divergence-free winds.
+This was observed on both equi-edge and equiangular grids. Additionally, the equi-edge grids yielded smaller errors.
+Furthermore, the new scheme was less sensitive to the corners, as it did not show larger errors at these locations. 
+This was observed in tests where we evaluated a Gaussian hill, cosine bell, and a cylinder over the corners. 
+
+The possible extension of this work would be to consider more shallow-water test cases and then move to 
+the non-hydrostatic solver of FV3 could be used to test the ability of the new advection scheme in three 
+dimensions and run more realistic simulations, as we have only analyzed idealized test cases in this work.
+Furthermore, we could also investigate the new scheme on the stretched grids available in FV3.
