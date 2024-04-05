@@ -870,7 +870,7 @@ The divergence on B-grid points may be computed using the D-grid contravariant w
  	   \hat{\delta}x_{i+\frac{1}{2},j  }{v}_{i+\frac{1}{2},j  }^n\sin{\alpha}_{i+\frac{1}{2},j  }}
 	\bigg].
 \end{align*}
-This is straightforward from the definition of divergence in terms of cubed-sphere mapping (Equation \eqref{advcs:eqdiv}).
+This is straightforward from the definition of divergence in terms of a cubed-sphere mapping (Equation \eqref{advcs:eqdiv}).
 We may then compute the gradient of this divergence at D-grid wind positions, namely:
 \begin{align}
 	D^u_{i,j+\frac{1}{2}}[u^n,v^n] &= \frac{D_{i+\frac{1}{2},j+\frac{1}{2}}[u^n,v^n]- D_{i-\frac{1}{2},j+\frac{1}{2}}[u^n,v^n]}{\hat{\delta}x_{i,j+\frac{1}{2}}},
@@ -880,18 +880,18 @@ We may then compute the gradient of this divergence at D-grid wind positions, na
 \end{align}
 Notice that we can apply the divergence operator $D_{i+\frac{1}{2},j+\frac{1}{2}}$
 again to the inputs $D^u_{i,j+\frac{1}{2}}$ and $D^v_{i+\frac{1}{2},j}$.
-We may apply this procedure as many times as we want.
-This process results in divergence damping (dd) which is a explicit dissipation mechanism.
-Dissipation mechanisms are commonly used in dynamical cores to ensure numerical stability and avoid accumulation of energy at small scales.
+and we may repeat this procedure as many times as we want.
+This process results in divergence damping (dd) operator which is an explicit dissipation mechanism.
+Dissipation mechanisms are commonly used in dynamical cores to ensure numerical stability and avoid accumulation of energy at the smallest grid scale.
 There are many other ways of introducing dissipation besides divergence damping (see \citet{jablonowski:2011} for a review)
-For an comprehensive analysis of the divergence damping, refer to \citet{whitehead:2011}. 
+For an comprehensive analysis of the divergence damping operator, refer to \citet{whitehead:2011}. 
 
 In FV3, the number of times we apply the divergence operator is denoted by \textit{nord} \citep{harris:2021}.
-We are considering a divergence damping coefficient $\nu_D > 0$:
+We are considering a divergence damping coefficient:
 \begin{equation}
 	\nu_D = (d_4 \min_{i,j} |\Omega_{ij}|)^{nord+1},
 \end{equation}
-where $d_4$ is a given constant.
+where $d_4 \ge 0$  is a given constant.
 The obtained results of after applying the divergence operator $nord$ times
 are multiplied by $\nu_D$ and added in Equations \eqref{2d-sweq-dscheme-u} and \eqref{2d-sweq-dscheme-v}.
 
