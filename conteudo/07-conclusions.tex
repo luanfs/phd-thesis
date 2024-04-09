@@ -49,9 +49,15 @@ Our scheme is second-order accurate on the cubed-sphere,
 while the FV3 scheme is second-order only for divergence-free winds and first-order for non-divergence-free winds.
 This was observed on both equi-edge and equiangular grids. Additionally, the equi-edge grids yielded smaller errors.
 Furthermore, the new scheme was less sensitive to the corners, as it did not show larger errors at these locations. 
-This was observed in tests where we evaluated a Gaussian hill, cosine bell, and a cylinder over the corners. 
+This was observed in tests where we evaluated a Gaussian hill, cosine bell, and a cylinder over the corners.
 
-The possible extension of this work would be to consider more shallow-water test cases and then move to 
-the non-hydrostatic solver of FV3 could be used to test the ability of the new advection scheme in three 
-dimensions and run more realistic simulations, as we have only analyzed idealized test cases in this work.
-Furthermore, we could also investigate the new scheme on the stretched grids available in FV3.
+As an application of our new scheme, in Chapter \ref{chp-cs-fv}, we provide a comprehensive description of the FV3 shallow-water solver.
+This solver utilizes the shallow-water equations in vector form and employs only advective finite volume fluxes
+to compute the fluid depth, kinetic energy, and absolute vorticity fluxes. 
+For simplicity, we consider our scheme only to solve the continuity equation.
+We observe that for the geostrophic balanced flow test case, our scheme helps to reduce the maximum error slightly.
+
+A possible extension of this work would be to consider more shallow-water test cases and explore our scheme's performance in handling absolute vorticity fluxes.
+Subsequently, we could employ the non-hydrostatic solver of FV3 to assess the new advection scheme's ability 
+in three dimensions and conduct more realistic simulations, as we have only analyzed idealized test cases in this work.
+Furthermore, we could also investigate the new scheme's performance on the stretched grids available in FV3.

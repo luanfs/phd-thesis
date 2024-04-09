@@ -68,7 +68,7 @@ is the kinetic energy,
 	\label{vort-eq}
 	\xi = f+ \zeta,
 \end{equation}
-is the relative vorticity, where
+is the absolute vorticity, where
 \begin{equation}
 	\label{coriolis-eq}
 	f  = 2 \Omega \sin{\phi},
@@ -85,14 +85,13 @@ is the relative vorticity.
 %\label{sec:sweq-prop}
 Now, let us describe some elementary properties of the SWE.
 By taking $\partial_y$ in Equation \eqref{2d-sweq-u} and $\partial_x$ in Equation \eqref{2d-sweq-v} and
-subtracting the obtained results, we get that the relative vorticity satisfies:
+subtracting the obtained results, we get that the absolute vorticity satisfies:
 \begin{align}
 	\label{absvort-eq}
 	{\partial_t (\sqrt{\mathfrak{g}} {\zeta})}(x,y,t) & = 
 	-[{\partial_x (\mathfrak{u}\sqrt{\mathfrak{g}}{\zeta}})
 	+ {\partial_y (\mathfrak{v}\sqrt{\mathfrak{g}}{\zeta}})](x,y,t).
 \end{align}
-Then, in the SWE, the  relative vorticity.
 One can also easily show (as described in Section \ref{chp-cs-adv}) that the total mass of $h$ and $\zeta$ is preserved.
 
 By replacing Equations \eqref{contra-uv} and \eqref{covari-uv} in Equation \eqref{ke-eq}, 
@@ -918,14 +917,15 @@ Thus, we are going to use the DP1 scheme for the kinetic energy flux (Equation \
 
 There are two parts of the D-grid scheme where we may use the LT advection scheme from Chapter \ref{chp-cs-fv}:
 the fluid depth update and the vorticity fluxes (Equations \eqref{absvort1} and \eqref{absvort2}).
-Currently, this part is solved using the PL advection scheme, and we propose assessing the impact of using the LT advection scheme.
+Currently, these parts are solved using the PL advection scheme, and we propose assessing the impact of using the LT advection scheme
+only for the continuity equation for simplicity.
 The shallow-water solver that uses PL for these fluxes is referred to simply as the PL scheme, and when LT is used, we refer to it as the LT scheme.
 
 \section{Numerical experiments}
 \label{sec:numerical_results}
 In this Section, we are going to compare the PL and LT shallow-water schemes described \eqref{sw-modf} using classical
 shallow-water tests presented in the literature.
-These schemes shall be testes with the 1D hord0 and hord8 schemes.
+These schemes shall be tested with the hord8 scheme.
 
 The D-grid output $(U_{i,j+\frac{1}{2}}^n,V_{i+\frac{1}{2},j}^n)$ is interpolated to the A-grid as
 \begin{align}
@@ -939,53 +939,101 @@ We point out that this does not impact the error check,
 provided our schemes are at best-case second-order, 
 as this averaging is second-order accurate and the wind conversion is an exact transformation.
 
-Then, the errors are computed using a reference solution on the A-grid, denoted by $(h^{REF})^n$, $(u_{\lambda}^{REF})^n$ and $(v_{\phi}^{REF})^n$. 
-The reference solution shall be assumed to be computed exactly or we follow the approach of \citet{peixoto:2016} and use
-the ENDGame (Even Newer Dynamics for General atmospheric modelling of the environment) shallow-water solver developed by \citet{thuburn:2010},
-which is the current UK MetOffice operational dynamical core 
-(\url{https://www.metoffice.gov.uk/research/foundation/dynamics/endgame}, last accessed on April 3rd, 2024).
-This model is semi-Lagrangian and semi-implicit on a latitude-longitude grid.
-As suggested by \citet{peixoto:2016}, we use a grid size of 2048$\times$1024 with a time step of 50 seconds whenever we employ it.
-This grid has a 20km resolution at the equator.
-The outputs of ENDGame are interpolated to the cubed-sphere A-grid from the latitude-longitude grid using cubic interpolation,
-giving us the reference solutions $(h^{REF})^n$, $(u_{\lambda}^{REF})^n$, and $(v_{\phi}^{REF})^n$.
+%Then, the errors are computed using a reference solution on the A-grid, denoted by $(h^{REF})^n$, $(u_{\lambda}^{REF})^n$ and $(v_{\phi}^{REF})^n$. 
+%The reference solution shall be assumed to be computed exactly or we follow the approach of \citet{peixoto:2016} and use
+%the ENDGame (Even Newer Dynamics for General atmospheric modelling of the environment) shallow-water solver developed by \citet{thuburn:2010},
+%which is the current UK MetOffice operational dynamical core 
+%(\url{https://www.metoffice.gov.uk/research/foundation/dynamics/endgame}, last accessed on April 3rd, 2024).
+%This model is semi-Lagrangian and semi-implicit on a latitude-longitude grid.
+%As suggested by \citet{peixoto:2016}, we use a grid size of 2048$\times$1024 with a time step of 50 seconds whenever we employ it.
+%This grid has a 20km resolution at the equator.
+%The outputs of ENDGame are interpolated to the cubed-sphere A-grid from the latitude-longitude grid using cubic interpolation,
+%giving us the reference solutions $(h^{REF})^n$, $(u_{\lambda}^{REF})^n$, and $(v_{\phi}^{REF})^n$.
 
-The relative errors in the $p$-norm ($p=2$ or $p=\infty$)
-are defined as in this Section as well for the variables $h^n$, $u_{\lambda}^n$, and $v_{\phi}^n$.
-The duo-grid is used to fill all ghost cell information using cubic polynomials.
-In FV3, we need to input the atmospheric time-step, denoted by \textit{dt\textunderscore atmos}.
-We also need to give the number \textit{k\textunderscore split}, which represents the number of vertical remappings, 
-and the number of substeps denoted by \textit{n\textunderscore split}, 
-which defines the number of times that the horizontal dynamics is solved on each remapping step \citep{mouallem:2023}.
-Since we are considering only the SWE, we have \textit{k\textunderscore split}=1.
-Hence, the actual time step for the shallow-water model is $\Delta t = \frac{\textit{dt\textunderscore atmos}}{\textit{n\textunderscore split}}$.
+We will consider the global steady geostrophic flow test case from \citet{will:1992}.
+This test initializes the depth using Equation \eqref{duo-tc1} (Figure \ref{cs-duo-tc1}) and the winds using Equation \eqref{duo-wind1}.
+We set $\alpha=\frac{\pi}{4}$ so that the flow is oriented with the corners of a cube.
+In this setup, the Coriolis parameter (Equation \eqref{coriolis-eq2}) is modified as
+\begin{equation}
+	\label{coriolis-eq2}
+	f = 2 \Omega(-\cos{\phi}\cos{\lambda}\sin{\alpha} + \sin{\phi}\cos{\alpha}),
+\end{equation}
+and therefore, the initial condition does not change over time, allowing us to compute the exact solution.
+%All the test cases (TCs) that we are going to consider are presented in Table \ref{sw-tc}.
 
-All the test cases (TCs) that we are going to consider are presented in Table \ref{sw-tc}.
-To compute the convergence, we consider cubed-sphere grids with values of
+To compute the error convergence, we consider cubed-sphere grids with values of
 $N_k = 48\times2^{k}$, and \textit{dt\textunderscore atmos}$^{(k)} = \frac{dt\textunderscore atmos^{(0)}}{2^k}$ for 
-$k=0, \ldots, 4$, where the value of \textit{dt\textunderscore atmos}$^{(0)}$ is taken from Table \ref{chp5-vf} for each TC.
-The value of n\_split is the same regardless of the value of $N_k$. 
-We are going to consider both the g0 and g2 grids with the spherical midpoint formulation,
-and it will always be made clear whether the divergence damping is being used or not (Section \ref{dd-cs}).
-Whenever we use divergence damping, we consider $d_4 = 0.12$ and $nord=2$, as used in \citet{mouallem:2023}.
+$k=0, \ldots, 4$, where the value of \textit{dt\textunderscore atmos}$^{(0)}$ is taken from Table \ref{chp5-vf}. %for each TC.
+The value of n\_split is the same regardless of the value of $N_k$.
+We are going to consider both the g0 and g2 grids with the spherical midpoint formulation.%, and it will always be made clear whether the divergence damping is being used or not (Section \ref{dd-cs}).%Whenever we use divergence damping, we consider $d_4 = 0.12$ and $nord=2$, as used in \citet{mouallem:2023}.
+We also use divergence damping, we consider $d_4 = 0.12$ and $nord=2$, as used in \citet{mouallem:2023}.
 In this case, the dissipation is a fourth-order operator and therefore is more scale selective.
 \begin{table}[!ht]
-	\begin{tabular}{|l|l|l|l|l|}
+	\begin{tabular}{|l|l|l|l|l|l|}
 		\hline
-		Test case & Description            & Reference & \textit{dt\textunderscore atmos$^{(0)}$} & n\_split \\ \hline
-		TC2       & Geostrophic balance    & \citet{will:1992}       & 3600                & 7        \\ \hline
-		TC5       & Flow over a mountain   & \citet{will:1992}        & 1800                & 7        \\ \hline
-		TC7       & Barotropic instability & \citet{galewsky:2004}      & 1800                & 8        \\ \hline
+		Test case & Description            & Reference & \textit{dt\textunderscore atmos$^{(0)}$} & n\_split & Total time \\ \hline
+		TC2       & Geostrophic balance    & \citet{will:1992}       & 3600 \textit{s}               & 7     & 5 \textit{days}   \\ \hline
+		%TC5       & Flow over a mountain   & \citet{will:1992}        & 1800 \textit{s}               & 7    & 15 \textit{days}  \\ \hline
+		%TC7       & Barotropic instability & \citet{galewsky:2004}      & 1800 \textit{s}             & 8  & 7 \textit{days}    \\ \hline
 	\end{tabular}
-	\caption{The test cases considered in the numerical experiments, including descriptions, references, 
+	\caption{The test case considered in the numerical experiments, including descriptions, references, 
 		initial atmospheric time step \textit{dt\textunderscore atmos}$^{(0)}$, 
-		and the number of times that the horizontal dynamics are solved on each atmospheric time step (n\_split).}
+	    the number of times that the horizontal dynamics are solved on each atmospheric time step (n\_split)
+	    and the total time of integration.}
 \label{sw-tc}
 \end{table}
 
-\subsection{Global steady geostrophic flow - to be written}
-Equation \eqref{duo-tc1}, Figure \ref{cs-duo-tc1}, Equation \eqref{duo-wind1}, $\alpha=\frac{\pi}{4}$.
+
+
+\begin{figure}[!h]
+	\centering
+	\begin{subfigure}{0.6\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_error_tc2_t5_alpha45_C192_g0_dg1_adv1_hord8_dd0.12_mf1_tf5}
+		\caption{PL scheme, max= $7.03\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-0a}}
+	\end{subfigure}
+	\begin{subfigure}{0.6\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_error_tc2_t5_alpha45_C192_g0_dg1_adv2_hord8_dd0.12_mf1_tf5}
+		\caption{ max= $5.37\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-0b}}
+	\end{subfigure}
+	\caption{
+		Geostrophic flow test using hord8
+		with PL (top) and LT schemes (bottm) on the g0 grid with $N=192$. 
+		\label{chp-advcs-sec-exp-sw1-errors-0}}
+\end{figure}
+\newpage
+\begin{figure}[!h]
+	\centering
+	\begin{subfigure}{0.6\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_error_tc2_t5_alpha45_C192_g2_dg1_adv1_hord8_dd0.12_mf1_tf5}
+		\caption{PL scheme,  max= $6.27\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-2a}}
+	\end{subfigure}
+	\begin{subfigure}{0.6\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_error_tc2_t5_alpha45_C192_g2_dg1_adv2_hord8_dd0.12_mf1_tf5}
+		\caption{LT scheme, max= $5.49\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-2b}}
+	\end{subfigure}
+	\caption{As Figure \ref{chp-advcs-sec-exp-sw1-errors-0} but using the g2 grid.\label{chp-advcs-sec-exp-sw1-errors-2}}
+\end{figure}
+
+rom Figure \ref{chp-advcs-sec-exp-sw1-errors-0}, we observe the errors for the grid g0 using the PL and LT schemes. It is evident that the LT scheme has a smaller error. Furthermore, although both schemes exhibit grid imprinting, the PL scheme displays more pronounced grid imprinting, whereas the LT scheme shows a more evenly distributed error.
+For the g2 grid, LT reduces the maximum error, but the grid imprinting is very similar to the PL scheme.
+This test case demonstrates how the LT scheme improves performance for the g0 and g2 grids.
+
+Finally, Figure \ref{chp-advcs-sec-exp-sw-l2} shows the error convergence for the zonal wind in the $L_{\infty}$. 
+We can notice that the error of LT is slightly smaller and both schemes achieve 2nd order.
+\newpage
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=0.8\linewidth]{u_linferror_tc2_alpha45}
+	\caption{Error of the zonal wind component for the geostrophic case for the g0 (left) and g2 (right) grids \label{chp-advcs-sec-exp-sw-l2}}
+\end{figure}
+
+%\subsection{Global steady geostrophic flow - to be written}
+
 %\subsection{Flow over a mountain}
 %\subsection{Barotropically unstable jet with perturbation}
-\section{Conclusions - to be written}
-\label{sec:conclusions}
+%\section{Conclusions - to be written}
+%\label{sec:conclusions}
