@@ -217,11 +217,11 @@ However, they utilized extrapolations near the cube edges instead of the duo-gri
 The current solver of FV3 solves the shallow-water equation on the so-called Lagrangian surfaces.
 This shallow-water solver, based on \citet{lin:1997}, 
 utilizes the advection solver from \citet{putman:2007} to update the pressure, vorticity, and kinetic energy fluxes.
-Therefore, advection is a key aspect of the FV3 dynamical core and it deserves to be better understood.
-Although \citet{mouallem:2023} present results on the convergence of some shallow-water tests,
-they do not provide a detailed discussion on the solver on the cubed-sphere itself.
-Therefore, in this thesis, we propose to thoroughly examine all the minor details of the scheme from \citet{putman:2007} and suggest potential improvements,
-thus addressing gaps in the existing literature.
+%Although \citet{mouallem:2023} present results on the convergence of some shallow-water tests,
+%they do not provide a detailed discussion on the solver on the cubed-sphere itself.
+Therefore, advection is a key aspect of the FV3 dynamical core, deserving better understanding. 
+In this thesis, we propose to thoroughly examine all the minor details of the scheme from \citet{putman:2007} and suggest potential improvements, 
+thereby addressing gaps in the existing literature.
 
 
 \section{Outline and contributions}
@@ -269,6 +269,7 @@ based on the extension of the solver by \citet{lin:1997} to the cubed-sphere.
 This solver uses finite-volume advection fluxes to compute all operators.
 Then, we may use our advection scheme introduced in Chapter \ref{chp-cs-fv} 
 to compute the fluxes and compare the results with the scheme by \citet{putman:2007}.
+We show that our scheme may help to slightly reduce the maximum errors for the geostrophic balanced case.
 \end{itemize}
 
 In summary, the main contribution of this thesis is a modified version of the two-dimensional scheme proposed by \citet{putman:2007}, which exhibits improved accuracy.
