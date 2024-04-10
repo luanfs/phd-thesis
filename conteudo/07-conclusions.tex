@@ -51,11 +51,12 @@ This was observed on both equi-edge and equiangular grids. Additionally, the equ
 Furthermore, the new scheme was less sensitive to the corners, as it did not show larger errors at these locations. 
 This was observed in tests where we evaluated a Gaussian hill, cosine bell, and a cylinder over the corners.
 
-As an application of our new scheme, in Chapter \ref{chp-cs-fv}, we provide a comprehensive description of the FV3 shallow-water solver.
+As an application of our new scheme, in Chapter \ref{chp-cs-swm}, we provide a comprehensive description of the FV3 shallow-water solver.
 This solver utilizes the shallow-water equations in vector form and employs only advective finite volume fluxes
 to compute the fluid depth, kinetic energy, and absolute vorticity fluxes. 
 For simplicity, we consider our scheme only to solve the continuity equation.
 We observe that for the geostrophic balanced flow test case, our scheme helps to reduce the maximum error slightly.
+Additionally, we analyze the total runtime for each method at different grid resolutions, and we conclude that our scheme adds a very small extra cost.
 
 A possible extension of this work would be to consider more shallow-water test cases and explore our scheme's performance in handling absolute vorticity fluxes.
 Subsequently, we could employ the non-hydrostatic solver of FV3 to assess the new advection scheme's ability 

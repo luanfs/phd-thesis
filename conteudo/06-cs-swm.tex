@@ -998,8 +998,8 @@ In this case, the dissipation is a fourth-order operator and therefore is more s
 		\caption{ max= $5.37\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-0b}}
 	\end{subfigure}
 	\caption{
-		Geostrophic flow test using hord8
-		with PL (top) and LT schemes (bottm) on the g0 grid with $N=192$. 
+		Geostrophic balanced flow test error distribution using hord8
+		with PL (top) and LT schemes (bottom) on the g0 grid with $N=192$. 
 		\label{chp-advcs-sec-exp-sw1-errors-0}}
 \end{figure}
 \newpage
@@ -1018,22 +1018,79 @@ In this case, the dissipation is a fourth-order operator and therefore is more s
 	\caption{As Figure \ref{chp-advcs-sec-exp-sw1-errors-0} but using the g2 grid.\label{chp-advcs-sec-exp-sw1-errors-2}}
 \end{figure}
 
-rom Figure \ref{chp-advcs-sec-exp-sw1-errors-0}, we observe the errors for the grid g0 using the PL and LT schemes. It is evident that the LT scheme has a smaller error. Furthermore, although both schemes exhibit grid imprinting, the PL scheme displays more pronounced grid imprinting, whereas the LT scheme shows a more evenly distributed error.
-For the g2 grid, LT reduces the maximum error, but the grid imprinting is very similar to the PL scheme.
-This test case demonstrates how the LT scheme improves performance for the g0 and g2 grids.
-
-Finally, Figure \ref{chp-advcs-sec-exp-sw-l2} shows the error convergence for the zonal wind in the $L_{\infty}$. 
-We can notice that the error of LT is slightly smaller and both schemes achieve 2nd order.
-\newpage
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=0.8\linewidth]{u_linferror_tc2_alpha45}
+	\includegraphics[width=1\linewidth]{u_linferror_tc2_alpha45}
 	\caption{Error of the zonal wind component for the geostrophic case for the g0 (left) and g2 (right) grids \label{chp-advcs-sec-exp-sw-l2}}
 \end{figure}
+
+\newpage
+From Figure \ref{chp-advcs-sec-exp-sw1-errors-0}, we observe the errors for the grid g0 using the PL and LT schemes. It is evident that the LT scheme has a smaller error. Furthermore, although both schemes exhibit grid imprinting, the PL scheme displays more pronounced grid imprinting, whereas the LT scheme shows a more evenly distributed error.
+For the g2 grid, LT reduces the maximum error, but the grid imprinting is very similar to the PL scheme.
+This test case demonstrates how the LT scheme improves performance for the g0 and g2 grids.
+Additionally, Figure \ref{chp-advcs-sec-exp-sw-l2} shows the error convergence for the zonal wind in the $L_{\infty}$. 
+We observe that the error of the LT scheme is slightly smaller compared to PL scheme, and both schemes demonstrate second-order accuracy.
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=0.8\linewidth]{tc2_C192_linf_errors}
+	\caption{
+		$L_{\infty}$ error evolution for the geostrophic balanced flow test  on the g0 (left) and g2 (right) grids for 5 days and $N=192$.
+		Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme. All schemes use hord8.
+		\label{chp-advcs-sec-exp-sw-evol-linf}}
+\end{figure}
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=0.8\linewidth]{tc2_C192_l2_errors}
+	\caption{ As Figure \ref{chp-advcs-sec-exp-sw-evol-linf} but using the 
+		$L_{2}$ norm.
+		\label{chp-advcs-sec-exp-sw-evol-l2}}
+\end{figure}
+
+Furthermore, in Figure \ref{chp-advcs-sec-exp-sw-evol-linf}, we present the evolution of the $L_{\infty}$ error in fluid depth over 5 days. 
+Once again, the LT scheme exhibits a slightly lower error than the PL scheme.
+On the other hand, Figure \ref{chp-advcs-sec-exp-sw-evol-l2} shows that the $L_2$ error evolution of both schemes is similar for the g2 grid, with PL being slightly smaller. However, on the g0 grid, the LT scheme grows faster and is larger than PL.
+\newpage
+
+
+Finally, in Table \ref{sw-time}, we show the times needed by each scheme for different grids and values of $N$. 
+It is clear that the LT scheme adds a very small cost, showing that this scheme does not degrade the computational performance of the shallow-water solver.
+
+\begin{table}[!h]
+	\begin{tabular}{|l|llll|}
+		\hline
+		\multicolumn{1}{|c|}{\multirow{2}{*}{\textbf{$N$}}} & \multicolumn{4}{c|}{Total runtime (seconds)}                                                                              \\ \cline{2-5} 
+		\multicolumn{1}{|c|}{}                              & \multicolumn{1}{c|}{PL-g0}     & \multicolumn{1}{c|}{PL-g2}     & \multicolumn{1}{c|}{LT-g0}     & \multicolumn{1}{c|}{LT-g2} \\ \hline
+		48                                                  & \multicolumn{1}{l|}{2.8901}    & \multicolumn{1}{l|}{2.8996}    & \multicolumn{1}{l|}{2.9582}    & 2.9353                     \\ \hline
+		96                                                  & \multicolumn{1}{l|}{12.7231}   & \multicolumn{1}{l|}{12.6902}   & \multicolumn{1}{l|}{13.0833}   & 13.0697                    \\ \hline
+		192                                                 & \multicolumn{1}{l|}{93.2210}   & \multicolumn{1}{l|}{92.4684}   & \multicolumn{1}{l|}{94.8132}   & 95.3641                    \\ \hline
+		384                                                 & \multicolumn{1}{l|}{737.8164}  & \multicolumn{1}{l|}{727.3037}  & \multicolumn{1}{l|}{754.4678}  & 748.9158                   \\ \hline
+		768                                                 & \multicolumn{1}{l|}{7851.4003} & \multicolumn{1}{l|}{7606.7404} & \multicolumn{1}{l|}{7983.9900} & 7764.0984                  \\ \hline
+	\end{tabular}
+	\caption{Total runtime for the LT and PL schemes using the g0 and g2 grids for different values of $N$.
+		The additional cost of the LT scheme is due to the computation of a second-order estimate of 1D departure points.}
+\label{sw-time}
+\end{table}
 
 %\subsection{Global steady geostrophic flow - to be written}
 
 %\subsection{Flow over a mountain}
 %\subsection{Barotropically unstable jet with perturbation}
-%\section{Conclusions - to be written}
-%\label{sec:conclusions}
+\section{Conclusions}
+\label{sec:conclusions}
+In this chapter, we provided a detailed description of the FV4 shallow-water solver on the cubed-sphere. 
+This solver begins with the shallow water equations written in the vector invariant form and considers their C and D grid discretization.
+We presented a general discretization of the shallow water equations on the C and D grids and showed that they can be solved using finite-volume fluxes.
+The C-grid solver is computed for a half time step, and the finite-volume fluxes use the classical upwind scheme, providing the winds centered at time.
+This part of the scheme is designed to be computationally cheap.
+
+Following that, the D-grid solver can use the time-centered winds from the C-grid solver and apply the PPM fluxes to update the fluid depth,
+as well as absolute vorticity and kinetic energy fluxes. 
+Then we discussed how our advection scheme from Chapter \ref{chp-cs-fv} can be used in the shallow-water solver. 
+Since the C-grid is supposed to be computationally inexpensive and our scheme uses PPM, we decided to leave it unchanged. 
+For simplicity, we consider our new finite-volume advection scheme only to compute the fluid depth on the D-grid.
+
+We then ran the geostrophic balance flow test case for 5 days. 
+We analyzed the runtime and found that our advection scheme adds a very small additional computational burden.
+Additionally, we noticed that our scheme helps to slightly reduce the $L_{\infty}$ errors.
+The goal of this chapter was to describe the shallow-water solver, demonstrate how our scheme may be used and compare the computational performance.
+However, a more comprehensive analysis of the shallow-water model using our scheme is certainly needed.
