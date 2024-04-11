@@ -9,11 +9,11 @@ requiring the averaging of fluxes at the edges to ensure a unique value in order
 This Chapter is organized as follows: Section \ref{chp-cs-adv} introduces the advection equation on the cubed-sphere.
 Section \ref{chp-cs-fvcs} presents its finite-volume discretization with a focus on the extension of dimension splitting (Section \ref{sec-csdsplit}) 
 as presented in Section \ref{sec-dsplit}.
-Numerical experiments are presented in Section \ref{chp-cs-numexpadv}, where we use dimension splitting to assess its
-accuracy in computing the divergence of a given vector field to check its numerical consistency, as well as to solve the advection equation.
-In particular, we explore different treatments for the cube edges. Section \ref{chp-cs-conc} presents the final thoughts.
+Numerical experiments are presented in Section \ref{chp-cs-numexpadv}, where we use dimension splitting to solve the advection equation.
+Section \ref{chp-cs-conc} presents the final thoughts.
+%In particular, we explore different treatments for the cube edges. 
 
-\section{Cubed-sphere advection equation in integral form}
+\section{Cubed-sphere advection equation in the integral form}
 \label{chp-cs-adv}
 Given a tangent velocity field $\boldsymbol{u}$ on the sphere, we denote its
 contravariant components by $\mathfrak{u}$ and $\mathfrak{v}$.

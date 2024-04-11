@@ -29,7 +29,7 @@ Subsequently, the dimension splitting method is presented in Section \ref{sec-ds
 Finally, we showcase numerical experiments in Section \ref{sec-ds-exp} to illustrate the practical application of the dimension splitting approach.
 Final thoughts are presented in Section \ref{chp-2d-fv-conc}.
 
-\section{Two-dimensional advection equation in integral form}
+\section{Two-dimensional advection equation in the integral form}
 \label{sec-adv2d}
 \subsection{Notation}
 \label{chp-adv2d-sec-not}
@@ -727,7 +727,7 @@ Let us, for an instant, assume that $\mathbf{F}$ and $\mathbf{G}$ are linear in 
       \frac{1}{2}\mathbf{G}\bigg[\mathbf{F}[Q^n, \tilde{c}^{x,n}], \tilde{c}^{y,n}\bigg].
 \end{align}
 The numerical flux functions defined in Chapter \ref{chp-1d-fv} are indeed linear in the input $Q$ if there are no monotonic constraints,
-that is, when we use the unlimited PPM (hord0),
+that is, when we use the unlimited PPM,
 implying that $\mathbf{F}$ and $\mathbf{G}$ are both linear in this case.
 %citet{lin:1996} suggests using Equation \eqref{chp-adv2d-LT-linear}
 %instead of \eqref{chp-adv2d-LT} to save computational operations, but the current implementation of FV3 does not follow this approach.
@@ -845,8 +845,8 @@ The spatial domain spans approximately $10^4$ kilometers in both directions,
 which correspond to approximately the lengths of a cubed-sphere panel,
 as shall be seen in Chapter \ref{chp-cs-grids}.
 
-For the 1D schemes, we will consider the FV-SL unlimited PPM (\textbf{hord0} - Subsection \ref{chp-adv1d-sec-hord0}) and limited PPM
-(\textbf{hord8}  - Subsection \ref{chp-adv1d-sec-hord8}), 
+For the 1D schemes, we will consider the FV-SL unlimited PPM ({hord0}, Subsection \ref{chp-adv1d-sec-hord0}) and limited PPM
+({hord8}, Subsection \ref{chp-adv1d-sec-hord8}), 
 each tested with both departure point schemes \textbf{DP1} (Subsection \ref{chp-adv1d-sec-DP1}) and \textbf{DP2} (Subsection \ref{chp-adv1d-sec-DP2}).
 We employ $(\Delta x^{(k)},\Delta y^{(k)},\lambda)$-discretizations with $\Delta x^{(k)} = \Delta y^{(k)} = \frac{L}{N^{(k)}}$,
 $N^{(k)} = 48 \times 2^k$, $k=0,\ldots, 4$.
