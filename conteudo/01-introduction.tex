@@ -13,7 +13,7 @@
 
 \enlargethispage{.5\baselineskip}
 
-\section{Background}
+\section{Historical background}
 
 Weather and climate predictions are recognized as a good for mankind,
 due to the information they yield for diverse activities. 
@@ -114,10 +114,13 @@ due to the larger times-steps allowed in this case.
 Due to these enhancements, the spectral transform dominated global atmospheric modeling 
 \citep{randall:2018} since the 1980s.
 Indeed, the spectral method is still used in many current operational Weather Forecasting models such as
-the Integrated Forecast System (IFS) from  European Centre for Medium-Range Weather Forecasts (ECMWF),
-Global Forecast System (GFS) from National Centers for Environmental Prediction (NCEP) and the
+the Integrated Forecast System (IFS) from  European Centre for Medium-Range Weather Forecasts (ECMWF), and the
 Brazilian Global Atmospheric Model (BAM) \citep{figueroa:2016} from  Center for Weather Forecasting 
 and Climate Research [Centro de Previsão de Tempo e Estudos Climáticos (CPTEC)].
+\textcolor{red}{The Global Forecast System (GFS) from the National Centers for Environmental Prediction (NCEP) 
+employed the spectral method until June 2019 when it was replaced by the Finite Volume Cubed-Sphere dynamical core (FV3) 
+from the Geophysical Fluid Dynamics Laboratory (GFDL) and the National Oceanic and Atmospheric Administration (NOAA) in June 2019 
+(\url{https://www.noaa.gov/media-release/noaa-upgrades-us-global-weather-forecast-model}, last accessed on March 19th, 2024).}
 
 With the beginning of the multicore era in the 1990s, the global atmospheric models
 started to move towards parallel efficiency aiming to run at very high resolutions. 
@@ -135,12 +138,12 @@ conserved quantities. Among them, some of the most important are mass, total ene
 angular momentum and potential vorticity \citep{thuburn:2011}.
 Numerical schemes that are known for having discrete analogous of these conservative properties
 are known as mimetic schemes.
-As we pointed out, Semi-Lagrangian schemes lack mass conservation. Nevertheless, 
+As we pointed out, classical Semi-Lagrangian schemes lack mass conservation. Nevertheless, 
 these schemes have been employed in dynamical cores for better computational performance.
 However, dynamical cores should have discrete analogous of the 
 continuous conserved quantities, especially concerning for longer simulation runs.
 
-Aiming for better performance in massively parallel computers and conservation properties, 
+Aiming for better performance in massively parallel computers and better conservation properties, 
 new dynamical cores have been developed since the beginning of the 2000s.
 Novel spherical grids have been proposed, in order to avoid the pole problem.
 A popular choice are grids based on Platonic solids \citep{stan:2012}.
@@ -192,10 +195,8 @@ to reach better performance in parallel computers, leading to the FV3 dycore.
 Later, the FV3 also was improved to allow locally refinement grids 
 through grid-nesting or grid-stretching \citep{harris:2013}.
 
-Currently, the FV3 dycore is capable of perfoming hydrostatic and non-hydrostatic atmospheric simulations 
-and it was chosen as the new US global weather prediction model, indeed, it replaced the spectral transform
-Global Forecast System (GFS) in June, 2019
-(\url{https://www.noaa.gov/media-release/noaa-upgrades-us-global-weather-forecast-model}, last accessed on March 19th, 2024).
+Currently, the FV3 dycore is capable of performing both hydrostatic and non-hydrostatic atmospheric simulations. 
+\textcolor{red}{It was chosen as the new US GFS dynamical core, indeed replacing the spectral transform GFS in 2019, as mentioned before.}
 Additionally, the FV3 dynamical core is employed in the GEOS Chem model \citep{martin:2022} from Harvard University, 
 in NASA’s next-generation Mars Climate Model \citep{wilson:2022}, 
 and also in the System for High-resolution prediction on Earth-to-Local Domain (SHiELD) model from GFDL \citep{harris:2020}.
@@ -273,5 +274,7 @@ We show that our scheme may help to slightly reduce the maximum errors for the g
 Additionally, we analyze the runtimes and show that our scheme adds a very small extra computational cost.
 \end{itemize}
 
-In summary, the main contribution of this thesis is a modified version of the two-dimensional scheme proposed by \citet{putman:2007}, which exhibits improved accuracy.
+In summary, the main contribution of this thesis is a modified version of the two-dimensional scheme proposed by \citet{putman:2007}, 
+which exhibits significantly improved accuracy, especially for divergent flows,
+\textcolor{red}{requiring minor extra computational cost and only minor modifications to the current FV3 code}
 We give some final thoughts and future work perspectives in Chapter \ref{chp-conclusions}.
