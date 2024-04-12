@@ -39,11 +39,11 @@ We denote by $\nabla \cdot (q\boldsymbol{u})$ the divergence operator:
 	[{\partial_x (\mathfrak{u}q\sqrt{\mathfrak{g}})} + {\partial_y (\mathfrak{v}q\sqrt{\mathfrak{g}})}](x, y, p, t).
 \end{equation}
 We recall that we say the $\boldsymbol{u}$ is \textbf{non-divergent} if $\nabla \cdot \boldsymbol{u}=0$.
-We define the $\mathcal{CS}_N$ grid function $\delta^n$ as
+We define the $\mathcal{CS}_N$ grid function $\mathfrak{D}^n$ as
 the exact divergence of $q\boldsymbol{u}$ at the cell centers, namely
 \begin{equation}
 	\label{cs-discrete-div}
-	\delta^n_{ijp} = \nabla \cdot (\boldsymbol{u}q)(x_i,y_j,p,t^n).
+	\mathfrak{D}^n_{ijp} = \nabla \cdot (\boldsymbol{u}q)(x_i,y_j,p,t^n).
 \end{equation}
 In this Chapter, it shall be useful to define the average value of $q\sqrt{\mathfrak{g}}$ on the 2D coordinates as:
 \begin{equation}
@@ -177,8 +177,8 @@ We use this approximation in Problem \ref{chp5-prob2} and we obtain the followin
 \end{prob}
 \begin{remark}
 	For Problem \ref{chp5-prob3}, we define the CFL number in the $x$ and $y$ direction
-	by $\max \{{|\mathfrak{u}_{i+\frac{1}{2},j,p}^n}|\}\frac{\Delta t}{\Delta x}$ and 
-	$\max \{ {|\mathfrak{v}_{i,j+\frac{1}{2},p}^n}|\}\frac{\Delta t}{\Delta y}$, respectively.
+	by $\max_{i,j,p} \{{|\mathfrak{u}_{i+\frac{1}{2},j,p}^n}|\}\frac{\Delta t}{\Delta x}$ and 
+	$\max_{i,j,p} \{ {|\mathfrak{v}_{i,j+\frac{1}{2},p}^n}|\}\frac{\Delta t}{\Delta y}$, respectively.
 	The CFL number is maximum between these numbers and we say that the CFL condition is
 	satisfied if the CFL number is less than one. 
 \end{remark}
@@ -273,7 +273,7 @@ we introduce the following PPM flux in the $x$ direction (recall Equation \eqref
 	\end{cases}
 \end{align}
 for each $j=-\nu+1, \ldots, N+\nu$ and $i=1, \ldots, N$, and
-where the PPM perturbation values $b^L$ and $b^R$ values are computed using hord0 (Section \ref{chp-adv1d-sec-hord0}) or hord8 (Section \ref{chp-adv1d-sec-hord8})
+where the PPM perturbation values $b^L$ and $b^R$ values are computed using the unlimited PPM hord0 (Section \ref{chp-adv1d-sec-hord0}) or the limited PPM (hord8) (Section \ref{chp-adv1d-sec-hord8})
 
 Therefore, we may rewrite Equation \eqref{1d-qx} as
 \begin{equation}
@@ -383,7 +383,7 @@ where the inner advection operators $\mathbf{f}$ and $\mathbf{g}$ are given in T
 
 \subsection{The upwind CFL number}
 \label{sec-cfl}
-When using the DP2 scheme (Section \ref{chp-adv1d-sec-DP2}), we define the CFL number as (recall the wind formulation in Section \ref{anexo-sph-ll}):
+When using the DP2 scheme (Section \ref{chp-adv1d-sec-DP2}), we define the CFL number at the edges as (recall the wind formulation in Section \ref{anexo-sph-ll}):
 \begin{align}
 	\label{cfl_dp2-x}
 	{c}_{i+\frac{1}{2},j}^{x,n} = {\mathfrak{u}}_{i+\frac{1}{2},j}^{x,n}\frac{\Delta t}{\Delta x}
@@ -621,7 +621,7 @@ For an expression of the exact solution when using VF1 and a general initial con
 
 We are going to consider the schemes LT-DP2 and PL-DP1 since these schemes yield better results on planar simulations (Section \ref{sec-ds-exp}).
 For a shorter notation, we shall denote LT-DP2 and PL-DP1 by \textbf{LT} and \textbf{PL} advection schemes. 
-These schemes will be tested using hord0 and hord8 1D PPM schemes.
+These schemes will be tested using the unlimited PPM (hord0) and the limited PPM (hord8) 1D PPM schemes.
 As we mentioned in Section \ref{sec-metricppm}, the PL scheme needs the \textbf{mt1} 
 metric term formulation for the 1D flux operators to eliminate the splitting error for a constant scalar field.
 For the LT scheme, we shall use the \textbf{mt0} metric term formulation because for this scheme, 
@@ -696,7 +696,7 @@ eventually returning to its initial position.
 		8  \eqref{chp-advcs-sec-exp-adv2-d},
 		10  \eqref{chp-advcs-sec-exp-adv2-e},
 		and 12  \eqref{chp-advcs-sec-exp-adv2-f} days.
-		We are using the LT-hord8-mf1 scheme on the g2 grid with $N=384$. \label{chp-advcs-sec-exp-adv2}}
+		We are using the LT-hord8-mf1 scheme on the equiangular grid (g2) with $N=384$. \label{chp-advcs-sec-exp-adv2}}
 \end{figure}
 
 The goal of this test is to observe the ability of all schemes and grids to perform this test without creating
@@ -705,42 +705,43 @@ In fact, in Figure \ref{chp-advcs-sec-exp-adv2-evol-linf} we show how the error 
 Similarly, Figure \ref{chp-advcs-sec-exp-adv2-evol-l2} shows the error evolution over time in the $L_2$ norm.
 Both figures use green lines to represent the PL scheme and blue lines to represent the LT scheme.
 Light colors denote cases where the mass fixer is not used, while dark colors represent cases where it is used. 
-Dashed lines represent hord8 while solid lines represent hord0.
+Dashed lines represent the limited PPM (hord8) while solid lines represent the unlimited PPM (hord0).
 
 \newpage
 In terms of the $L_2$ norm, as shown in Figure \ref{chp-advcs-sec-exp-adv2-evol-l2}, 
 no spikes are observed in the graphs corresponding to the days when the Gaussian passes over a corner.
-Another conclusion is that the mass fixer does not have too much impact on error evolution when hord8 scheme is used.
-However, from Figure \ref{chp-advcs-sec-exp-adv2-evol-linf} we can see some small spikes in the $L_{\infty}$
-on the g0 grid when using the PL scheme, which is not very pronounced in the LT scheme.
+Another conclusion is that the mass fixer does not have too much impact on error evolution when the limited PPM (hord8) scheme is used.
+However, from Figure \ref{chp-advcs-sec-exp-adv2-evol-linf} we can see some small spikes in the $L_{\infty}$ error
+on the equi-edge grid (g0) when using the PL scheme, which is not very pronounced in the LT scheme.
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=1\linewidth]{tc-3_C384_linf_errors}
+	\includegraphics[width=0.9\linewidth]{tc-3_C384_linf_errors}
 	\caption{
-		$L_{\infty}$ error evolution for IC1 (Table \ref{chp5-ic}) and VF1 (Table \ref{chp5-vf}) on the g0 (left) and g2 (right) grids for 12 days and $N=384$.
+		$L_{\infty}$ error evolution for IC1 (Table \ref{chp5-ic}) and VF1 (Table \ref{chp5-vf}) 
+		on the equi-edge grid (g0, left) and on the equiangular grid (g2, right) grids for 12 days and $N=384$.
 		Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme.
-		Solid lines represent the results with the hord8 scheme, whereas dashed lines represent the results with hord8.
+		Solid lines represent the results with the unlimited PPM (hord0) scheme, whereas dashed lines represent the results with the limited PPM (hord8).
 		Light colors show the result without mass fixer (mf0), whereas dark colors show the results with flux averaging (mf1).
 		\label{chp-advcs-sec-exp-adv2-evol-linf}}
 \end{figure}
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=1\linewidth]{tc-3_C384_l2_errors}
+	\includegraphics[width=0.9\linewidth]{tc-3_C384_l2_errors}
 	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-evol-linf} but using the $L_2$ error.\label{chp-advcs-sec-exp-adv2-evol-l2}}
 \end{figure}
 
 \newpage
 This indicates that LT is less sensitive to corners than PL when using hord8. 
-Indeed, Figure \ref{chp-advcs-sec-exp-adv2-errors-0} shows the final error at a cube corner for the g0 grid, 
-and Figure \ref{chp-advcs-sec-exp-adv2-errors-2} shows it for the g2 grid.
+Indeed, Figure \ref{chp-advcs-sec-exp-adv2-errors-0} shows the final error at a cube corner for the equi-edge grid (g0), 
+and Figure \ref{chp-advcs-sec-exp-adv2-errors-2} shows it for the equiangular grid (g2).
 The results without a mass fixer are very similar and are not shown here. 
 We can observe that the errors for PL are larger at the corner 
 (Figures \ref{chp-advcs-sec-exp-adv2-errors-0a} and \ref{chp-advcs-sec-exp-adv2-errors-2a}), 
 which is not observed for LT (Figures \ref{chp-advcs-sec-exp-adv2-errors-0b} and \ref{chp-advcs-sec-exp-adv2-errors-2b}).
-Also, g0 and g2 yield similar results for both schemes, 
-although g2 exhibits a very small error near the corner, which is not observed in g0, 
-indicating that g0 is less sensitive to the corner for the LT scheme.
+Also, the equi-edge grid (g0) and  the equiangular grid (g2) yield similar results for both schemes, 
+although the equiangular grid (g2) exhibits a very small error near the corner, which is not observed in the equi-edge grid (g0), 
+indicating that the equi-edge grid (g0) is less sensitive to the corner for the LT scheme.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
@@ -755,7 +756,7 @@ indicating that g0 is less sensitive to the corner for the LT scheme.
 	\end{subfigure}
 	\caption{
 		Advection experiment errors at a cube corner using IC1 (Table \ref{chp5-ic}) and VF1 (Table \ref{chp5-vf}) after 12 days, using hord8
-		with PL (left) and LT schemes (right) on the g0 grid with $N=384$. 
+		with PL (left) and LT schemes (right) on the equi-edge grid (g0) with $N=384$. 
 		\label{chp-advcs-sec-exp-adv2-errors-0}}
 \end{figure}
 \begin{figure}[!htb]
@@ -770,22 +771,23 @@ indicating that g0 is less sensitive to the corner for the LT scheme.
 		\includegraphics[width=1\linewidth]{h_error_tc-3_t12_alpha45_C384_g2_dg2_adv2_hord8_mf1_tf12}
 		\caption{LT scheme.\label{chp-advcs-sec-exp-adv2-errors-2b}}
 	\end{subfigure}
-	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-errors-0} but using the g2 grid.\label{chp-advcs-sec-exp-adv2-errors-2}}
+	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-errors-0} but using the equiangular grid (g2).\label{chp-advcs-sec-exp-adv2-errors-2}}
 \end{figure}
 
 
 \newpage
 Finally, in Figures \ref{chp-advcs-sec-exp-adv2-linf} and \ref{chp-advcs-sec-exp-adv2-l2} we show the error convergence in $L_{\infty}$ and $L_{2}$ norms.
-We can observe that all schemes with hord0 achieve second-order accuracy as expected.
+We can observe that all schemes with the unlimited PPM (hord0) achieve second-order accuracy as expected.
 However, for hord8, the order is reduced, which is also expected.
 Additionally, we can see that hord8 with LT has smaller errors when comparing the blue dashed lines with the green dashed lines, 
-for both $L_{\infty}$ and $L_{2}$ norms on both g0 and g2 grids, indicating that LT is more accurate.
+for both $L_{\infty}$ and $L_{2}$ norms on both equi-edge grid (g0) and the equiangular grid (g2), indicating that LT is more accurate.
 In general, the errors of g0 are slightly smaller than those of g2.
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=1\linewidth]{linferror_tc-3_alpha45}
+	\includegraphics[width=0.9\linewidth]{linferror_tc-3_alpha45}
 	\caption{
-$L_{\infty}$ error convergence for IC1 (Table \ref{chp5-ic}) and VF1 (Table \ref{chp5-vf}) on the g0 (left) and g2 (right) grids after 12 days.
+$L_{\infty}$ error convergence for IC1 (Table \ref{chp5-ic}) and VF1 (Table \ref{chp5-vf}) on the equi-edge grid (g0, left) 
+and on the equiangular grid (g2, right) grids after 12 days.
 Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme.
 Solid lines represent the results with the hord8 scheme, whereas dashed lines represent the results with hord8.
 Light colors show the result without mass fixer (mf0), whereas dark colors show the results with flux averaging (mf1).\label{chp-advcs-sec-exp-adv2-linf}}
@@ -793,7 +795,7 @@ Light colors show the result without mass fixer (mf0), whereas dark colors show 
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=1\linewidth]{l2error_tc-3_alpha45}
+	\includegraphics[width=0.9\linewidth]{l2error_tc-3_alpha45}
 	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-linf} but considering the $L_2$ norm. \label{chp-advcs-sec-exp-adv2-l2}}
 \end{figure}
 
@@ -819,7 +821,7 @@ For $N=384$, the temporal evolution of the errors is very similar to that of IC1
 	\end{subfigure}
 	\caption{
 		Advection experiment errors at a cube corner using IC2 (Table \ref{chp5-ic}) and VF1 (Table \ref{chp5-vf}) after 12 days, using hord8
-		with PL (left) and LT schemes (right) on the g0 grid with $N=384$. 
+		with PL (left) and LT schemes (right) on the equi-edge grid (g0) grid with $N=384$. 
 		\label{chp-advcs-sec-exp-adv5-errors-0}}
 \end{figure}
 \begin{figure}[!htb]
@@ -834,20 +836,21 @@ For $N=384$, the temporal evolution of the errors is very similar to that of IC1
 		\includegraphics[width=1\linewidth]{h_error_tc1_t12_alpha45_C384_g2_dg2_adv2_hord8_mf1_tf12}
 		\caption{LT scheme.\label{chp-advcs-sec-exp-adv5-errors-2b}}
 	\end{subfigure}
-	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-errors-0} but using the g2 grid.\label{chp-advcs-sec-exp-adv5-errors-2}}
+	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-errors-0} but using the equiangular grid (g2).\label{chp-advcs-sec-exp-adv5-errors-2}}
 \end{figure}
 
-In Figure \ref{chp-advcs-sec-exp-adv5-errors-0}, we show the final error at the cube corner for the grid g0, 
-and Figure \ref{chp-advcs-sec-exp-adv5-errors-2} show the same for the grid g0.
+In Figure \ref{chp-advcs-sec-exp-adv5-errors-0}, we show the final error at the cube corner for the equi-edge grid (g0), 
+and Figure \ref{chp-advcs-sec-exp-adv5-errors-2} show the same for the equiangular grid (g2).
 We can observe that the results are similar to IC1 with VF1 shown in Figures \ref{chp-advcs-sec-exp-adv2-errors-0} and \ref{chp-advcs-sec-exp-adv2-errors-2}.
-We conclude again that LT has a smaller error at the corner, especially for the g0 grid.
+We conclude again that LT has a smaller error at the corner, especially for the equi-edge grid (g0).
 \newpage
 In Figures \ref{chp-advcs-sec-exp-adv5-linf} and \ref{chp-advcs-sec-exp-adv5-l2},
 we show the error convergence for the $L_{\infty}$ and $L_2$ norms, respectively.
 Note that the errors in the $L_{\infty}$ norm (Figure \ref{chp-advcs-sec-exp-adv5-linf})
-for hord0 (solid lines) are not achieving second order as they should because the solution is not differentiable.
-For hord8 (dashed lines), we can see that the $L_{\infty}$ errors for LT (blue lines) are smaller than the errors of PL (green lines), especially for the g0 grid.
-Also, for g0, the order of the LT-hord8 scheme in the $L_{\infty}$ norm gets very close to 2, and for the grid g2, its order surpasses two.
+for the unlimited PPM (hord0) (solid lines) are not achieving second order as they should because the solution is not differentiable.
+For hord8 (dashed lines), we can see that the $L_{\infty}$ errors for LT (blue lines) are smaller than the errors of PL (green lines), especially for the equi-edge grid (g0).
+Also, for the equi-edge grid (g0), the order of the LT-hord8 scheme in the $L_{\infty}$ norm gets very close to 2,
+and for the equiangular grid (g2), its order surpasses two.
 These results for LT-hord8 are better than expected and are not observed for the PL-hord8 scheme.
 Finally, the $L_2$ errors are very similar (Figure \ref{chp-advcs-sec-exp-adv5-l2}).
 \begin{figure}[!htb]
@@ -916,23 +919,23 @@ It is evident that all the schemes yield similar results, and we cannot observe 
 	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{h_tc-7_t12_alpha45_C192_g0_dg2_adv1_hord8_mf1_tf12}
-		\caption{PL-hord8 at g0.\label{chp-advcs-sec-exp-adv7-b}}
+		\caption{PL-hord8 at the equi-edge grid (g0).\label{chp-advcs-sec-exp-adv7-b}}
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{h_tc-7_t12_alpha45_C192_g0_dg2_adv2_hord8_mf1_tf12}
-		\caption{LT-hord8 at g0.\label{chp-advcs-sec-exp-adv7-c}}
+		\caption{LT-hord8 at the equi-edge grid (g0).\label{chp-advcs-sec-exp-adv7-c}}
 	\end{subfigure}
 	
 	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{h_tc-7_t12_alpha45_C192_g2_dg2_adv1_hord8_mf1_tf12}
-		\caption{PL-hord8 at g2.\label{chp-advcs-sec-exp-adv7-d}}
+		\caption{PL-hord8 at the equiangular grid (g2).\label{chp-advcs-sec-exp-adv7-d}}
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 	\centering
 	\includegraphics[width=1\linewidth]{h_tc-7_t12_alpha45_C192_g2_dg2_adv2_hord8_mf1_tf12a}
-	\caption{PL-hord8 at g2.\label{chp-advcs-sec-exp-adv7-e}}
+	\caption{PL-hord8 at the equiangular grid (g2).\label{chp-advcs-sec-exp-adv7-e}}
     \end{subfigure}
 
 	\begin{subfigure}{0.3\textwidth}
@@ -941,7 +944,8 @@ It is evident that all the schemes yield similar results, and we cannot observe 
 	\caption{IC and exact solution at day 12.\label{chp-advcs-sec-exp-adv7-a}}
     \end{subfigure}
 	\caption{Cylinder at corner test with $N=192$ after 12 days for the schemes 
-	PL-hord8 at g0 a(a),	LT-hord8 at g0 (b), PL-hord8 at g2 (c) and LT-hord8 at g2 (d).
+	PL-hord8 at the equi-edge grid (g0) (a),	LT-hord8 at the equi-edge grid (g0) (b), 
+	PL-hord8 at the equiangular grid (g2) (c) and LT-hord8 at the equiangular grid (g2) (d).
 	(e) depicts the reference solution.
 	\label{chp-advcs-sec-exp-adv7}}
 \end{figure}
@@ -991,7 +995,8 @@ This test is the spherical analogous of the planar divergence free deformational
 	\caption{Similar to Figure \ref{chp-advcs-sec-exp-adv2} but using IC4 (Table \ref{chp5-ic}) and VF2 (Table \ref{chp5-vf}).\label{chp-advcs-sec-exp-adv3}}
 \end{figure}
 
-Figures \ref{chp-advcs-sec-exp-adv3-errors-0} and \ref{chp-advcs-sec-exp-adv3-errors-2} show the final error at a cube face for the g0 and g2 grids, respectively.
+Figures \ref{chp-advcs-sec-exp-adv3-errors-0} and \ref{chp-advcs-sec-exp-adv3-errors-2} show 
+the final error at a cube face for the equi-edge grid (g0) and the equiangular grid (g2), respectively.
 The results without a mass fixer are very similar and are not shown here. 
 We can observe that the errors for both PL and LT are very similar, and also the type of grid does not have a significant impact.
 \newpage
@@ -1009,7 +1014,7 @@ We can observe that the errors for both PL and LT are very similar, and also the
 	\end{subfigure}
 	\caption{
 		Advection experiment errors using IC4 (Table \ref{chp5-ic}) and VF2 (Table \ref{chp5-vf}) after 12 days, using hord8
-		with PL (left) and LT schemes (right) on the g0 grid with $N=384$. 
+		with PL (left) and LT schemes (right) on the equi-edge grid (g0) with $N=384$. 
 		 \label{chp-advcs-sec-exp-adv3-errors-0}}
 \end{figure}
 \begin{figure}[!htb]
@@ -1024,10 +1029,10 @@ We can observe that the errors for both PL and LT are very similar, and also the
 		\includegraphics[width=1\linewidth]{h_error_tc-5_t12_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
 		\caption{LT scheme.\label{chp-advcs-sec-exp-adv3-errors-2b}}
 	\end{subfigure}
-	\caption{As Figure \ref{chp-advcs-sec-exp-adv3-errors-0} but using the g2 grid.\label{chp-advcs-sec-exp-adv3-errors-2}}
+	\caption{As Figure \ref{chp-advcs-sec-exp-adv3-errors-0} but using the the equiangular grid (g2).\label{chp-advcs-sec-exp-adv3-errors-2}}
 \end{figure}
 Figures \ref{chp-advcs-sec-exp-adv3-linf} and \ref{chp-advcs-sec-exp-adv3-l2} we show the error convergence in $L_{\infty}$ and $L_{2}$ norms.
-Once more, it is evident that all schemes with hord0 achieve second-order accuracy as expected, while those with hord8 experience a reduced order 
+Once more, it is evident that all schemes with the unlimited PPM (hord0) achieve second-order accuracy as expected, while those with hord8 experience a reduced order 
 in $L_{\infty}$ norm. In $L_{2}$ norm, the order is 2 for hord8.
 Furthermore, LT demonstrates smaller errors when utilizing hord8, reaffirming that LT is indeed more accurate than PL.
 We also notice that the mass fixer does not impact the errors.
@@ -1090,7 +1095,8 @@ This test is the spherical analogous of the planar divergent deformational flow 
 	\caption{Similar to Figure \ref{chp-advcs-sec-exp-adv2} but using IC4 (Table \ref{chp5-ic}) and VF3 (Table \ref{chp5-vf}).\label{chp-advcs-sec-exp-adv4}}
 \end{figure}
 
-Figures \ref{chp-advcs-sec-exp-adv4-errors-0} and \ref{chp-advcs-sec-exp-adv4-errors-2} show the final error at a cube face for the g0 and g2 grids, respectively.
+Figures \ref{chp-advcs-sec-exp-adv4-errors-0} and \ref{chp-advcs-sec-exp-adv4-errors-2} show the final error at a cube face 
+for the equi-edge grid (g0) and the equiangular grid (g2), respectively.
 The results without a mass fixer are very similar and are not shown here. 
 We can observe that the errors for PL are much larger, with significant errors present in many cells, whereas LT has smaller errors that are concentrated in some ripples.
 \newpage
@@ -1108,7 +1114,7 @@ We can observe that the errors for PL are much larger, with significant errors p
 	\end{subfigure}
 	\caption{
 	 Advection experiment errors using IC4 and VF3 from Table \ref{chp5-ic} after 12 days, using hord8
-	 with PL (left) and LT schemes (right) on the g0 grid with $N=384$.
+	 with PL (left) and LT schemes (right) on the equi-edge grid (g0) with $N=384$.
 	 \label{chp-advcs-sec-exp-adv4-errors-0}}
 \end{figure}
 \begin{figure}[!htb]
@@ -1123,15 +1129,15 @@ We can observe that the errors for PL are much larger, with significant errors p
 		\includegraphics[width=1\linewidth]{h_error_tc-6_t12_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
 		\caption{LT scheme.\label{chp-advcs-sec-exp-adv4-errors-2b}}
 	\end{subfigure}
-	\caption{As Figure \ref{chp-advcs-sec-exp-adv4-errors-0} but using the g2 grid.\label{chp-advcs-sec-exp-adv4-errors-2}}
+	\caption{As Figure \ref{chp-advcs-sec-exp-adv4-errors-0} but using the the equiangular grid (g2).\label{chp-advcs-sec-exp-adv4-errors-2}}
 \end{figure}
 
 Figures \ref{chp-advcs-sec-exp-adv4-linf} and \ref{chp-advcs-sec-exp-adv4-l2} we show the error convergence in $L_{\infty}$ and $L_{2}$ norms.
 These figures highlight a major significant distinction between LT and PL schemes, unlike the previous tests.
-It is clear that PL with hord0 achieves only first-order accuracy, whereas LT with hord0 achieves third-order accuracy, 
-surpassing second-order the expectation, for both g0 and g2 grids and norms.
-For hord8, LT demonstrates second-order accuracy in the $L_2$ norm, while PL is only first-order.
-LT with hord8 exhibits smaller errors in the $L_{\infty}$ norm compared to the PL scheme for all grids.
+It is clear that PL with the unlimited PPM (hord0) achieves only first-order accuracy, whereas LT with the unlimited PPM (hord0) achieves third-order accuracy, 
+surpassing second-order the expectation, for both equi-edge grid (g0) and the equiangular grid (g2) and norms.
+For the limited PPM (hord8), LT demonstrates second-order accuracy in the $L_2$ norm, while PL is only first-order.
+LT with the limited PPM (hord8) exhibits smaller errors in the $L_{\infty}$ norm compared to the PL scheme for all grids.
 This discrepancy arises because the PL splitting is designed for divergence-free flows, while LT is designed to be second-order regardless of the flow characteristics.
 Finally, these results are similar to the planar divergent deformational flow test presented in Section \ref{2d-adv-divflow}.
 
@@ -1154,7 +1160,7 @@ Finally, these results are similar to the planar divergent deformational flow te
 \label{chp-cs-conc}
 In summary, in this Chapter, we demonstrate how the dimension-splitting methods from Chapter \ref{chp-2d-fv}, 
 namely the PL and LT methods, can be extended to the cubed-sphere to solve the advection equation on the sphere 
-using the cubed-sphere grids g0 and g2, along with the duo-grid interpolation presented in Chapter \ref{chp-cs-grids}.
+using the cubed-sphere grids equi-edge (g0) and equiangular (g2), along with the duo-grid interpolation presented in Chapter \ref{chp-cs-grids}.
 We observed a major difference in the metric term that appears in this case, and it may be treated differently in the PPM flux computation.
 Also, on the cubed-sphere, we need to apply a mass fixer, namely averaging the fluxes at the cube edges, to ensure exact mass preservation.
 
@@ -1179,4 +1185,4 @@ while LT did not exhibit this behavior.
 Also, the final error of PL was concentrated at a cube corner, which was not observed for the LT scheme.
 The overall results for these test showed that the LT scheme have smaller errors in general.
 We could also observe that the mass fixer did not significantly impact the results,
-and the g0 grid generally exhibited smaller errors compared to the g2 grid, with LT showing good performance in both grids.
+and the equi-edge grid (g0) grid generally exhibited smaller errors compared to the equiangular grid (g2), with LT showing good performance in both grids.
