@@ -6,8 +6,8 @@ we are able to introduce the method of \citet{lin:1997} for solving the shallow-
 In fact, this scheme considers the SWE in the vector invariant form, and therefore, 
 the flux operators discussed in Chapter \ref{chp-cs-fv} are used to update the fluid depth,
 as well as the time-averaged relative vorticity and kinetic energy fluxes.
-This scheme first solves the SWE for a half time-step to obtain covariant C-grid winds and 
-then utilizes this new information to advance the covariant D-grid winds for a full time step.
+This scheme first solves the SWE for a half time-step to obtain  C-grid covariant winds and 
+then utilizes this new information to advance the  D-grid covariant winds for a full time step.
 The C-grid half-step employs upwind flux operators, which are computationally inexpensive, 
 while the D-grid uses PPM-based fluxes, providing higher accuracy. 
 We note that other flux operators could be employed here, but the choice presented is what is utilized in FV3.
@@ -116,19 +116,19 @@ and observe that its integral over the sphere is preserved; that is, the total e
 
 \subsection{Momentum equation discretization}
 The continuity equation \eqref{2d-sweq-h} has the exact same form as the advection equation when written in its conservative form.
-Therefore, this equation can be solved on the A-grid using C-grid winds, as explored in Chapters \ref{chp-2d-fv} and \ref{chp-cs-fv}.
+Therefore, this equation can be solved on the A-grid using C-grid contravariant winds, as explored in Chapters \ref{chp-2d-fv} and \ref{chp-cs-fv}.
 This is how the continuity equation is solved in FV3.
 As we shall see later, this equation is solved twice: 
 once using the 2D upwind flux and another using the dimension-splitting method from Chapter \ref{chp-cs-fv} with PPM.
 
 Therefore, we need to describe how we can solve the momentum equations \eqref{2d-sweq-u} and \eqref{2d-sweq-v}. 
-The method of \citet{lin:1997} employs two types of approaches on their shallow-water solver: one using a C-grid wind and the other using a D-grid.
+The method of \citet{lin:1997} employs two types of approaches on their shallow-water solver: one using a C-grid wind and the other using a D-grid wind.
 The C-grid method serves as an intermediate step utilized by the D-grid method.
 Our goal now is to describe a general discretization of the momentum equations for the C-grid and D-grid winds.
 The full description of the C-grid and D-grid solvers proposed by 
 \citet{lin:1997} will be provided in Sections \ref{csw-grid} and \ref{dsw-grid}, respectively.
 
-\subsubsection{D-grid discretization of momentum equation }
+\subsubsection{D-grid discretization of the momentum equation }
 We introduce the following average operators for the covariant components in $x$ and $y$ directions, respectively:
 \begin{align}
 	\label{2d-sweq-int_u}
@@ -177,7 +177,7 @@ Integrating Equations \eqref{2d-sweq-int_equ} and \eqref{2d-sweq-int_eqv} on tim
 	\,dy \bigg)\bigg]\,dt .
 \end{align}
 Using the midpoint rule and using the normalized covariant winds in Equations \eqref{2d-sweq-int_equt} and \eqref{2d-sweq-int_eqvt}, we derive a general scheme
-to update the normalized covariant D-grid winds:
+to update the normalized D-grid covariant winds:
 \begin{align}
 	\label{2d-sweq-dscheme-u}
 	{U}_{i,j+\frac{1}{2}}^{n+1}&=
@@ -200,7 +200,7 @@ Then, this schemes requires an approximation of the time-averaged kinetic energy
 	\int_{t_{n}}^{t_{n+1}} ({u}{U})(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}}, t) \,dt +
 	\int_{t_{n}}^{t_{n+1}} ({v}{V})(x_{i+\frac{1}{2}}, y_{j+\frac{1}{2}}, t) \,dt\bigg],
 \end{equation}
-and an approximation of the time-averaged geopotential on B-grid points:
+and an approximation of the time-averaged geopotential on B-grid:
 \begin{equation}
 	\label{geop-bgrid}
 	\Phi_{i+\frac{1}{2},j+\frac{1}{2}}^n \approx
@@ -222,12 +222,12 @@ The terms should $F_{i+\frac{1}{2},j}[\xi^{n}, u^n]$ and $G_{i,j+\frac{1}{2}}[\x
 \end{align}
 Notice that since $\xi$ satisfies the advection equation \eqref{absvort-eq}, 
 these integrals may be approximated using finite-volume fluxes assuming that $\xi$ may be advected on the A-grid.
-Indeed, this is possible because, as we shall see soon, the D-grid facilitates the estimation of $\xi$ on the A-grid by using centered finite differences.
+Indeed, this is possible because, as we shall see soon, the  D-grid covariant wind facilitates the estimation of $\xi$ on the A-grid by using centered finite differences.
 All these approximations needed for the D-grid scheme are described in Section \ref{dsw-grid}.
 
 
-\subsubsection{C-grid discretization of momentum equation }
-Similar to the derivation of the D-grid wind scheme, we may deduce the following C-grid scheme for a half-time step:
+\subsubsection{C-grid discretization of the momentum equation }
+Similar to the derivation of the  D-grid covariant wind scheme, we may deduce the following C-grid covariant wind scheme for a half-time step:
 \begin{align}
 	\label{2d-sweq-cscheme-u}
 	{U}_{i+\frac{1}{2},j}^{n+1}&=
@@ -274,7 +274,7 @@ The terms should $F_{i,j+\frac{1}{2}}[\xi^{n}, u^n]$ and $G_{i+\frac{1}{2},j}[\x
 \end{align}
 Once again, since $\xi$ satisfies the advection equation \eqref{absvort-eq}, 
 these integrals may be approximated using finite-volume fluxes assuming that $\xi$ may be advected on the B-grid.
-Indeed, this is possible because, as we shall see soon, the C-grid facilitates the estimation of $\xi$ on the B-grid by using centered finite differences.
+Indeed, this is possible because, as we shall see soon, the C-grid covariant wind facilitates the estimation of $\xi$ on the B-grid by using centered finite differences.
 All these approximations are described in Section \ref{csw-grid}.
 
 \section{The FV3 shallow-water solver}
@@ -284,7 +284,7 @@ The C-grid intermediate step is described in Section \ref{csw-grid}, while the D
 
 \subsection{C-grid intermediate step}
 \label{csw-grid}
-The C-grid intermediate step serves to provide the contravariant C-grid winds centered at time 
+The C-grid intermediate step serves to provide the  C-grid contravariant winds centered at time 
 ${u}^{n+\frac{1}{2}}_{i+\frac{1}{2},j}$ and ${v}^{n+\frac{1}{2}}_{i,j+\frac{1}{2}}$
 that are required by the advection fluxes when using PPM, as discussed in Chapters \ref{chp-2d-fv} and \ref{chp-cs-fv}. 
 One could utilize second-order extrapolation to obtain these centered at time C-grid winds, using two time levels, namely:
@@ -302,14 +302,13 @@ We are going to describe everything that is needed to advance the
 C-grid winds given by Equations \eqref{2d-sweq-cscheme-u} and \eqref{2d-sweq-cscheme-v}.
 
 \subsubsection{Wind interpolation}
-We are given  the normalized covariant wind components  on a D-grid
+We are given the D-grid covariant wind,
 that is, we have $U_{i,j+\frac{1}{2}}^n$ for $i=0,\ldots,N$, $j=1,\ldots,N$, 
 and $V_{i+\frac{1}{2},j}^n$ $j=0,\ldots,N$, $i=1,\ldots,N$.
 We may then use the duo-grid interpolation (Section \ref{cs-wind-interp}) to get the values on the duo-grid.
 After that, we have all the values 
 $U_{i,j+\frac{1}{2}}^n$ for $i=0,\ldots,N+\nu$, $j=1,\ldots,N+\nu$, 
 and $V_{i+\frac{1}{2},j}^n$ $j=0,\ldots,N+\nu$, $i=1,\ldots,N+\nu$.
-
 
 We define the average operator in the $x$ direction as:
 \begin{align}
@@ -378,7 +377,7 @@ for $i=-\nu+2,\ldots,N+\nu$, $j=-\nu+1,\ldots,N+\nu$, and similarly to the $V$ c
 \end{align}
 for $i=-\nu+1,\ldots,N+\nu$, $j=-\nu+2,\ldots,N+\nu$.
 
-Then, we may get the covariant C-grid wind using the original contravariant D-grid wind:
+Then, we may get the C-grid covariant wind using the original D-grid contravariant wind:
 \begin{align}
 	\label{d2a-uuu}
 	u_{i+\frac{1}{2},j}^n &= \frac{1}{\sin^2{\alpha_{i+\frac{1}{2},j}}}
@@ -483,7 +482,7 @@ Once we have computed $h^{n+\frac{1}{2}}_{ij}$, we are able to estimate the time
 for $i,j=0, \ldots, N+1$.
 We use $h^{n+\frac{1}{2}}_{ij}$ instead of $h^{n}_{ij}$ so the C-grid scheme becomes backward-forward in time;
 otherwise, the C-grid scheme would be unconditionally unstable \citep{lin:1997}.
-Following that, we estimate the geopotential gradient on the C-grid and D-grid points, respectively, by using centered differences:
+Following that, we estimate the geopotential gradient on the edge midpoints by using centered differences:
 \begin{align}
 	\label{2d-sw-eq-Cgrid-geo-dx}
 	\delta_i \Phi^n_{i+\frac{1}{2},j} &= \Phi^{n}_{i+1,j} - \Phi^{n}_{ij},
@@ -494,7 +493,7 @@ Following that, we estimate the geopotential gradient on the C-grid and D-grid p
 \end{align}
 \subsubsection{Absolute vorticity fluxes}
 Using the C-grid covariant winds $(U_{i+\frac{1}{2},j}^n,V_{i,j+\frac{1}{2}}^n)$,
-we may compute the relative vorticity (Equation \eqref{vort2-eq}) at the B-grid points using a centered finite difference:
+we may compute the relative vorticity (Equation \eqref{vort2-eq}) at the B-grid using a centered finite difference:
 \begin{align}
 	\label{2d-sw-rv-Cgrid}
 	\zeta_{i+\frac{1}{2},j+\frac{1}{2}}^n &= \frac{1}{\sqrt{\mathfrak{g}}_{i+\frac{1}{2},j+\frac{1}{2}}}\bigg[
@@ -709,7 +708,7 @@ for $j=-1,\ldots,N+2, i=-\nu+1,\ldots,N+\nu$.
 Hence, we have the C-grid contravariant time-averaged winds that are needed for the flux operators.
 
 For the kinetic energy fluxes, we require B-grid winds. 
-For this reason, we compute the covariant B-grid wind using:
+For this reason, we compute the B-grid covariant wind using:
 \begin{equation}
 	\label{bgrid-U}
 	U_{i+\frac{1}{2},j+\frac{1}{2}}^{n+\frac{1}{2}}	= 
@@ -871,7 +870,7 @@ The divergence on B-grid points may be computed using the D-grid contravariant w
 	\bigg].
 \end{align*}
 This is straightforward from the definition of divergence in terms of a cubed-sphere mapping (Equation \eqref{advcs:eqdiv}).
-We may then compute the gradient of this divergence at D-grid wind positions, namely:
+We may then compute the gradient of this divergence at the edge midpoints, namely:
 \begin{align}
 	D^u_{i,j+\frac{1}{2}}[u^n,v^n] &= \frac{D_{i+\frac{1}{2},j+\frac{1}{2}}[u^n,v^n]- D_{i-\frac{1}{2},j+\frac{1}{2}}[u^n,v^n]}{\hat{\delta}x_{i,j+\frac{1}{2}}},
 	\quad i=1,\ldots,N, j=0,\ldots,N,\\
@@ -925,7 +924,7 @@ The shallow-water solver that uses PL for these fluxes is referred to simply as 
 \label{sec:numerical_results}
 In this Section, we are going to compare the PL and LT shallow-water schemes described \eqref{sw-modf} using classical
 shallow-water tests presented in the literature.
-These schemes shall be tested with the hord8 scheme.
+These schemes shall be tested with the limited PPM scheme (hord8).
 
 The D-grid output $(U_{i,j+\frac{1}{2}}^n,V_{i+\frac{1}{2},j}^n)$ is interpolated to the A-grid as
 \begin{align}
@@ -965,7 +964,7 @@ To compute the error convergence, we consider cubed-sphere grids with values of
 $N_k = 48\times2^{k}$, and \textit{dt\textunderscore atmos}$^{(k)} = \frac{dt\textunderscore atmos^{(0)}}{2^k}$ for 
 $k=0, \ldots, 4$, where the value of \textit{dt\textunderscore atmos}$^{(0)}$ is taken from Table \ref{chp5-vf}. %for each TC.
 The value of n\_split is the same regardless of the value of $N_k$.
-We are going to consider both the g0 and g2 grids with the spherical midpoint formulation.%, and it will always be made clear whether the divergence damping is being used or not (Section \ref{dd-cs}).%Whenever we use divergence damping, we consider $d_4 = 0.12$ and $nord=2$, as used in \citet{mouallem:2023}.
+We are going to consider both the equi-edge grid (g0) and the equiangular grid (g2) with the spherical midpoint formulation.%, and it will always be made clear whether the divergence damping is being used or not (Section \ref{dd-cs}).%Whenever we use divergence damping, we consider $d_4 = 0.12$ and $nord=2$, as used in \citet{mouallem:2023}.
 We also use divergence damping, we consider $d_4 = 0.12$ and $nord=2$, as used in \citet{mouallem:2023}.
 In this case, the dissipation is a fourth-order operator and therefore is more scale selective.
 \begin{table}[!ht]
@@ -998,8 +997,8 @@ In this case, the dissipation is a fourth-order operator and therefore is more s
 		\caption{ max= $5.37\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-0b}}
 	\end{subfigure}
 	\caption{
-		Geostrophic balanced flow test error distribution using hord8
-		with PL (top) and LT schemes (bottom) on the g0 grid with $N=192$. 
+		Geostrophic balanced flow test error distribution using the limited PPM (hord8)
+		with PL (top) and LT schemes (bottom) on the equi-edge grid (g0) with $N=192$. 
 		\label{chp-advcs-sec-exp-sw1-errors-0}}
 \end{figure}
 \newpage
@@ -1015,27 +1014,28 @@ In this case, the dissipation is a fourth-order operator and therefore is more s
 		\includegraphics[width=1\linewidth]{h_error_tc2_t5_alpha45_C192_g2_dg1_adv2_hord8_dd0.12_mf1_tf5}
 		\caption{LT scheme, max= $5.49\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-2b}}
 	\end{subfigure}
-	\caption{As Figure \ref{chp-advcs-sec-exp-sw1-errors-0} but using the g2 grid.\label{chp-advcs-sec-exp-sw1-errors-2}}
+	\caption{As Figure \ref{chp-advcs-sec-exp-sw1-errors-0} but using the equiangular grid (g2).\label{chp-advcs-sec-exp-sw1-errors-2}}
 \end{figure}
 
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=1\linewidth]{u_linferror_tc2_alpha45}
-	\caption{Error of the zonal wind component for the geostrophic case for the g0 (left) and g2 (right) grids \label{chp-advcs-sec-exp-sw-l2}}
+	\caption{Error of the zonal wind component for the geostrophic case for the equi-edge grid (g0, eft) and the equiangular grid (g2, right) \label{chp-advcs-sec-exp-sw-l2}}
 \end{figure}
 
 \newpage
-From Figure \ref{chp-advcs-sec-exp-sw1-errors-0}, we observe the errors for the grid g0 using the PL and LT schemes. It is evident that the LT scheme has a smaller error. Furthermore, although both schemes exhibit grid imprinting, the PL scheme displays more pronounced grid imprinting, whereas the LT scheme shows a more evenly distributed error.
-For the g2 grid, LT reduces the maximum error, but the grid imprinting is very similar to the PL scheme.
-This test case demonstrates how the LT scheme improves performance for the g0 and g2 grids.
+From Figure \ref{chp-advcs-sec-exp-sw1-errors-0}, we observe the errors for the equi-edge grid (g0) using the PL and LT schemes. It is evident that the LT scheme has a smaller error. Furthermore, although both schemes exhibit grid imprinting, the PL scheme displays more pronounced grid imprinting, whereas the LT scheme shows a more evenly distributed error.
+For the equiangular grid (g2), LT reduces the maximum error, but the grid imprinting is very similar to the PL scheme.
+This test case demonstrates how the LT scheme improves performance for the equi-edge grid (g0) and the equiangular grid (g2).
 Additionally, Figure \ref{chp-advcs-sec-exp-sw-l2} shows the error convergence for the zonal wind in the $L_{\infty}$. 
 We observe that the error of the LT scheme is slightly smaller compared to PL scheme, and both schemes demonstrate second-order accuracy.
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=0.8\linewidth]{tc2_C192_linf_errors}
 	\caption{
-		$L_{\infty}$ error evolution for the geostrophic balanced flow test  on the g0 (left) and g2 (right) grids for 5 days and $N=192$.
-		Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme. All schemes use hord8.
+		$L_{\infty}$ error evolution for the geostrophic balanced flow test  on the equi-edge grid (g0, left)
+		 and on the equiangular (g2, right) grid for 5 days and $N=192$.
+		Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme. All schemes use the limited PPM (hord8).
 		\label{chp-advcs-sec-exp-sw-evol-linf}}
 \end{figure}
 \begin{figure}[!htb]
@@ -1048,7 +1048,8 @@ We observe that the error of the LT scheme is slightly smaller compared to PL sc
 
 Furthermore, in Figure \ref{chp-advcs-sec-exp-sw-evol-linf}, we present the evolution of the $L_{\infty}$ error in fluid depth over 5 days. 
 Once again, the LT scheme exhibits a slightly lower error than the PL scheme.
-On the other hand, Figure \ref{chp-advcs-sec-exp-sw-evol-l2} shows that the $L_2$ error evolution of both schemes is similar for the g2 grid, with PL being slightly smaller. However, on the g0 grid, the LT scheme grows faster and is larger than PL.
+On the other hand, Figure \ref{chp-advcs-sec-exp-sw-evol-l2} shows that the $L_2$ error evolution 
+of both schemes is similar for the equiangular grid (g2), with PL being slightly smaller. However, on the equi-edge grid (g0), the LT scheme grows faster and is larger than PL.
 \newpage
 
 
@@ -1066,7 +1067,7 @@ It is clear that the LT scheme adds a very small cost, showing that this scheme 
 		384                                                 & \multicolumn{1}{l|}{737.8164}  & \multicolumn{1}{l|}{727.3037}  & \multicolumn{1}{l|}{754.4678}  & 748.9158                   \\ \hline
 		768                                                 & \multicolumn{1}{l|}{7851.4003} & \multicolumn{1}{l|}{7606.7404} & \multicolumn{1}{l|}{7983.9900} & 7764.0984                  \\ \hline
 	\end{tabular}
-	\caption{Total runtime for the LT and PL schemes using the g0 and g2 grids for different values of $N$.
+	\caption{Total runtime for the LT and PL schemes using the equi-edge grid (g0) and the equiangular grid (g2) for different values of $N$.
 		The additional cost of the LT scheme is due to the computation of a second-order estimate of 1D departure points.}
 \label{sw-time}
 \end{table}
