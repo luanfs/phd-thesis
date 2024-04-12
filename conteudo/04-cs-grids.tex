@@ -1027,6 +1027,12 @@ However, when spherical midpoints are employed, we observe a reduction in accura
 Both dg1 and dg2 are very similar in this case.
 This discrepancy arises due to a second-order mismatch between cube and spherical midpoints, as discussed in Section \ref{duogrid-points}.
 Finally, we observe that the equi-edge grid (g0) yields slightly better results than the equiangular grid (g2) for the cube midpoints formulation.
+
+At last, we point out that a B-grid fields, as defined by \cite{arakawa:1977} represents a scalar field
+at the corner points, namely, 
+denoted by $q_{i+\frac{1}{2},j+\frac{1}{2},p}$, where $i, j=0\ldots, N$ and $p=1,\ldots, 6$. 
+We can estimate these values at positions outside the range $0, \ldots, N$ using an analogous procedure to the one described here for A-grid fields.
+
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
