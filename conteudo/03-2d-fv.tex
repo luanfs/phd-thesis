@@ -845,7 +845,7 @@ The spatial domain spans approximately $10^4$ kilometers in both directions,
 which correspond to approximately the lengths of a cubed-sphere panel,
 as shall be seen in Chapter \ref{chp-cs-grids}.
 
-For the 1D schemes, we will consider the FV-SL unlimited PPM ({hord0}, Subsection \ref{chp-adv1d-sec-hord0}) and limited PPM
+For the 1D schemes, we will consider the FV-SL unlimited PPM ({hord0}, Subsection \ref{chp-adv1d-sec-hord0}) and the limited PPM
 ({hord8}, Subsection \ref{chp-adv1d-sec-hord8}), 
 each tested with both departure point schemes \textbf{DP1} (Subsection \ref{chp-adv1d-sec-DP1}) and \textbf{DP2} (Subsection \ref{chp-adv1d-sec-DP2}).
 We employ $(\Delta x^{(k)},\Delta y^{(k)},\lambda)$-discretizations with $\Delta x^{(k)} = \Delta y^{(k)} = \frac{L}{N^{(k)}}$,
@@ -894,7 +894,7 @@ The IC is a rectangular profile (refer to Figure \ref{chp-adv2d-sec-exp-adv1-a})
 	\caption{Linear advection experiment using a constant velocity $\boldsymbol{u} = \left(\frac{L}{T},\frac{L}{T}\right)$, 
 	a CFL number set to $0.67$, and a grid resolution of $N=M=48$.
 	The initial condition is given by Equation \eqref{chp-adv2d-ic1}.
-	We run this test with the PL splitting combined with the unlimited PPM (hord0) (b) and limited PPM (hord8) (c).
+	We run this test with the PL splitting combined with the unlimited PPM hord0 (b) and the limited PPM hord8 (c).
         The figures display the advected profile after 12 days (one time period).
         The initial condition is depicted in (a). \label{chp-adv2d-sec-exp-adv1}}
 \end{figure}
@@ -905,12 +905,10 @@ Due to the constant velocity field, all splitting schemes introduced in Section 
 Therefore, we only consider the PL splitting. Additionally, it is evident that the Lie-Trotter splitting is exact in this case 
 (see, for example, \cite[p.~202-203]{leveque:1990}), meaning no splitting error is introduced.
 For the 1D schemes, we utilize DP1 to compute the departure point, as this scheme is exact when the velocity is constant.
-
 The conclusions drawn from this test closely resemble those of the first 1D test discussed in Section \ref{chp-adv1d-sec-numerical-exp-1}.
 This similarity arises because no splitting error is introduced when the velocity remains constant.
 Figure \ref{chp-adv2d-sec-exp-adv1-c} illustrates that PL splitting maintains monotonicity, particularly noticeable when using the limited 1D scheme hord8.
 
-\newpage
 \subsection{Flow deformation with nondivergent wind}
 \label{2d-adv-ndivflow}
 For a first variable velocity testing, we consider two Gaussian hills given by:
@@ -1015,7 +1013,7 @@ that PL-DP1 and LT-DP2 have smaller errors than PL-DP2 and LT-DP1, along with hi
 \includegraphics[width=1\linewidth]{adv2d_tc3_linf_error}
 \caption{$L_{\infty}$ error for the two Gaussian hills (Equation \ref{chp-adv2d-ic2})
 with the velocity from Equation \eqref{chp-adv2d-vf1}.
-Schemes using the unlimited PPM (hord0) are on the left, and limited PPM (hord8) are on the right.
+Schemes using the unlimited PPM (hord0) are on the left, and the limited PPM (hord8) are on the right.
 The PL scheme with DP1 is in green, and with DP2 is in red. 
 The LT scheme with DP1 is in blue, and with DP2 is in yellow.
 \label{chp-adv2d-sec-exp-adv2-error-linf}}

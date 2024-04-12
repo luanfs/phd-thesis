@@ -359,7 +359,7 @@ These grids are generated using the equidistant, equiangular and equi-edge mappi
 We will denote the area of $\Omega_{ijp}$ by $|\Omega_{ij}|$.
 Notice that the area does not depend on the panel due to the grid symmetry.
 We also define the diameter of a cell as $2\sqrt{\frac{|\Omega_{ij}|}{\pi}}$, which corresponds to the diameter of a circle with area $|\Omega_{ij}|$.
-This gives a good approximation to the cell diameters, as the cells on the cubed-sphere have similar lengths.
+This gives a good approximation to the cell diameters, as a cell on the cubed-sphere has similar lengths.
 The control volume area is given by:
 \begin{equation}
 	\label{chp4-area}
@@ -472,7 +472,7 @@ Similarly, in tables \ref{g0-da-table}, \ref{g1-da-table}, and \ref{g2-da-table}
 \end{table}
 
 
-We can observe that in terms of areas and diameters of the cells, the equidistant grid (g1) is the least uniform,
+We can observe that in terms of areas and diameters of the cells, the equidistant grid (g1) is the less uniform,
 while the equiangular grid  is the most uniform grid.
 The equi-edge grid is more uniform than the equidistant grid, but the maximum/minimum ratio of the areas is almost 2.3. 
 Despite this, the equi-edge grid is the operational grid in some applications of FV3 \citep{harris:2021,chen:2021}, such as, for instance, 
@@ -526,7 +526,7 @@ The grids equi-edge (g0) and equiangular (g2), formulated with these grid points
 We refer to this grid point formulation as cube midpoints, which is a common approach used in the literature \citep{guo:2014,katta:2015,katta:2015b,nair:2005,ullrich:2016}.
 
 Another way to compute the grid points, which is used in FV3, is to compute the corner
-points using as before and obtain the center, right-left edge and up-down edge points using the spherical midpoints.
+points as before and obtain the center, right-left edge and up-down edge points using the spherical midpoints.
 These points shall be denoted using a superscript 's'.
 The corner points in this case are:
 \begin{equation}
@@ -565,7 +565,7 @@ However, one can see that this does not occur on g0.s or g2.s, as the center, ri
 Although this misalignment becomes negligible for high resolutions,
 it impacts ghost cell interpolation accuracy, as we shall see in Section \ref{cs-halodata}.
 
-Hereafter, we are going to omit the superscripts 's' and 'c', because what is described here has the same meaning for both midpoint formulations.
+Hereafter in this Subsection, we are going to omit the superscripts 's' and 'c', because what is described here has the same meaning for both midpoint formulations.
 Finally, we introduce the following geodesic distances in $x$ and $y$ directions, respectively,
 \begin{align}
 	\label{distcube}
@@ -637,8 +637,8 @@ This may require special attention from numerical schemes using equi-edge near e
 		\includegraphics[width=1\linewidth]{g2_duo}
 		\caption{g2 duo-grid.\label{cs-duo-g2}}
 	\end{subfigure}
-	\caption{Duo-grid lines of panel 1 for the equi-edge (g0) (a) and equiangular (g2) grids (c). (b) shows the mirrored duo-grid of equi-edge (g0).
-		Corner duo-grid points are denoted by blue circles, the corner points are denoted by white points.\label{cs-duo}}
+	\caption{Duo-grid lines of panel 1 for the equi-edge grid g0 (a) and the equiangular grid g2 (c). (b) shows the mirrored duo-grid of equi-edge grid.
+		Corner duo-grid points are denoted by blue circles, and the corner points are denoted by white points.\label{cs-duo}}
 \end{figure}
 
 \subsection{Tangent vectors on the sphere}
@@ -905,7 +905,7 @@ components and the covariant components.
 \label{cs-notation}
 We also utilize the notation $\mathcal{CS}_N=\mathbb{R}^{(N+\nu)\times(N+\nu)\times 6}$
 to represent grid functions on the cubed-sphere at cell centers.
-These grid functions, as they are defined at cell centers and follow the nomenclature of \citet{arakawa:1977}, define what we call an A-grid field or function.
+These grid functions, as they are defined at cell centers and following the nomenclature of \citet{arakawa:1977}, define what we call an A-grid field or function.
 We define the average values of a function $q$ with the aid of the metric term
 $\sqrt{\mathfrak{g}}(x,y)$ at time $t$: 
 \begin{equation}
@@ -1023,10 +1023,10 @@ Additionally, we analyze g2.s and g2.c, each one with dg1 and dg2, and their err
 
 From the dashed lines in Figure \ref{cs-tc1-error}, we observe that both dg1 and dg2 achieve fourth-order accuracy when the midpoints use the cube formulation, 
 with dg2 being much more accurate than dg1.
-Both dg1 and dg2 are very similar in this case.
 However, when spherical midpoints are employed, we observe a reduction in accuracy by two orders, as indicated by the solid lines.
+Both dg1 and dg2 are very similar in this case.
 This discrepancy arises due to a second-order mismatch between cube and spherical midpoints, as discussed in Section \ref{duogrid-points}.
-Finally, we observe that the equi-edge (g0) grid yields slightly better results than equiangular (g2) for cube midpoints formulation.
+Finally, we observe that the equi-edge grid (g0) yields slightly better results than the equiangular grid (g2) for the cube midpoints formulation.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
@@ -1039,7 +1039,7 @@ Finally, we observe that the equi-edge (g0) grid yields slightly better results 
 		\includegraphics[width=1\linewidth]{g2_duo_error_tc-2_ha}
 		\caption{Error for g2.\label{cs-duoscalar-tc1-g2}}
 	\end{subfigure}
-	\caption{Error for the duo-grid interpolation of the scalar field of \eqref{duo-tc1} for the grid equi-edge (g0) (left) and g2 (right).
+	\caption{Error for the duo-grid interpolation of the scalar field of \eqref{duo-tc1} for the equi-edge grid (g0, left) and the equiangular grid (g2, right).
 Dashed lines use the cube midpoint formulation, while solid lines use the spherical midpoint formulation.
 Green lines represent dg1, and red lines represent dg2.\label{cs-tc1-error}}
 \end{figure}
@@ -1048,7 +1048,7 @@ Green lines represent dg1, and red lines represent dg2.\label{cs-tc1-error}}
 \subsection{Ghost cells wind interpolation}
 \label{cs-wind-interp}
 Let us consider the following problem: Assume that we are given a tangent vector field of the sphere, denoted as 
-$\boldsymbol{u}:\mathbb{S}^2_R \to \mathbb{R}^3$. We also have its normalized covariant components at the edge points, 
+$\boldsymbol{u}:\mathbb{S}^2_R \to \mathbb{R}^3$. We also have its normalized covariant normal components at the edge points, 
 namely $u_{i+\frac{1}{2},j,p}$ for $i=0, \ldots, N$ and $j=1, \ldots, N$, as well as
 $v_{i,j+\frac{1}{2},p}$ for $i=1, \ldots, N$ and $j=0, \ldots, N$. This grid function is called C-grid wind following \citet{arakawa:1977} (Figure \ref{cs-duovec-1}).
 
@@ -1112,11 +1112,11 @@ Specifically, we need the values:
 We apply a simple linear interpolation to remap $u$ and $v$ to the center points (Figure \ref{cs-duovec}).
 Then we obtain two A-grid scalar fields, and we may proceed as before to fill the ghost cell values.
 However, we are going to use one extra layer of A-grid values since they will be needed for re-interpolation to the edge points.
-For instance, for 3 layers of ghost cells, we need 4 layers of A duo-grid values as shown in Figure \ref{cs-duovec-2}.
+For instance, for 3 layers of ghost cells, we need 4 layers of A duo-grid values to fill the C-grid wind at the duo-grid edge points, as shown in Figure \ref{cs-duovec-2}.
 Once these interpolated values are computed, we convert the covariant values $u_{ijp}, v_{ijp}$
 to their latitude-longitude components $(u_{\lambda})_{ijp}, (v_{\phi})_{ijp}$ using Equations \eqref{norm-contravariant-to-covariant} and
 \eqref{ll-to-normcontravariant}.
-This conversion avoids any coordinate system discontinuity, as this interpolation is performed only close to the grid edges and far from the poles.
+This conversion avoids any coordinate system discontinuity, as this interpolation is performed only close to the cube edges and far from the poles.
 Then, we can use the ghost cell centers interpolation procedure described before for the latitude-longitude components
 to recover the wind at the ghost cell centers using any polynomial degree (Figures \ref{cs-duovec-3}).
 Finally, we can use the values at the ghost cell centers to obtain the values at the ghost cell edges
@@ -1132,13 +1132,13 @@ We will consider the following rotated zonal field, as a numerical test, based o
 	\end{cases}
 \end{align}
 Here,  $u_0 = \frac{2\pi R}{12 \text{days}}$ and $\alpha= \frac{\pi}{4}$. We will adopt the same grids and schemes as in Section \ref{cs-interp}.
-Next, we will compute the relative errors of the covariant components at the midpoint edges.
-The errors are presented in Figure \ref{cs-tc2-error}, along with the convergence rate for different degrees employed in the ghost cell center interpolation.
+Next, we will compute the relative errors of the covariant components at the edge midpoints.
+The errors are presented in Figure \ref{cs-tc2-error}, along with the convergence rate for different schemes employed in the ghost cell center interpolation.
 We emphasize that, since we utilize a linear interpolation to retrieve the A-grid wind components from the edge midpoints, as well as in the interpolation
 from the center duo-grid points to edge duo-grid points, the maximum attainable scheme order is 2.
 Indeed, from Figure \ref{cs-tc2-error}, we observe that when employing a cubic polynomials in the duo-grid interpolation step, the final order achieved is 2.
 We can also observe again that the spherical midpoints yield larger errors than the cube midpoints formulation.
-Additionally, dg2 yields smaller errors, and overall, equi-edge (g0) performs slightly better than equiangular (g2) grid .
+Additionally, dg2 yields smaller errors, and overall, equi-edge (g0) performs slightly better than the equiangular (g2) grid.
 
 
 \newpage
@@ -1198,7 +1198,7 @@ We introduce the relative errors:
 We are going to compute $E$ for different values of $N$ as in the numerical experiments of Section \ref{cs-interp}.
 We consider the kinked scheme for the grids g0.s and g2.s, and the dg2 scheme for the grids g0.s, g0.c, g2.s, and g2.c.
 The reconstruction scheme employed is the limited PPM (hord8). We depict the errors in Figure \ref{cs-recon-error}.
-We can observe that the error for the equi-edge grid (g0) is only slightly better than the error for equiangular grid (g2).
+We can observe that the error for the equi-edge grid (g0) is only slightly better than the error for the equiangular grid (g2).
 Also, the errors for the cube midpoint formulation and the spherical midpoint formulation are essentially the same when using dg2.
 \begin{figure}[!htb]
 	\centering
@@ -1213,7 +1213,7 @@ Also, the errors for the cube midpoint formulation and the spherical midpoint fo
 		\caption{Error for g2.\label{cs-recon-g2}}
 	\end{subfigure}
 	\caption{Relative error for the PPM reconstruction using scalar field from Equation \eqref{duo-tc1}.
-	equi-edge (g0) grid results are on the left, and g2 results are on the right.
+	Equi-edge (g0) grid results are on the left, and equiangular grid (g2) results are on the right.
 	Green lines represent g2.s with the kinked method;
 	red lines represent g2.s with dg2;
 	blue lines represent g2.c with dg2.
@@ -1249,8 +1249,8 @@ Additionally, the kinked method exhibits less grid imprinting in the equi-edge g
 		\includegraphics[width=1\linewidth]{recon_g0_192.c.dg2.hord8}
 		\caption{g0.c with dg2.\label{recon-errors-g0-c-dg}}
 	\end{subfigure}
-	\caption{The logarithm in base 10 of the errors of the edge grid points reconstruction from A-grid values of the scalar field, 
-		given by Equation \eqref{duo-tc1}, using the equi-edge (grid g0) with $N=192$. \label{recon-errors-g0}}
+	\caption{The logarithm in base 10 of the errors of the edge grid points reconstruction from the A-grid field
+		given by Equation \eqref{duo-tc1}, using the equi-edge grid (g0) with $N=192$. \label{recon-errors-g0}}
 \end{figure}
 
 \newpage
@@ -1280,30 +1280,29 @@ Additionally, the kinked method exhibits less grid imprinting in the equi-edge g
 \section{Concluding remarks}
 \label{cs-conc}
 In this Chapter, we reviewed cubed-sphere mappings with a special focus on the equiangular and equi-edge mappings,
-which leads to a more uniform cubed-sphere grid, with the equiangular being the most uniform.
-The corner points points are generated using the equiangular and equi-edge mappings;
-however, the center and edge points may be generated using the cubed-sphere mappings or using midpoints based on spherical midpoints of the corner points
+which leads to a more uniform cubed-sphere grid, with the equiangular grid being the most uniform.
+The corner points are generated using the equiangular and equi-edge mappings;
+however, the center and edge points may be generated using a cubed-sphere mapping or using midpoints based on spherical midpoints of the corner points
 (Section \ref{cs-geo}).
 
 
-We observed that the equiangular cubed-sphere ghost cells, obtained by extending the gridlines, has a nice property:
+We observed that the equiangular cubed-sphere ghost cells, obtained by extending the gridlines, have a nice property:
 their edge and center ghost points are located on a common geodesic that contains the edge and center points of the adjacent panels. 
 This property allows us to use 1D Lagrange interpolation to obtain the values of scalar and vector fields in the ghost cells.
 The equi-edge grid does not have this property, but we may mirror some points to make its ghost cells have the same property as in the equiangular grid.
 In fact, we demonstrated the accuracy of this interpolation on the duo-grid method through numerical examples in Sections \ref{cs-interp} and \ref{cs-wind-interp}.
-We explored two ways of computing the Lagrange polynomials: one based on geodesic distance and the other based on local coordinate distances.
-Overall, the method based on local coordinate distances showed to introduce smaller errors,
+We explored two ways of computing the Lagrange polynomials: one based on the geodesic distances and the other based on local coordinate distances.
+Overall, the method based on local coordinate distances showed that it introduces smaller errors,
 especially when using the cube midpoints formulation instead of the spherical midpoints formulation.
 
 Afterward, in Section \ref{cs-recon}, we investigated different methods for computing stencils near the cube edges.
 We considered the scheme based on 1D Lagrange interpolation and a scheme based on extrapolations from \citet{putman:2007}, which is currently implemented in FV3.
-Through numerical examples, we demonstrated that the reconstruction at cell edges using  limited PPM (hord8) scheme generates grid imprinting near
+Through numerical examples, we demonstrated that the reconstruction at cell edges using the limited PPM (hord8) scheme generates grid imprinting near
 the cubed edges when using extrapolations.
-The grid imprinting is greatly reduced when we apply the duo-grid Lagrange interpolation,
-showing that this scheme is much better for filling the ghost cells of the cube panels.
+The grid imprinting is greatly reduced when we apply the duo-grid Lagrange interpolation, which shows that this scheme is much better for filling the ghost cells of the cube panels.
 
 One major conclusion of this Chapter is that the cube and spherical midpoints formulation have a second-order difference.
-This impacts severely the duo-grid interpolation step, where we attain the expected orders of interpolation only for the cube midpoints formulation.
+This impacts severely on the duo-grid interpolation step, where we attain the expected orders of interpolation only for the cube midpoints formulation.
 However, in the reconstruction from center to edge midpoints, both formulations have essentially the same errors.
 Hence, we expect that both midpoint formulations should lead to the very similar results.
 

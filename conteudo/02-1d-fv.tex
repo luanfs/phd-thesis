@@ -233,7 +233,7 @@ represents the space of $k$-times periodically differentiable functions over the
 \subsection{The 1D advection equation}
 In this Section, we will derive the integral form of the 1D advection equation with periodic boundary conditions over the interval $\Omega$.
 What is going to be presented here follows \citet{leveque:1990,leveque:2002} closely.
-The advection equation with periodic boundary conditions is the given by the following PDE:
+The advection equation with periodic boundary conditions is given by the following PDE:
 \begin{equation}
 	\label{chp-adv1d-sec-adv-eq1}
 	\begin{cases}
@@ -467,7 +467,7 @@ in terms of the departure point, avoiding the need for knowledge about $q$ over 
 entire interval $[t^n, t^{n+1}]$. This is described in Problem \ref{chp-adv1d-sec2-prob3}:
 \begin{prob}
     \label{chp-adv1d-sec2-prob3}
-	\textcolor{red}{Assume the framework of Problem \ref{chp-adv1d-sec2-prob2}.
+	\textcolor{black}{Assume the framework of Problem \ref{chp-adv1d-sec2-prob2}.
     It follows from Proposition \ref{chp-adv1d-sec-flux:prop1} that}:
 \begin{equation}
 	\label{1d-fvslexact-scheme}
@@ -876,7 +876,7 @@ The expression for the values of $q_{R,i}$ and $q_{L,i}$ are given by:
 	q_{L,i} = q_{i-\frac{1}{2}}.
 \end{align}
 During this work, we refer to this PPM scheme as \textbf{hord0}.
-\textcolor{red}{
+\textcolor{black}{
 This name is justified because in FV3, the 1D advection solver input is named ``hord'' (horizontal advection method).
 We note that hord0 is not implemented in FV3, but we implemented it because, since it has no limiter, it is suitable for checking order of accuracy for the schemes investigated in this work.
 For a list of reconstruction schemes available in FV3, refer to \citet{harris:2021}. One may see that the scheme hord5 in FV3 is the closest to hord0, as hord5 only applies a filter on the hord0 flux to remove  2$\Delta x$ numerical noise}.
@@ -1029,7 +1029,7 @@ and
 \end{equation}
 where we are expressing the flux in terms of the time-averaged CFL number $\tilde{c}^n$.
 Notice that this flux is upwind based, that is, it always computes the flux using the parabola in the upwind direction.
-Finally, for both the unlimited PPM (hord0) and limited PPM (hord8) schemes, $F_{i+\frac{1}{2}}^n$ uses the stencil
+Finally, for both unlimited PPM (hord0) and limited PPM (hord8) schemes, $F_{i+\frac{1}{2}}^n$ uses the stencil
 $\mathcal{S}_{i+\frac{1}{2}} = \{i-3,i-2,i-1,i,i+1,i+2,i+3\}$, and therefore we need $\nu=3$ layers of ghost cells.
 
 In FV3, the 1D flux is computed based on the perturbation values \citep{harris:2021} given by:
