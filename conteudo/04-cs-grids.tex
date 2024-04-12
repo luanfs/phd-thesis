@@ -1048,16 +1048,19 @@ Green lines represent dg1, and red lines represent dg2.\label{cs-tc1-error}}
 \subsection{Ghost cells wind interpolation}
 \label{cs-wind-interp}
 Let us consider the following problem: Assume that we are given a tangent vector field of the sphere, denoted as 
-$\boldsymbol{u}:\mathbb{S}^2_R \to \mathbb{R}^3$. We also have its normalized covariant normal components at the edge points, 
+$\boldsymbol{u}:\mathbb{S}^2_R \to \mathbb{R}^3$. We also have its normalized contravariant normal components at the edge points, 
 namely $u_{i+\frac{1}{2},j,p}$ for $i=0, \ldots, N$ and $j=1, \ldots, N$, as well as
-$v_{i,j+\frac{1}{2},p}$ for $i=1, \ldots, N$ and $j=0, \ldots, N$. This grid function is called C-grid wind following \citet{arakawa:1977} (Figure \ref{cs-duovec-1}).
+$v_{i,j+\frac{1}{2},p}$ for $i=1, \ldots, N$ and $j=0, \ldots, N$. This grid function is called C-grid covariant wind following \citet{arakawa:1977} (Figure \ref{cs-duovec-1}). The C-grid covariant wind is defined similarly using $(U,V)$.
 
 Our objective is to obtain the values 
 \begin{align*}
 	u_{i+\frac{1}{2},j,p} \quad \text{ for} \quad &i=-1, \ldots, N+1, \quad &j=-\nu+1, \ldots, 0, \quad &j=N, \ldots, N+\nu,\\
 	v_{i,j+\frac{1}{2},p} \quad \text{ for} \quad &j=0, \ldots, N, \quad &i=-\nu+1, \ldots, 0,\quad &i=N, \ldots, N+\nu.
 \end{align*}
+
+
 This problem arises when we apply the dimension splitting method on each panel of the cubed-sphere.
+We point out that the method we are going to describe considers the C-grid covariant wind, but it works very similarly for the C-grid contravariant wind.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
@@ -1140,6 +1143,12 @@ Indeed, from Figure \ref{cs-tc2-error}, we observe that when employing a cubic p
 We can also observe again that the spherical midpoints yield larger errors than the cube midpoints formulation.
 Additionally, dg2 yields smaller errors, and overall, equi-edge (g0) performs slightly better than the equiangular (g2) grid.
 
+We point out that we define the D-grid contravariant wind as the grid functions
+namely $v_{i+\frac{1}{2},j,p}$ for $i=0, \ldots, N$ and $j=1, \ldots, N$, as well as
+$u_{i,j+\frac{1}{2},p}$ for $i=1, \ldots, N$ and $j=0, \ldots, N$, following again \citet{arakawa:1977}.
+On the D-grid wind, we have the tangential components of the wind, whereas on the C-grid wind, we have the normal components of the wind.
+The D-grid wind at duo-grid points may be obtained using a very similar process as described before.
+The D-grid covariant wind is defined similarly using $(U,V)$.
 
 \newpage
 \subsection{Edges reconstruction}
