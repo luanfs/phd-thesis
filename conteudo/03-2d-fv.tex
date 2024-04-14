@@ -558,7 +558,7 @@ The time-averaged CFL numbers are computed using the schemes
 The values $q_{L,ij}^x$, $q_{R,ij}^x$, $q_{L,ij}^y$, and $q_{R,ij}^y$,
 which approximate values of $q$, namely 
 $q_{i-\frac{1}{2},j}$, $q_{i+\frac{1}{2},j}$, $q_{i,j-\frac{1}{2}}$, $q_{i,j+\frac{1}{2}}$, respectively,
-are computed using one of the schemes unlimited PPM ({hord0}) and limited PPM ({hord8}) as described
+are computed using one of the schemes unlimited PPM (UNLIM) and monotonic PPM (MONO) as described
 in Sections \ref{chp-adv1d-sec-hord0} and \ref{chp-adv1d-sec-hord8}, again
 applied separately in the $x$ and $y$ directions.
 These approximations are expected to be
@@ -616,7 +616,7 @@ for $i=0, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and the 1D fluxes in $y$ dire
     	\end{cases}
 \end{equation}
 for $i=-\nu+1, \ldots, N + \nu$, $j=0, \ldots, M$.
-For both the unlimited (hord0) and limited (hord8) PPM schemes, we set $\nu=3$.
+For both the unlimited and monotonic PPM schemes, we set $\nu=3$.
 
 We introduce the auxiliary grid functions $\mathbf{F}$ and $\mathbf{G}$, both belonging to $\mathbb{R}^{N\times M}_{\nu}$, given by:
 \begin{align*}
@@ -845,8 +845,8 @@ The spatial domain spans approximately $10^4$ kilometers in both directions,
 which correspond to approximately the lengths of a cubed-sphere panel,
 as shall be seen in Chapter \ref{chp-cs-grids}.
 
-For the 1D schemes, we will consider the FV-SL unlimited PPM ({hord0}, Subsection \ref{chp-adv1d-sec-hord0}) and the limited PPM
-({hord8}, Subsection \ref{chp-adv1d-sec-hord8}), 
+For the 1D schemes, we will consider the FV-SL unlimited PPM (Subsection \ref{chp-adv1d-sec-hord0}) and the monotonic PPM
+(Subsection \ref{chp-adv1d-sec-hord8}), 
 each tested with both departure point schemes \textbf{DP1} (Subsection \ref{chp-adv1d-sec-DP1}) and \textbf{DP2} (Subsection \ref{chp-adv1d-sec-DP2}).
 We employ $(\Delta x^{(k)},\Delta y^{(k)},\lambda)$-discretizations with $\Delta x^{(k)} = \Delta y^{(k)} = \frac{L}{N^{(k)}}$,
 $N^{(k)} = 48 \times 2^k$, $k=0,\ldots, 4$.
@@ -884,17 +884,17 @@ The IC is a rectangular profile (refer to Figure \ref{chp-adv2d-sec-exp-adv1-a})
 	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1.185\linewidth]{adv2d_tc1_N48_hord0_iadv1_dp1_t12}
-		\caption{PL-hord0\label{chp-adv2d-sec-exp-adv1-b}}
+		\caption{PL-UNLIM\label{chp-adv2d-sec-exp-adv1-b}}
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1.185\linewidth]{adv2d_tc1_N48_hord8_iadv1_dp1_t12}
-		\caption{PL-hord8.\label{chp-adv2d-sec-exp-adv1-c}}
+		\caption{PL-MONO.\label{chp-adv2d-sec-exp-adv1-c}}
 	\end{subfigure}	
 	\caption{Linear advection experiment using a constant velocity $\boldsymbol{u} = \left(\frac{L}{T},\frac{L}{T}\right)$, 
 	a CFL number set to $0.67$, and a grid resolution of $N=M=48$.
 	The initial condition is given by Equation \eqref{chp-adv2d-ic1}.
-	We run this test with the PL splitting combined with the unlimited PPM hord0 (b) and the limited PPM hord8 (c).
+	We run this test with the PL splitting combined with the unlimited PPM (UNLIM) (b) and the monotonic PPM (MONO) (c).
         The figures display the advected profile after 12 days (one time period).
         The initial condition is depicted in (a). \label{chp-adv2d-sec-exp-adv1}}
 \end{figure}
@@ -907,7 +907,7 @@ Therefore, we only consider the PL splitting. Additionally, it is evident that t
 For the 1D schemes, we utilize DP1 to compute the departure point, as this scheme is exact when the velocity is constant.
 The conclusions drawn from this test closely resemble those of the first 1D test discussed in Section \ref{chp-adv1d-sec-numerical-exp-1}.
 This similarity arises because no splitting error is introduced when the velocity remains constant.
-Figure \ref{chp-adv2d-sec-exp-adv1-c} illustrates that PL splitting maintains monotonicity, particularly noticeable when using the limited 1D scheme hord8.
+Figure \ref{chp-adv2d-sec-exp-adv1-c} illustrates that PL splitting maintains monotonicity, particularly noticeable when using the monotonic 1D scheme.
 
 \subsection{Flow deformation with nondivergent wind}
 \label{2d-adv-ndivflow}
@@ -945,7 +945,7 @@ $u$ to prevent error cancellation, as discussed by \citet{nair:2010}.
 
 Figure \ref{chp-adv2d-sec-exp-adv2} illustrates the results obtained using two Gaussian hills and the velocity field 
 from Equation \eqref{chp-adv2d-vf1}.
-We employed a high-resolution grid with $N=768$, along with the PL-DP1-hord8 scheme,
+We employed a high-resolution grid with $N=768$, along with the PL-DP1-MONO scheme,
 to demonstrate the behavior of the test.
 The Figure shows the deformation of the scalar field over time, eventually returning to its initial position.
 
@@ -993,16 +993,16 @@ The Figure shows the deformation of the scalar field over time, eventually retur
 		8  \eqref{chp-adv2d-sec-exp-adv2-d},
 		10  \eqref{chp-adv2d-sec-exp-adv2-e},
 		and 12  \eqref{chp-adv2d-sec-exp-adv2-f} days.
-		We are using the PL-DP1-hord8 scheme, where hord8 is the limited PPM. \label{chp-adv2d-sec-exp-adv2}}
+		We are using the PL-DP1-MONO scheme, where MONO is the monotonic PPM. \label{chp-adv2d-sec-exp-adv2}}
 \end{figure}
 
 To investigate the error convergence, we employ time steps $\Delta t^{(k)}=\frac{5400}{2^{k}}$ for 
 $k = 0, \ldots, 4$, and the spatial discretization as described at the beginning of Section \ref{sec-ds-exp},
 resulting in a CFL number approximately equal to 0.79.
 
-We can observe from Figure \ref{chp-adv2d-sec-exp-adv2-error-linf} that for the unlimited PPM (hord0), PL-DP1 and LT-DP2 have smaller
+We can observe from Figure \ref{chp-adv2d-sec-exp-adv2-error-linf} that for the unlimited PPM, PL-DP1 and LT-DP2 have smaller
 error and higher convergence order than PL-DP2 and LT-DP1.
-However, when considering the limited PPM (hord8), all the schemes have the same error in $L_{\infty}$ norm.
+However, when considering the monotonic PPM, all the schemes have the same error in $L_{\infty}$ norm.
 The errors in $L_{1}$ norm (Figure \ref{chp-adv2d-sec-exp-adv2-error-l1}) exhibit a similar behavior; the only difference is 
 that PL-DP1 and LT-DP2 have smaller errors than PL-DP2 and LT-DP1, along with higher convergence order.
 
@@ -1013,7 +1013,7 @@ that PL-DP1 and LT-DP2 have smaller errors than PL-DP2 and LT-DP1, along with hi
 \includegraphics[width=1\linewidth]{adv2d_tc3_linf_error}
 \caption{$L_{\infty}$ error for the two Gaussian hills (Equation \ref{chp-adv2d-ic2})
 with the velocity from Equation \eqref{chp-adv2d-vf1}.
-Schemes using the unlimited PPM (hord0) are on the left, and the limited PPM (hord8) are on the right.
+Schemes using the unlimited PPM (UNLIM) are on the left, and the monotonic PPM (MONO) are on the right.
 The PL scheme with DP1 is in green, and with DP2 is in red. 
 The LT scheme with DP1 is in blue, and with DP2 is in yellow.
 \label{chp-adv2d-sec-exp-adv2-error-linf}}
@@ -1082,15 +1082,15 @@ resulting in a CFL number approximately equal to 0.67.
 	\end{subfigure}
 	\caption{Similar to Figure \ref{chp-adv2d-sec-exp-adv2}
 		but using the wind from Equation \eqref{chp-adv2d-vf2}.
-		We are using the PL-DP1-hord8 scheme, where hord8 is the limited PPM.\label{chp-adv2d-sec-exp-adv3}}
+		We are using the PL-DP1-MONO scheme, where MONO is the monotonic PPM.\label{chp-adv2d-sec-exp-adv3}}
 \end{figure}
 
-We can observe from Figure \ref{chp-adv2d-sec-exp-adv3-error-linf} that for the unlimited PPM hord0, PL-DP1 has the bigger error,
+We can observe from Figure \ref{chp-adv2d-sec-exp-adv3-error-linf} that for the unlimited PPM, PL-DP1 has the bigger error,
 while LT-DP2 has the smaller error and the highest convergence rate.
-However, when considering the limited PPM (hord8) scheme, all the schemes have almost the same error in $L_{\infty}$ norm.
-Regarding the error in $L_{1}$ norm (Figure \ref{chp-adv2d-sec-exp-adv3-error-l1}), we can see that for limited PPM (hord8),
+However, when considering the monotonic PPM  scheme, all the schemes have almost the same error in $L_{\infty}$ norm.
+Regarding the error in $L_{1}$ norm (Figure \ref{chp-adv2d-sec-exp-adv3-error-l1}), we can see that for monotonic PPM,
 LT-DP2 achieves second-order accuracy, while PL-DP1 achieves only first order.
-Finally, the schemes PL-DP2 and LT-DP1 have the same errors for both the unlimited (hord0) and limited (hord8) PPM, in both $L_{\infty}$ and $L_{1}$ norms.
+Finally, the schemes PL-DP2 and LT-DP1 have the same errors for both the unlimited and monotonic PPM, in both $L_{\infty}$ and $L_{1}$ norms.
 
 \newpage
 \begin{figure}[!htb]
@@ -1098,7 +1098,7 @@ Finally, the schemes PL-DP2 and LT-DP1 have the same errors for both the unlimit
 	\includegraphics[width=1\linewidth]{adv2d_tc4_linf_error}
 	\caption{$L_{\infty}$ error for the two Gaussian hills (Equation \ref{chp-adv2d-ic2})
 			with the velocity from Equation \eqref{chp-adv2d-vf2}.
-			Schemes using the unlimited PPM (hord0) are on the left, and limited PPM (hord8) are on the right.
+			Schemes using the unlimited PPM (UNLIM) are on the left, and monotonic PPM (MONO) are on the right.
 			The PL scheme with DP1 is in green, and with DP2 is in red. 
 			The LT scheme with DP1 is in blue, and with DP2 is in yellow.\label{chp-adv2d-sec-exp-adv3-error-linf}}
 \end{figure}
