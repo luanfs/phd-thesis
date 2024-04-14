@@ -273,7 +273,7 @@ we introduce the following PPM flux in the $x$ direction (recall Equation \eqref
 	\end{cases}
 \end{align}
 for each $j=-\nu+1, \ldots, N+\nu$ and $i=1, \ldots, N$, and
-where the PPM perturbation values $b^L$ and $b^R$ values are computed using the unlimited PPM hord0 (Section \ref{chp-adv1d-sec-hord0}) or the limited PPM (hord8) (Section \ref{chp-adv1d-sec-hord8})
+where the PPM perturbation values $b^L$ and $b^R$ values are computed using the unlimited PPM (Section \ref{chp-adv1d-sec-hord0}) or the monotonic (Section \ref{chp-adv1d-sec-hord8})
 
 Therefore, we may rewrite Equation \eqref{1d-qx} as
 \begin{equation}
@@ -621,7 +621,7 @@ For an expression of the exact solution when using VF1 and a general initial con
 
 We are going to consider the schemes LT-DP2 and PL-DP1 since these schemes yield better results on planar simulations (Section \ref{sec-ds-exp}).
 For a shorter notation, we shall denote LT-DP2 and PL-DP1 by \textbf{LT} and \textbf{PL} advection schemes. 
-These schemes will be tested using the unlimited PPM (hord0) and the limited PPM (hord8) 1D PPM schemes.
+These schemes will be tested using the unlimited PPM  and the monotonic PPM scheme.
 As we mentioned in Section \ref{sec-metricppm}, the PL scheme needs the \textbf{mt1} 
 metric term formulation for the 1D flux operators to eliminate the splitting error for a constant scalar field.
 For the LT scheme, we shall use the \textbf{mt0} metric term formulation because for this scheme, 
@@ -697,7 +697,7 @@ eventually returning to its initial position.
 		8  \eqref{chp-advcs-sec-exp-adv2-d},
 		10  \eqref{chp-advcs-sec-exp-adv2-e},
 		and 12  \eqref{chp-advcs-sec-exp-adv2-f} days.
-		We are using the LT-hord8-mf1 scheme on the equiangular grid (g2) with $N=384$. \label{chp-advcs-sec-exp-adv2}}
+		We are using the LT-MONO-mf1 scheme on the equiangular grid (g2) with $N=384$. \label{chp-advcs-sec-exp-adv2}}
 \end{figure}
 
 The goal of this test is to observe the ability of all schemes and grids to perform this test without creating
@@ -706,12 +706,12 @@ In fact, in Figure \ref{chp-advcs-sec-exp-adv2-evol-linf} we show how the error 
 Similarly, Figure \ref{chp-advcs-sec-exp-adv2-evol-l2} shows the error evolution over time in the $L_2$ norm.
 Both figures use green lines to represent the PL scheme and blue lines to represent the LT scheme.
 Light colors denote cases where the mass fixer is not used, while dark colors represent cases where it is used. 
-Dashed lines represent the limited PPM (hord8) while solid lines represent the unlimited PPM (hord0).
+Dashed lines represent the monotonic while solid lines represent the unlimited PPM.
 
 \newpage
 In terms of the $L_2$ norm, as shown in Figure \ref{chp-advcs-sec-exp-adv2-evol-l2}, 
 no spikes are observed in the graphs corresponding to the days when the Gaussian passes over a corner.
-Another conclusion is that the mass fixer does not have too much impact on error evolution when the limited PPM (hord8) scheme is used.
+Another conclusion is that the mass fixer does not have too much impact on error evolution when the monotonic scheme is used.
 However, from Figure \ref{chp-advcs-sec-exp-adv2-evol-linf} we can see some small spikes in the $L_{\infty}$ error
 on the equi-edge grid (g0) when using the PL scheme, which is not very pronounced in the LT scheme.
 \begin{figure}[!htb]
@@ -721,7 +721,7 @@ on the equi-edge grid (g0) when using the PL scheme, which is not very pronounce
 		$L_{\infty}$ error evolution for IC1 (Table \ref{chp5-ic}) and VF1 (Table \ref{chp5-vf}) 
 		on the equi-edge grid (g0, left) and on the equiangular grid (g2, right) grids for 12 days and $N=384$.
 		Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme.
-		Solid lines represent the results with the unlimited PPM (hord0) scheme, whereas dashed lines represent the results with the limited PPM (hord8).
+		Solid lines represent the results with the unlimited PPM (UNLIM) scheme, whereas dashed lines represent the results with the monotonic (MONO).
 		Light colors show the result without mass fixer (mf0), whereas dark colors show the results with flux averaging (mf1).
 		\label{chp-advcs-sec-exp-adv2-evol-linf}}
 \end{figure}
@@ -733,7 +733,7 @@ on the equi-edge grid (g0) when using the PL scheme, which is not very pronounce
 \end{figure}
 
 \newpage
-This indicates that LT is less sensitive to corners than PL when using hord8. 
+This indicates that LT is less sensitive to corners than PL when using MONO. 
 Indeed, Figure \ref{chp-advcs-sec-exp-adv2-errors-0} shows the final error at a cube corner for the equi-edge grid (g0), 
 and Figure \ref{chp-advcs-sec-exp-adv2-errors-2} shows it for the equiangular grid (g2).
 The results without a mass fixer are very similar and are not shown here. 
@@ -757,7 +757,7 @@ indicating that the equi-edge grid (g0) is less sensitive to the corner for the 
 	\end{subfigure}
 	\caption{
 		Advection experiment errors at a cube corner using the Gaussian hill (IC1, Table \ref{chp5-ic}) and  
-		the rotated zonal wind (VF1, Table \ref{chp5-vf}) after 12 days, using the limited PPM scheme (hord8) 
+		the rotated zonal wind (VF1, Table \ref{chp5-vf}) after 12 days, using the monotonic scheme (MONO) 
 		with PL (left) and LT schemes (right) on the equi-edge grid (g0) with $N=384$. 
 		\label{chp-advcs-sec-exp-adv2-errors-0}}
 \end{figure}
@@ -779,9 +779,9 @@ indicating that the equi-edge grid (g0) is less sensitive to the corner for the 
 
 \newpage
 Finally, in Figures \ref{chp-advcs-sec-exp-adv2-linf} and \ref{chp-advcs-sec-exp-adv2-l2} we show the error convergence in $L_{\infty}$ and $L_{2}$ norms.
-We can observe that all schemes with the unlimited PPM (hord0) achieve second-order accuracy as expected.
-However, for hord8, the order is reduced, which is also expected.
-Additionally, we can see that hord8 with LT has smaller errors when comparing the blue dashed lines with the green dashed lines, 
+We can observe that all schemes with the unlimited PPM (UNLIM) achieve second-order accuracy as expected.
+However, for MONO, the order is reduced, which is also expected.
+Additionally, we can see that MONO with LT has smaller errors when comparing the blue dashed lines with the green dashed lines, 
 for both $L_{\infty}$ and $L_{2}$ norms on both equi-edge grid (g0) and the equiangular grid (g2), indicating that LT is more accurate.
 In general, the errors of g0 are slightly smaller than those of g2.
 \begin{figure}[!htb]
@@ -792,7 +792,7 @@ $L_{\infty}$ error convergence for the advection on the sphere test using the Ga
 the rotated zonal wind  (VF1, Table \ref{chp5-vf}) on the equi-edge grid (g0, left) 
 and on the equiangular grid (g2, right) after 12 days.
 Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme.
-Solid lines represent the results with the unlimited PPM (hord0) scheme, whereas dashed lines represent the results with limited PPM (hord8).
+Solid lines represent the results with the unlimited PPM (UNLIM) scheme, whereas dashed lines represent the results with the monotonic PPM (MONO).
 Light colors show the result without mass fixer (mf0), whereas dark colors show the results with flux averaging (mf1).\label{chp-advcs-sec-exp-adv2-linf}}
 \end{figure}
 
@@ -824,7 +824,7 @@ For $N=384$, the temporal evolution of the errors is very similar to that of IC1
 	\end{subfigure}
 	\caption{
 		Advection experiment errors at a cube corner using the cosine bell (IC2, Table \ref{chp5-ic}) and  
-the rotated zonal wind (VF1, Table \ref{chp5-vf}) after 12 days, using the limited PPM scheme (hord8) 
+the rotated zonal wind (VF1, Table \ref{chp5-vf}) after 12 days, using the monotonic scheme (MONO) 
 		with PL (left) and LT schemes (right) on the equi-edge grid (g0) grid with $N=384$. 
 		\label{chp-advcs-sec-exp-adv5-errors-0}}
 \end{figure}
@@ -851,11 +851,11 @@ We conclude again that LT has a smaller error at the corner, especially for the 
 In Figures \ref{chp-advcs-sec-exp-adv5-linf} and \ref{chp-advcs-sec-exp-adv5-l2},
 we show the error convergence for the $L_{\infty}$ and $L_2$ norms, respectively.
 Note that the errors in the $L_{\infty}$ norm (Figure \ref{chp-advcs-sec-exp-adv5-linf})
-for the unlimited PPM (hord0) (solid lines) are not achieving second order as they should because the solution is not differentiable.
-For hord8 (dashed lines), we can see that the $L_{\infty}$ errors for LT (blue lines) are smaller than the errors of PL (green lines), especially for the equi-edge grid (g0).
-Also, for the equi-edge grid (g0), the order of the LT-hord8 scheme in the $L_{\infty}$ norm gets very close to 2,
+for the unlimited PPM (solid lines) are not achieving second order as they should because the solution is not differentiable.
+For MONO (dashed lines), we can see that the $L_{\infty}$ errors for LT (blue lines) are smaller than the errors of PL (green lines), especially for the equi-edge grid (g0).
+Also, for the equi-edge grid (g0), the order of the LT-MONO scheme in the $L_{\infty}$ norm gets very close to 2,
 and for the equiangular grid (g2), its order surpasses two.
-These results for LT-hord8 are better than expected and are not observed for the PL-hord8 scheme.
+These results for LT-MONO are better than expected and are not observed for the PL-MONO scheme.
 Finally, the $L_2$ errors are very similar (Figure \ref{chp-advcs-sec-exp-adv5-l2}).
 \begin{figure}[!htb]
 	\centering
@@ -865,7 +865,7 @@ Finally, the $L_2$ errors are very similar (Figure \ref{chp-advcs-sec-exp-adv5-l
 		the rotated zonal wind  (VF1, Table \ref{chp5-vf}) on the equi-edge grid (g0, left) 
 		and on the equiangular grid (g2, right) after 12 days.
 		Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme.
-		Solid lines represent the results with the unlimited PPM (hord0) scheme, whereas dashed lines represent the results with limited PPM (hord8).
+		Solid lines represent the results with the unlimited PPM (UNLIM) scheme, whereas dashed lines represent the results with monotonic (MONO).
 		Light colors show the result without mass fixer (mf0), whereas dark colors show the results with flux averaging (mf1).
 		\label{chp-advcs-sec-exp-adv5-linf}}
 \end{figure}
@@ -924,7 +924,7 @@ We show how the solution evolves with time in Figure \ref{chp-advcs-sec-exp-adv6
 		8  \eqref{chp-advcs-sec-exp-adv6-d},
 		10  \eqref{chp-advcs-sec-exp-adv6-e},
 		and 12  \eqref{chp-advcs-sec-exp-adv6-f} days.
-		We are using the LT-hord8-mf1 scheme on the equiangular grid (g2) with $N=192$. \label{chp-advcs-sec-exp-adv6}}
+		We are using the LT-MONO-mf1 scheme on the equiangular grid (g2) with $N=192$. \label{chp-advcs-sec-exp-adv6}}
 \end{figure}
 
 The goal of this test is to assess the qualitative behavior of the solution, 
@@ -938,23 +938,23 @@ It is evident that all the schemes yield similar results, and we cannot observe 
 	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{h_tc-7_t12_alpha45_C192_g0_dg2_adv1_hord8_mf1_tf12}
-		\caption{PL-hord8 at g0.\label{chp-advcs-sec-exp-adv7-b}}
+		\caption{PL-MONO at g0.\label{chp-advcs-sec-exp-adv7-b}}
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{h_tc-7_t12_alpha45_C192_g0_dg2_adv2_hord8_mf1_tf12}
-		\caption{LT-hord8 at g0.\label{chp-advcs-sec-exp-adv7-c}}
+		\caption{LT-MONO at g0.\label{chp-advcs-sec-exp-adv7-c}}
 	\end{subfigure}
 	
 	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{h_tc-7_t12_alpha45_C192_g2_dg2_adv1_hord8_mf1_tf12}
-		\caption{PL-hord8 at g2.\label{chp-advcs-sec-exp-adv7-d}}
+		\caption{PL-MONO at g2.\label{chp-advcs-sec-exp-adv7-d}}
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 	\centering
 	\includegraphics[width=1\linewidth]{h_tc-7_t12_alpha45_C192_g2_dg2_adv2_hord8_mf1_tf12a}
-	\caption{PL-hord8 at g2.\label{chp-advcs-sec-exp-adv7-e}}
+	\caption{PL-MONO at g2.\label{chp-advcs-sec-exp-adv7-e}}
     \end{subfigure}
 
 	\begin{subfigure}{0.3\textwidth}
@@ -963,9 +963,9 @@ It is evident that all the schemes yield similar results, and we cannot observe 
 	\caption{IC and exact solution at day 12.\label{chp-advcs-sec-exp-adv7-a}}
     \end{subfigure}
 	\caption{Cylinder at corner test with $N=192$ after 12 days for the schemes 
-	PL-hord8 at the equi-edge grid (g0) (a),	LT-hord8 at the equi-edge grid (g0) (b), 
-	PL-hord8 at the equiangular grid (g2) (c) and LT-hord8 at the equiangular grid (g2) (d).
-	(e) depicts the reference solution. The limited PPM scheme is denoted by hord8.
+	PL-MONO at the equi-edge grid (g0) (a),	LT-MONO at the equi-edge grid (g0) (b), 
+	PL-MONO at the equiangular grid (g2) (c) and LT-MONO at the equiangular grid (g2) (d).
+	(e) depicts the reference solution. The monotonic scheme is denoted by MONO.
 	\label{chp-advcs-sec-exp-adv7}}
 \end{figure}
 
@@ -1020,7 +1020,7 @@ This test is the spherical analogous of the planar divergence free deformational
 		8  \eqref{chp-advcs-sec-exp-adv3-d},
 		10  \eqref{chp-advcs-sec-exp-adv3-e},
 		and 12  \eqref{chp-advcs-sec-exp-adv3-f} days.
-		We are using the LT-hord8-mf1 scheme on the equiangular grid (g2) with $N=384$.\label{chp-advcs-sec-exp-adv3}}
+		We are using the LT-MONO-mf1 scheme on the equiangular grid (g2) with $N=384$.\label{chp-advcs-sec-exp-adv3}}
 \end{figure}
 
 Figures \ref{chp-advcs-sec-exp-adv3-errors-0} and \ref{chp-advcs-sec-exp-adv3-errors-2} show 
@@ -1050,7 +1050,7 @@ These figures show the advected profile after
 8  \eqref{chp-advcs-sec-exp-adv3-d},
 10  \eqref{chp-advcs-sec-exp-adv3-e},
 and 12  \eqref{chp-advcs-sec-exp-adv3-f} days.
-We are using the LT-hord8-mf1 scheme on the equiangular grid (g2) with $N=384$.
+We are using the LT-MONO-mf1 scheme on the equiangular grid (g2) with $N=384$.
 		 \label{chp-advcs-sec-exp-adv3-errors-0}}
 \end{figure}
 \begin{figure}[!htb]
@@ -1068,9 +1068,9 @@ We are using the LT-hord8-mf1 scheme on the equiangular grid (g2) with $N=384$.
 	\caption{As Figure \ref{chp-advcs-sec-exp-adv3-errors-0} but using the equiangular grid (g2).\label{chp-advcs-sec-exp-adv3-errors-2}}
 \end{figure}
 Figures \ref{chp-advcs-sec-exp-adv3-linf} and \ref{chp-advcs-sec-exp-adv3-l2} we show the error convergence in $L_{\infty}$ and $L_{2}$ norms.
-Once more, it is evident that all schemes with the unlimited PPM (hord0) achieve second-order accuracy as expected, while those with limited PPM (hord8) experience a reduced order 
-in $L_{\infty}$ norm. In $L_{2}$ norm, the order is 2 for hord8.
-Furthermore, LT demonstrates smaller errors when utilizing hord8, reaffirming that LT is indeed more accurate than PL.
+Once more, it is evident that all schemes with the unlimited PPM (UNLIM) achieve second-order accuracy as expected, while those with the monotonic PPM (MONO) experience a reduced order 
+in $L_{\infty}$ norm. In $L_{2}$ norm, the order is 2 for MONO.
+Furthermore, LT and PL demonstrate the same errors when utilizing MONO.%, reaffirming that LT is indeed more accurate than PL.
 We also notice that the mass fixer does not impact the errors.
 \newpage
 \begin{figure}[!htb]
@@ -1080,7 +1080,7 @@ We also notice that the mass fixer does not impact the errors.
 $L_{\infty}$ error convergence for the advection on the sphere test using the two Gaussian hills  (IC4, Table \ref{chp5-ic}) and the variable in time divergent-free wind
 (VF2, Table \ref{chp5-vf}) on the equi-edge grid (g0, left) and on the equiangular grid (g2, right) after 12 days.
 Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme.
-Solid lines represent the results with the unlimited PPM (hord0) scheme, whereas dashed lines represent the results with the limited PPM (hord8).
+Solid lines represent the results with the unlimited PPM (UNLIM) scheme, whereas dashed lines represent the results with the monotonic PPM (MONO).
 Light colors show the result without mass fixer (mf0), whereas dark colors show the results with flux averaging (mf1).
 \label{chp-advcs-sec-exp-adv3-linf}}
 \end{figure}
@@ -1144,7 +1144,7 @@ These figures show the advected profile after
 8  \eqref{chp-advcs-sec-exp-adv4-d},
 10  \eqref{chp-advcs-sec-exp-adv4-e},
 and 12  \eqref{chp-advcs-sec-exp-adv4-f} days.
-We are using the LT-hord8-mf1 scheme on the equiangular grid (g2) with $N=384$. \label{chp-advcs-sec-exp-adv4}}
+We are using the LT-MONO-mf1 scheme on the equiangular grid (g2) with $N=384$. \label{chp-advcs-sec-exp-adv4}}
 \end{figure}
 
 Figures \ref{chp-advcs-sec-exp-adv4-errors-0} and \ref{chp-advcs-sec-exp-adv4-errors-2} show the final error at a cube face 
@@ -1165,7 +1165,7 @@ We can observe that the errors for PL are much larger, with significant errors p
 		\caption{LT scheme.\label{chp-advcs-sec-exp-adv4-errors-0b}}
 	\end{subfigure}
 	\caption{
-		Advection experiment errors using the two Gaussian hills (IC4, Table \ref{chp5-ic}) and  the divergent wind (VF3, Table \ref{chp5-vf}) after 12 days, using the limited PPM scheme (hord8)
+		Advection experiment errors using the two Gaussian hills (IC4, Table \ref{chp5-ic}) and  the divergent wind (VF3, Table \ref{chp5-vf}) after 12 days, using the monotonic scheme (MONO)
 	 with PL (left) and LT schemes (right) on the equi-edge grid (g0) with $N=384$.
 	 \label{chp-advcs-sec-exp-adv4-errors-0}}
 \end{figure}
@@ -1186,10 +1186,10 @@ We can observe that the errors for PL are much larger, with significant errors p
 
 Figures \ref{chp-advcs-sec-exp-adv4-linf} and \ref{chp-advcs-sec-exp-adv4-l2} we show the error convergence in $L_{\infty}$ and $L_{2}$ norms.
 These figures highlight a major significant distinction between LT and PL schemes, unlike the previous tests.
-It is clear that PL with the unlimited PPM (hord0) achieves only first-order accuracy, whereas LT with the unlimited PPM (hord0) achieves third-order accuracy, 
+It is clear that PL with the unlimited PPM achieves only first-order accuracy, whereas LT with the unlimited PPM (UNLIM) achieves third-order accuracy, 
 surpassing second-order the expectation, for both equi-edge grid (g0) and the equiangular grid (g2) and norms.
-For the limited PPM (hord8), LT demonstrates second-order accuracy in the $L_2$ norm, while PL is only first-order.
-LT with the limited PPM (hord8) exhibits smaller errors in the $L_{\infty}$ norm compared to the PL scheme for all grids.
+For the monotonic  scheme (MONO), LT demonstrates second-order accuracy in the $L_2$ norm, while PL is only first-order.
+LT with the monotonic scheme (MONO) exhibits smaller errors in the $L_{\infty}$ norm compared to the PL scheme for all grids.
 This discrepancy arises because the PL splitting is designed for divergence-free flows, while LT is designed to be second-order regardless of the flow characteristics.
 Finally, these results are similar to the planar divergent deformational flow test presented in Section \ref{2d-adv-divflow}.
 
@@ -1203,7 +1203,7 @@ Finally, these results are similar to the planar divergent deformational flow te
 		(VF3, Table \ref{chp5-vf}) on the equi-edge grid (g0, left) 
 		and on the equiangular grid (g2, right) after 12 days.
 		Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme.
-		Solid lines represent the results with the unlimited PPM (hord0) scheme, whereas dashed lines represent the results with the limited PPM (hord8).
+		Solid lines represent the results with the unlimited PPM (UNLIM) scheme, whereas dashed lines represent the results with the monotonic PPM (MONO).
 		Light colors show the result without mass fixer (mf0), whereas dark colors show the results with flux averaging (mf1).
 	\label{chp-advcs-sec-exp-adv4-linf}}
 \end{figure}
