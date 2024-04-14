@@ -487,16 +487,16 @@ with $\alpha$ independent of $\Delta t$, $N$ and $n$, then we ensure the stabili
 With the PPM operator, we can compute the amplification factor by applying it
 on each Fourier mode considering any PPM  scheme without monotonization.
 We assume a constant velocity equal to one and $N=100$ (number of control volumes).
-In Figure \ref{chp-adv1d-fig-amplification} we show the amplification factor for the hord0 scheme.
-We can observe that hord0 damp most of the Fourier modes for larger $k$, regardless of the CFL number.
-We point out that hord0 is exact when the CFL number is equal to 1.
-From this analysis, we can conclude that hord0 satisfy the
+In Figure \ref{chp-adv1d-fig-amplification} we show the amplification factor for the unlimited PPM scheme (UNLIM).
+We can observe that  UNLIM damp most of the Fourier modes for larger $k$, regardless of the CFL number.
+We point out that  UNLIM is exact when the CFL number is equal to 1.
+From this analysis, we can conclude that  UNLIM satisfy the
 Von Neumann stability criteria when the CFL restriction is respected.
 For an analysis of stability for larger time-steps, we refer to \citet{lauritzen:2007}.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.49\linewidth]{stability_PPM-0}
-	\caption{Amplification factor for the hord0 scheme for different CFL numbers.}
+	\caption{Amplification factor for the  UNLIM scheme for different CFL numbers.}
 	\label{chp-adv1d-fig-amplification}
 \end{figure}
 
