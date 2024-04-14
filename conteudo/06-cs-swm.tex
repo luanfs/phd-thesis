@@ -896,7 +896,7 @@ are multiplied by $\nu_D$ and added in Equations \eqref{2d-sweq-dscheme-u} and \
 
 We point out that there are other numerical dissipation mechanisms available in FV3, such as vorticity damping and frictional heating \citep{harris:2021}. 
 We are considering only the divergence damping for simplicity.
-We also point out that limited scheme that we are using (hord8) has implicit diffusion.
+We also point out that monotonic scheme that we are using (MONO) has implicit diffusion.
 
 \section{Proposed modifications}
 \label{sw-modf}
@@ -924,7 +924,7 @@ The shallow-water solver that uses PL for these fluxes is referred to simply as 
 \label{sec:numerical_results}
 In this Section, we are going to compare the PL and LT shallow-water schemes described \eqref{sw-modf} using classical
 shallow-water tests presented in the literature.
-These schemes shall be tested with the limited PPM scheme (hord8).
+These schemes shall be tested with the monotonic PPM scheme (MONO).
 
 The D-grid output $(U_{i,j+\frac{1}{2}}^n,V_{i+\frac{1}{2},j}^n)$ is interpolated to the A-grid as
 \begin{align}
@@ -997,7 +997,7 @@ In this case, the dissipation is a fourth-order operator and therefore is more s
 		\caption{ max= $5.37\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-0b}}
 	\end{subfigure}
 	\caption{
-		Geostrophic balanced flow test error distribution using the limited PPM (hord8)
+		Geostrophic balanced flow test error distribution using the monotonic PPM (MONO)
 		with PL (top) and LT schemes (bottom) on the equi-edge grid (g0) with $N=192$. 
 		\label{chp-advcs-sec-exp-sw1-errors-0}}
 \end{figure}
@@ -1035,7 +1035,7 @@ We observe that the error of the LT scheme is slightly smaller compared to PL sc
 	\caption{
 		$L_{\infty}$ error evolution for the geostrophic balanced flow test  on the equi-edge grid (g0, left)
 		 and on the equiangular (g2, right) grid for 5 days and $N=192$.
-		Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme. All schemes use the limited PPM (hord8).
+		Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme. All schemes use the monotonic PPM (MONO).
 		\label{chp-advcs-sec-exp-sw-evol-linf}}
 \end{figure}
 \begin{figure}[!htb]
@@ -1050,7 +1050,7 @@ Furthermore, in Figure \ref{chp-advcs-sec-exp-sw-evol-linf}, we present the evol
 Once again, the LT scheme exhibits a slightly lower error than the PL scheme.
 On the other hand, Figure \ref{chp-advcs-sec-exp-sw-evol-l2} shows that the $L_2$ error evolution 
 of both schemes is similar for the equiangular grid (g2), with PL being slightly smaller. However, on the equi-edge grid (g0), the LT scheme grows faster and is larger than PL.
-\newpage
+
 
 
 Finally, in Table \ref{sw-time}, we show the times needed by each scheme for different grids and values of $N$. 
