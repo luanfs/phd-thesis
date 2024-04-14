@@ -847,7 +847,7 @@ and $q_{R, i}$ as an approximation of $q(x_{i+\frac{1}{2}})$.
 As we mentioned before in after introducing Equation \eqref{chp-adv1d-sec-recon-ppm-eq5}, this is achieved
 using finite-differences.
 
-\subsection{Unlimited PPM reconstruction - hord0}
+\subsection{Unlimited PPM reconstruction}
 \label{chp-adv1d-sec-hord0}
 This Subsection is dedicated to present the unlimited approximation of $q(x_{i-\frac{1}{2}})$ presented in \citet{colella:1984}.
 An explicit expression for the approximation of $q(x_{i-\frac{1}{2}})$, denoted by $q_{i+\frac{1}{2}}$, is given by \citep{colella:1984}:
@@ -875,13 +875,13 @@ The expression for the values of $q_{R,i}$ and $q_{L,i}$ are given by:
 	\label{chp-adv1d-sec-recon-ppm-eq11}
 	q_{L,i} = q_{i-\frac{1}{2}}.
 \end{align}
-During this work, we refer to this PPM scheme as \textbf{hord0}.
+During this work, we refer to this PPM scheme as \textbf{UNLIM}.
 \textcolor{black}{
-This name is justified because in FV3, the 1D advection solver input is named ``hord'' (horizontal advection method).
-We note that hord0 is not implemented in FV3, but we implemented it because, since it has no limiter, it is suitable for checking order of accuracy for the schemes investigated in this work.
-For a list of reconstruction schemes available in FV3, refer to \citet{harris:2021}. One may see that the scheme hord5 in FV3 is the closest to hord0, as hord5 only applies a filter on the hord0 flux to remove  2$\Delta x$ numerical noise}.
+In FV3, the 1D advection solver input is named ``hord'' (horizontal advection method).
+We note that UNLIM is not implemented in FV3, but we implemented it because, since it has no limiter, it is suitable for checking order of accuracy for the schemes investigated in this work.
+For a list of reconstruction schemes available in FV3, refer to \citet{harris:2021}. One may see that the scheme hord=5 in FV3 is the closest to UNLIM, as hord5 only applies a filter on the UNLIM flux to remove  2$\Delta x$ numerical noise}.
 
-\subsection{Limited PPM reconstruction - hord8}
+\subsection{Monotonic PPM reconstruction}
 \label{chp-adv1d-sec-hord8}
 This Subsection is dedicated to presenting a possible way of avoiding the creation of new 
 extrema values in the PPM reconstruction. We are going to present an alternative scheme from \citet{lin:2004},
@@ -914,9 +914,10 @@ The monotonicity is achieved by the following scheme:
 \end{align}
 This scheme may be further improved to reduce the diffusion even more, as described by \citet{lin:2004},
 but we are not going to assess this approach here.
-This scheme is referred to as \textbf{hord8} because, in FV3, the paramenter ``hord'' is set equal to 8 to use this scheme.
+This scheme is referred to as \textbf{MONO}.
+In FV3, the paramenter ``hord'' is set equal to 8 to use this scheme.
 At last, we point out again that many other PPM reconstruction schemes are available in the literature and in FV3 
-\citep{harris:2021,lin:2017}, but for simplicity, we are just going to consider the schemes hord0 and hord8.
+\citep{harris:2021,lin:2017}, but for simplicity, we are just going to consider the schemes UNLIM and MONO.
 
 \section{Flux}
 \label{chp-adv1d-sec-flux}
@@ -1029,7 +1030,7 @@ and
 \end{equation}
 where we are expressing the flux in terms of the time-averaged CFL number $\tilde{c}^n$.
 Notice that this flux is upwind based, that is, it always computes the flux using the parabola in the upwind direction.
-Finally, for both unlimited PPM (hord0) and limited PPM (hord8) schemes, $F_{i+\frac{1}{2}}^n$ uses the stencil
+Finally, for both unlimited PPM and monotonic PPM schemes, $F_{i+\frac{1}{2}}^n$ uses the stencil
 $\mathcal{S}_{i+\frac{1}{2}} = \{i-3,i-2,i-1,i,i+1,i+2,i+3\}$, and therefore we need $\nu=3$ layers of ghost cells.
 
 In FV3, the 1D flux is computed based on the perturbation values \citep{harris:2021} given by:
@@ -1068,7 +1069,7 @@ for $i=1, \cdots, N$.
 Thefore, at each time-step, we need to:
 \begin{enumerate}
 \item Compute $\tilde{c}_{i+\frac{1}{2}}^n$ (for $i = 0, \cdots, N$) using the schemes DP1 or DP2;
-\item Compute $q_{L,i}$ and  $q_{R,i}$ (for $i = 1, \cdots, N$) using hord0 or hord8;
+\item Compute $q_{L,i}$ and  $q_{R,i}$ (for $i = 1, \cdots, N$) using UNLIM or MONO;
 \item Evalute the pertubation values (for $i = 1, \cdots, N$) using Equations
 \eqref{chp-sec-flux:numerical-flux6} and \eqref{chp-sec-flux:numerical-flux7};
 \item Evaluate the fluxes  $\mathfrak{F}_{i+\frac{1}{2}}^{PPM}$ (for $i = 0, \cdots, N$) using Equation \eqref{chp-sec-flux:numerical-flux8};
@@ -1078,8 +1079,8 @@ Thefore, at each time-step, we need to:
 \label{chp-adv1d-sec-numerical-exp}
 This Section is dedicated to presenting the numerical results of the PPM and 
 its variations discussed here. We will consider the reconstruction
-schemes unlimited PPM \textbf{hord0} (Subsection \ref{chp-adv1d-sec-hord0}) and limited PPM
-\textbf{hord8} (Subsection \ref{chp-adv1d-sec-hord8}), as well as the departure point schemes
+schemes unlimited PPM  (Subsection \ref{chp-adv1d-sec-hord0}) and monotonic PPM
+(Subsection \ref{chp-adv1d-sec-hord8}), as well as the departure point schemes
 \textbf{DP1} (Subsection \ref{chp-adv1d-sec-DP1}) and \textbf{DP2} (Subsection \ref{chp-adv1d-sec-DP2}).
 The code used in this Section can be found in Appendix \ref{anexo-code}.
 
@@ -1120,7 +1121,7 @@ for the linear advection equation with constant velocity, which we adopt as $u=\
 	\includegraphics[width=0.6\linewidth]{adv1d_tc1_N48_hord8_DP1_t12}
 	\caption{Linear advection experiment using the IC given by Equation \eqref{chp-adv1d-ic1} (black curve) with constant velocity.
 		These figures show the advected profile after 12 days (one time period).
-		Reconstruction schemes employed: unlimited PPM (hord0 - blue curve) and limited PPM (hord8 - orange curve).\label{chp-adv1d-sec-exp-adv1}}
+		Reconstruction schemes employed: unlimited PPM (UNLIM - blue curve) and monotonic PPM (MONO - orange curve).\label{chp-adv1d-sec-exp-adv1}}
 \end{figure}
 
 It is easy to check that the exact solution of Problem \ref{chp-adv1d-sec2-prob1} is given
@@ -1129,8 +1130,8 @@ We will employ a time step of 14400 seconds and set $N=48$ (therefore $\Delta x 
 The departure schemes \textbf{DP1} and \textbf{DP2} compute the departure point exactly in this case, so we will only use the \textbf{DP1} scheme.
 
 In Figure \ref{chp-adv1d-sec-exp-adv1}, we present the obtained results.
-It is evident that the limited PPM (hord8) exhibit a significant advantage.
-This scheme effectively prevent the strong oscillations observed in the unlimited PPM scheme (hord0),
+It is evident that the monotonic PPM exhibit a significant advantage.
+This scheme effectively prevent the strong oscillations observed in the unlimited PPM scheme,
 as well as the generation of new extrema, which aligns with our expectations.
 
 \subsection{Flow deformation with divergent wind}
@@ -1157,7 +1158,7 @@ In this case, the solution exhibits a period of 12 days,
 meaning that the profile deforms and returns to its initial shape
 and position after 12 days, allowing us to compute the error.
 Indeed, in Figure \ref{chp-adv1d-sec-exp-adv2}, we show how the solution behaves
-using a high-resolution ($N=768$), the hord8 scheme and the DP1 departure point scheme.
+using a high-resolution ($N=768$), the MONO scheme and the DP1 departure point scheme.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.3\textwidth}
@@ -1208,7 +1209,7 @@ using a high-resolution ($N=768$), the hord8 scheme and the DP1 departure point 
 		8  \eqref{chp-adv1d-sec-exp-adv2-e},
 		10  \eqref{chp-adv1d-sec-exp-adv2-f},
 		and 12  \eqref{chp-adv1d-sec-exp-adv2-g} days.
-		We are using the limited PPM (hord8) scheme with the DP1 departure point scheme. \label{chp-adv1d-sec-exp-adv2}}
+		We are using the monotonic PPM scheme with the DP1 departure point scheme. \label{chp-adv1d-sec-exp-adv2}}
 \end{figure}
 \begin{figure}[!htb]
 	\centering
@@ -1222,7 +1223,7 @@ using a high-resolution ($N=768$), the hord8 scheme and the DP1 departure point 
 		\includegraphics[width=1.12\linewidth]{adv1d_tc3_l1_error}
 		\caption{$L_1$ error.\label{chp-adv1d-sec-exp-adv2-error-l1}}
 	\end{subfigure}
-	\caption{Relative error for the unlimited PPM (hord0 -red lines) and limited PPM (hord8 - green lines) schemes
+	\caption{Relative error for the unlimited PPM (UNLIM -red lines) and monotonic PPM (MONO - green lines) schemes
 	         in $L_{\infty}$
 	         (Figure \ref{chp-adv1d-sec-exp-adv2-error-linf})
 	         and $L_1$ norms
@@ -1248,13 +1249,13 @@ The convergence rate is defined by
 \end{equation*}
 The difference between the DP1 and DP2 schemes becomes clear when observing the relative error in Figure \ref{chp-adv1d-sec-exp-adv2-2}.
 In the $L_{\infty}$ norm (Figure \ref{chp-adv1d-sec-exp-adv2-error-linf}), 
-for  the unlimited PPM (hord0), the DP1 scheme results in a first-order error in the departure point, which dominates the total error.
+for  the unlimited PPM, the DP1 scheme results in a first-order error in the departure point, which dominates the total error.
 This observation is in agreement with the discussion in Section \ref{chp-adv1d-sec-dp}.
-On the other hand, when employing the DP2 scheme, we can achieve third-order accuracy for the unlimited PPM (hord0).
-For the limited PPM (hord8), the DP2 slightly reduces the $L_{\infty}$ error.
+On the other hand, when employing the DP2 scheme, we can achieve third-order accuracy for the unlimited PPM.
+For the monotonic PPM, the DP2 slightly reduces the $L_{\infty}$ error.
 
 However, in the $L_1$ norm, as shown in Figure \ref{chp-adv1d-sec-exp-adv2-error-l1}, 
-for both unlimited PPM (hord0) and limited PPM (hord8), we observe that DP1 results in a 1st order accuracy, 
+for both unlimited PPM and monotonic PPM, we observe that DP1 results in a 1st order accuracy, 
 while DP2 results in schemes with an order greater than 2.
 This experiment illustrates the impact of departure point calculation errors on the overall error and the benefit of using DP2.
 
@@ -1264,7 +1265,7 @@ In this Chapter, we provided a general overview of 1D FV-SL schemes for the adve
 We discussed the three essential tasks involved in these schemes.
 The first task is the reconstruction of a function from its average values.
 We employed the PPM method introduced by \citet{colella:1984}
-without limiter (hord0) and its limited variant such as the one from \citet{lin:2004} (hord8).
+without limiter and its monotonic variant such as the one from \citet{lin:2004}.
 The second task involves computing the departure point of the control volume edges. For this purpose, 
 we utilized the first-order departure point calculation  using a time-centered wind in an approach known as DP1.
 Additionally, we explored a second-order approach by employing a two-stages Runge-Kutta scheme
@@ -1273,11 +1274,11 @@ Lastly, the third task entails computing the flux, which involves integrating th
 reconstructed function over a domain determined by the departure point.
 
 The difference between the departure point schemes became apparent when we performed a test 
-with variable velocity. The simulation using the DP1 scheme with hord0 resulted in a final first-order 
-error, despite the scheme having third-order accuracy in space. However, the DP2 scheme  with the unlimited PPM (hord0)
+with variable velocity. The simulation using the DP1 scheme with the unlimited PPM resulted in a final first-order 
+error, despite the scheme having third-order accuracy in space. However, the DP2 scheme  with the unlimited PPM
 preserved third-order accuracy despite being only second-order accurate. We expect that, in 
 general, combining PPM with the DP2 scheme should result in at least second-order accuracy.
-The DP2 scheme also showed to lead to a more accurate result when combined with limited PPM (hord8), especially in the $L_1$ norm.
+The DP2 scheme also showed to lead to a more accurate result when combined with monotonic PPM, especially in the $L_1$ norm.
 Clearly, the DP2 scheme is more computationally expensive since it requires linear interpolation of the velocity field, but this additional cost is minimal.
 %One possible way to reduce 
 %its cost would be to use larger CFL numbers allowed by the FV-SL schemes, as discussed in 
