@@ -929,7 +929,7 @@ For a grid function $Q$ we also use the notations:
 %the halo size equal to three.
 \begin{align*}
 	Q_{\times,j,p} &:= (Q_{-\nu+1,j,p}, \ldots, Q_{N+\nu,j,p}) \in \mathbb{R}^{N}_{\nu},\\
-	Q_{i,\times,p} &:= (Q_{i,-\nu+1,p}, \ldots, Q_{i,M+\nu,p}) \in \mathbb{R}^{N}_{\nu}.
+	Q_{i,\times,p} &:= (Q_{i,-\nu+1,p}, \ldots, Q_{i,N+\nu,p}) \in \mathbb{R}^{N}_{\nu}.
 \end{align*}
 In this work, we shall always approximate the average values since our schemes are expected to be at most second-order,
 this approximation does not deteriorate the convergence order.
@@ -938,8 +938,8 @@ The $p$-norm for $q \in \mathcal{CS}^N$, is defined as:
 	\label{chp-advcs-pnorm}
 	\|q\|_{p, \mathcal{CS}^N}=
 	\begin{cases}
-		\bigg( \sum_{k=1}^{6} \sum_{i=1}^{N} \sum_{j=1}^{M}|q_{ijk}|^p |\Omega_{ij}|\bigg)^{\frac{1}{p}} & \text{if } 1\leq p < \infty,\\
-		\max_{i=1, \ldots, N,j=1,\ldots,M,k=1,\ldots,6}{|q_{ijk}|} & \text{if } p=\infty.
+		\bigg( \sum_{k=1}^{6} \sum_{i=1}^{N} \sum_{j=1}^{N}|q_{ijk}|^p |\Omega_{ij}|\bigg)^{\frac{1}{p}} & \text{if } 1\leq p < \infty,\\
+		\max_{i=1, \ldots, N,j=1,\ldots,N,k=1,\ldots,6}{|q_{ijk}|} & \text{if } p=\infty.
 	\end{cases}
 \end{equation}
 
@@ -1028,7 +1028,7 @@ Both dg1 and dg2 are very similar in this case.
 This discrepancy arises due to a second-order mismatch between cube and spherical midpoints, as discussed in Section \ref{duogrid-points}.
 Finally, we observe that the equi-edge grid (g0) yields slightly better results than the equiangular grid (g2) for the cube midpoints formulation.
 
-At last, we point out that a B-grid fields, as defined by \cite{arakawa:1977} represents a scalar field
+At last, we point out that B-grid fields, as defined by \cite{arakawa:1977} represents a scalar field
 at the corner points, namely, 
 denoted by $q_{i+\frac{1}{2},j+\frac{1}{2},p}$, where $i, j=0\ldots, N$ and $p=1,\ldots, 6$. 
 We can estimate these values at positions outside the range $0, \ldots, N$ using an analogous procedure to the one described here for A-grid fields.
@@ -1212,7 +1212,7 @@ We introduce the relative errors:
 \end{align*}
 We are going to compute $E$ for different values of $N$ as in the numerical experiments of Section \ref{cs-interp}.
 We consider the kinked scheme for the grids g0.s and g2.s, and the dg2 scheme for the grids g0.s, g0.c, g2.s, and g2.c.
-The reconstruction scheme employed is the limited PPM (hord8). We depict the errors in Figure \ref{cs-recon-error}.
+The reconstruction scheme employed is the limited PPM (MONO). We depict the errors in Figure \ref{cs-recon-error}.
 We can observe that the error for the equi-edge grid (g0) is only slightly better than the error for the equiangular grid (g2).
 Also, the errors for the cube midpoint formulation and the spherical midpoint formulation are essentially the same when using dg2.
 \begin{figure}[!htb]
@@ -1232,7 +1232,7 @@ Also, the errors for the cube midpoint formulation and the spherical midpoint fo
 	Green lines represent g2.s with the kinked method;
 	red lines represent g2.s with dg2;
 	blue lines represent g2.c with dg2.
-	The reconstruction scheme is the limited PPM (hord8).\label{cs-recon-error}}
+	The reconstruction scheme is the limited PPM (MONO).\label{cs-recon-error}}
 \end{figure}
 
 From Figure \ref{cs-recon-error}, we see that the dg2 method leads to second-order accuracy, while the kinked method leads to first-order accuracy.
@@ -1312,7 +1312,7 @@ especially when using the cube midpoints formulation instead of the spherical mi
 
 Afterward, in Section \ref{cs-recon}, we investigated different methods for computing stencils near the cube edges.
 We considered the scheme based on 1D Lagrange interpolation and a scheme based on extrapolations from \citet{putman:2007}, which is currently implemented in FV3.
-Through numerical examples, we demonstrated that the reconstruction at cell edges using the limited PPM (hord8) scheme generates grid imprinting near
+Through numerical examples, we demonstrated that the reconstruction at cell edges using the limited PPM (MONO) scheme generates grid imprinting near
 the cubed edges when using extrapolations.
 The grid imprinting is greatly reduced when we apply the duo-grid Lagrange interpolation, which shows that this scheme is much better for filling the ghost cells of the cube panels.
 
