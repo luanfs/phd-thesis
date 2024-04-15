@@ -713,7 +713,8 @@ In terms of the $L_2$ norm, as shown in Figure \ref{chp-advcs-sec-exp-adv2-evol-
 no spikes are observed in the graphs corresponding to the days when the Gaussian passes over a corner.
 Another conclusion is that the mass fixer does not have too much impact on error evolution when the monotonic scheme is used.
 However, from Figure \ref{chp-advcs-sec-exp-adv2-evol-linf} we can see some small spikes in the $L_{\infty}$ error
-on the equi-edge grid (g0) when using the PL scheme, which is not very pronounced in the LT scheme.
+on the equi-edge grid (g0) when using the PL scheme, which is less pronounced in the LT scheme.
+This indicates that LT is slightly less sensitive to corners than PL when using MONO. 
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=0.9\linewidth]{tc-3_C384_linf_errors}
@@ -733,27 +734,25 @@ on the equi-edge grid (g0) when using the PL scheme, which is not very pronounce
 \end{figure}
 
 \newpage
-This indicates that LT is less sensitive to corners than PL when using MONO. 
 Indeed, Figure \ref{chp-advcs-sec-exp-adv2-errors-0} shows the final error at a cube corner for the equi-edge grid (g0), 
 and Figure \ref{chp-advcs-sec-exp-adv2-errors-2} shows it for the equiangular grid (g2).
 The results without a mass fixer are very similar and are not shown here. 
-We can observe that the errors for PL are larger at the corner 
-(Figures \ref{chp-advcs-sec-exp-adv2-errors-0a} and \ref{chp-advcs-sec-exp-adv2-errors-2a}), 
-which is not observed for LT (Figures \ref{chp-advcs-sec-exp-adv2-errors-0b} and \ref{chp-advcs-sec-exp-adv2-errors-2b}).
-Also, the equi-edge grid (g0) and  the equiangular grid (g2) yield similar results for both schemes, 
-although the equiangular grid (g2) exhibits a very small error near the corner, which is not observed in the equi-edge grid (g0), 
-indicating that the equi-edge grid (g0) is less sensitive to the corner for the LT scheme.
+We can observe that the errors for PL are larger at the corners
+(Figures \ref{chp-advcs-sec-exp-adv2-errors-0a} and \ref{chp-advcs-sec-exp-adv2-errors-2a}) 
+than the corner errors of the LT scheme (Figures \ref{chp-advcs-sec-exp-adv2-errors-0b} and \ref{chp-advcs-sec-exp-adv2-errors-2b}).
+Additionally, the equi-edge grid (g0) and the equiangular grid (g2) yield similar results for both schemes,
+with the equi-edge grid resulting in smaller maximum errors.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{h_error_tc-3_t12_alpha45_C384_g0_dg2_adv1_hord8_mf1_tf12}
-		\caption{PL scheme.\label{chp-advcs-sec-exp-adv2-errors-0a}}
+		\caption{PL scheme - max = $1.19 \times 10^{-3}$.\label{chp-advcs-sec-exp-adv2-errors-0a}}
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{h_error_tc-3_t12_alpha45_C384_g0_dg2_adv2_hord8_mf1_tf12}
-		\caption{LT scheme.\label{chp-advcs-sec-exp-adv2-errors-0b}}
+		\caption{LT scheme - max = $8.22 \times 10^{-4}$.\label{chp-advcs-sec-exp-adv2-errors-0b}}
 	\end{subfigure}
 	\caption{
 		Advection experiment errors at a cube corner using the Gaussian hill (IC1, Table \ref{chp5-ic}) and  
@@ -766,12 +765,12 @@ indicating that the equi-edge grid (g0) is less sensitive to the corner for the 
 	\begin{subfigure}{0.45\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{h_error_tc-3_t12_alpha45_C384_g2_dg2_adv1_hord8_mf1_tf12}
-		\caption{PL scheme.\label{chp-advcs-sec-exp-adv2-errors-2a}}
+		\caption{PL scheme - max = $9.52 \times 10^{-4}$.\label{chp-advcs-sec-exp-adv2-errors-2a}}
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{h_error_tc-3_t12_alpha45_C384_g2_dg2_adv2_hord8_mf1_tf12}
-		\caption{LT scheme.\label{chp-advcs-sec-exp-adv2-errors-2b}}
+		\caption{LT scheme - max = $7.20 \times 10^{-4}$.\label{chp-advcs-sec-exp-adv2-errors-2b}}
 	\end{subfigure}
 	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-errors-0} but using the equiangular grid (g2).\label{chp-advcs-sec-exp-adv2-errors-2}}
 \end{figure}
@@ -782,7 +781,7 @@ Finally, in Figures \ref{chp-advcs-sec-exp-adv2-linf} and \ref{chp-advcs-sec-exp
 We can observe that all schemes with the unlimited PPM (UNLIM) achieve second-order accuracy as expected.
 However, for MONO, the order is reduced, which is also expected.
 Additionally, we can see that MONO with LT has smaller errors when comparing the blue dashed lines with the green dashed lines, 
-for both $L_{\infty}$ and $L_{2}$ norms on both equi-edge grid (g0) and the equiangular grid (g2), indicating that LT is more accurate.
+for both $L_{\infty}$ and $L_{2}$ norms on both equi-edge grid (g0) and the equiangular grid (g2), indicating that LT is slightly more accurate.
 In general, the errors of g0 are slightly smaller than those of g2.
 \begin{figure}[!htb]
 	\centering
@@ -815,12 +814,12 @@ For $N=384$, the temporal evolution of the errors is very similar to that of IC1
 	\begin{subfigure}{0.35\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{h_error_tc1_t12_alpha45_C384_g0_dg2_adv1_hord8_mf1_tf12}
-		\caption{PL scheme.\label{chp-advcs-sec-exp-adv5-errors-0a}}
+		\caption{PL scheme - max = $2.92 \times 10^{-3}$\label{chp-advcs-sec-exp-adv5-errors-0a}}
 	\end{subfigure}
 	\begin{subfigure}{0.35\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{h_error_tc1_t12_alpha45_C384_g0_dg2_adv2_hord8_mf1_tf12}
-		\caption{LT scheme.\label{chp-advcs-sec-exp-adv5-errors-0b}}
+		\caption{LT scheme - max = $2.34\times 10^{-3}$\label{chp-advcs-sec-exp-adv5-errors-0b}}
 	\end{subfigure}
 	\caption{
 		Advection experiment errors at a cube corner using the cosine bell (IC2, Table \ref{chp5-ic}) and  
@@ -833,12 +832,12 @@ the rotated zonal wind (VF1, Table \ref{chp5-vf}) after 12 days, using the monot
 	\begin{subfigure}{0.35\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{h_error_tc1_t12_alpha45_C384_g2_dg2_adv1_hord8_mf1_tf12}
-		\caption{PL scheme.\label{chp-advcs-sec-exp-adv5-errors-2a}}
+		\caption{PL scheme - max = $2.35\times 10^{-3}$\label{chp-advcs-sec-exp-adv5-errors-2a}}
 	\end{subfigure}
 	\begin{subfigure}{0.35\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{h_error_tc1_t12_alpha45_C384_g2_dg2_adv2_hord8_mf1_tf12}
-		\caption{LT scheme.\label{chp-advcs-sec-exp-adv5-errors-2b}}
+		\caption{LT scheme - max = $1.91\times 10^{-3}$ \label{chp-advcs-sec-exp-adv5-errors-2b}}
 	\end{subfigure}
 	\caption{As Figure \ref{chp-advcs-sec-exp-adv2-errors-0} but using the equiangular grid (g2).\label{chp-advcs-sec-exp-adv5-errors-2}}
 \end{figure}
@@ -852,10 +851,11 @@ In Figures \ref{chp-advcs-sec-exp-adv5-linf} and \ref{chp-advcs-sec-exp-adv5-l2}
 we show the error convergence for the $L_{\infty}$ and $L_2$ norms, respectively.
 Note that the errors in the $L_{\infty}$ norm (Figure \ref{chp-advcs-sec-exp-adv5-linf})
 for the unlimited PPM (solid lines) are not achieving second order as they should because the solution is not differentiable.
-For MONO (dashed lines), we can see that the $L_{\infty}$ errors for LT (blue lines) are smaller than the errors of PL (green lines), especially for the equi-edge grid (g0).
-Also, for the equi-edge grid (g0), the order of the LT-MONO scheme in the $L_{\infty}$ norm gets very close to 2,
-and for the equiangular grid (g2), its order surpasses two.
-These results for LT-MONO are better than expected and are not observed for the PL-MONO scheme.
+For MONO (dashed lines), we can see that the $L_{\infty}$ errors for LT (blue lines) are smaller than the errors of PL (green lines), 
+especially for the equi-edge grid (g0).
+%Also, for the equi-edge grid (g0), the order of the LT-MONO scheme in the $L_{\infty}$ norm gets very close to 2,
+%and for the equiangular grid (g2), its order surpasses two.
+%These results for LT-MONO are better than expected and are not observed for the PL-MONO scheme.
 Finally, the $L_2$ errors are very similar (Figure \ref{chp-advcs-sec-exp-adv5-l2}).
 \begin{figure}[!htb]
 	\centering
@@ -1070,7 +1070,7 @@ We are using the LT-MONO-mf1 scheme on the equiangular grid (g2) with $N=384$.
 Figures \ref{chp-advcs-sec-exp-adv3-linf} and \ref{chp-advcs-sec-exp-adv3-l2} we show the error convergence in $L_{\infty}$ and $L_{2}$ norms.
 Once more, it is evident that all schemes with the unlimited PPM (UNLIM) achieve second-order accuracy as expected, while those with the monotonic PPM (MONO) experience a reduced order 
 in $L_{\infty}$ norm. In $L_{2}$ norm, the order is 2 for MONO.
-Furthermore, LT and PL demonstrate the same errors when utilizing MONO.%, reaffirming that LT is indeed more accurate than PL.
+Furthermore, LT and PL demonstrate almost the same errors when utilizing MONO, with the LT scheme being slightly smaller.
 We also notice that the mass fixer does not impact the errors.
 \newpage
 \begin{figure}[!htb]
@@ -1239,9 +1239,8 @@ Therefore, our major conclusion here is that the LT scheme is much more accurate
 PL is only accurate for divergence-free winds.
 
 Additionally, the Gaussian hill and cosine bell advection through a rotated zonal wind showed 
-that some errors of PL presented small spikes whenever the Gaussian hill passed over a corner,
-while LT did not exhibit this behavior.
-Also, the final error of PL was concentrated at a cube corner, which was not observed for the LT scheme.
-The overall results for these test showed that the LT scheme have smaller errors in general.
+that some errors of PL and LT presented small spikes whenever the Gaussian hill passed over a corner.
+However, LT error was slightly smaller.
+The overall results for these test showed that the LT scheme have slightly smaller errors for divergence-free winds.
 We could also observe that the mass fixer did not significantly impact the results,
 and the equi-edge grid (g0) grid generally exhibited smaller errors compared to the equiangular grid (g2), with LT showing good performance in both grids.
