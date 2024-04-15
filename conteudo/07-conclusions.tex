@@ -58,7 +58,18 @@ For simplicity, we consider our scheme only to solve the continuity equation.
 We observe that for the geostrophic balanced flow test case, our scheme helps to reduce the maximum error slightly.
 Additionally, we analyze the total runtime for each method at different grid resolutions, and we conclude that our scheme adds a very small extra cost.
 
+\section{Future work ideas}
 A possible extension of this work would be to consider more shallow-water test cases and explore our scheme's performance in handling absolute vorticity fluxes.
 Subsequently, we could employ the non-hydrostatic solver of FV3 to assess the new advection scheme's ability 
 in three dimensions and conduct more realistic simulations, as we have only analyzed idealized test cases in this work.
 Furthermore, we could also investigate the new scheme's performance on the stretched grids available in FV3.
+
+Our modified advection scheme is slightly better for divergence-free flows, but for divergent winds, our new scheme is significantly better. 
+We expect that our scheme would perform similarly to the current FV3 method in processes where there is small divergence/convergence of the wind, 
+and it should yield better results for processes where divergence plays a key role.
+
+An important process where wind divergence plays a key role is in hurricanes and tropical cyclones \citep{holton:2012}.
+These phenomena are fueled by strong horizontal wind convergence at the Earth's surface, with strong horizontal wind divergence occurring at high altitudes.
+We could perform a study based on \citet{gao:2021}, where the authors investigated the impact of using different PPM schemes of FV3 on hurricane intensity prediction.
+Their study highlights how modifying the advection scheme may improve hurricane intensity prediction and affect the eyewall convection location.
+Therefore, we could use our advection scheme in these simulations and observe its effect on hurricane intensity prediction.
