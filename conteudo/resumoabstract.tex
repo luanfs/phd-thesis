@@ -21,10 +21,11 @@ Como o esquema de advecção do FV3 consiste na combinação de operadores de fl
 nossas melhorias foram obtidas ao melhorar o cálculo do ponto de partida para os operadores de fluxo 1D e
 modificar a forma como o termo métrico da esfera cubada é tratado ao calcular os fluxos 1D.
 Através de simulações, demonstramos que o esquema de advecção atual do FV3 é apenas de primeira ordem para ventos divergentes,
-enquanto nosso esquema é sempre de segunda ordem.
+enquanto nosso esquema é de segunda ordem.
+Para ventos livres de divergência, ambos os esquemas são de segunda ordem, sendo o nosso esquema ligeiramente mais preciso.
 Uma grande dificuldade em trabalhar na esfera cubada é lidar com a descontinuidade das coordenadas ao longo das faces do cubo,
 o que pode levar a erros maiores nessas regiões.
-No entanto, demonstramos através de simulações numéricas que o esquema de advecção proposto apresenta uma sensibilidade reduzida aos cantos do cubo.
+No entanto, demonstramos através de simulações numéricas que o esquema de advecção proposto apresenta uma sensibilidade ligeiramente reduzida aos cantos do cubo.
 }
 
 \abstract{
@@ -40,7 +41,8 @@ We conducted numerous numerical simulations using the advection and shallow-wate
 As the FV3 advection scheme consists of combining 1D finite-volume flux operators,
 our improvements were obtained by improving the departure point computation for the 1D flux operators
 and modifying the way the metric term of the cubed-sphere is treated when computing the 1D fluxes.
-Through simulations, we demonstrate that the current FV3 advection scheme is only first-order for divergent winds, while our scheme is always second-order.
+Through simulations, we demonstrate that the current FV3 advection scheme is only first-order accurate for divergent winds, while our scheme is second-order accurate.
+For divergence-free winds, both schemes are second-order, with our scheme being slightly more accurate.
 One major difficulty in working on the cubed-sphere is handling coordinate discontinuity along the cube faces, which may lead to larger errors in these regions. 
-However, we demonstrate through numerical simulations that the proposed advection scheme exhibits reduced sensitivity to the cube corners.
+However, we demonstrate through numerical simulations that the proposed advection scheme exhibits slightly reduced sensitivity to the cube corners.
 }
