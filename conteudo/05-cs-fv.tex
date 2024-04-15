@@ -273,7 +273,23 @@ we introduce the following PPM flux in the $x$ direction (recall Equation \eqref
 	\end{cases}
 \end{align}
 for each $j=-\nu+1, \ldots, N+\nu$ and $i=1, \ldots, N$, and
-where the PPM perturbation values $b^L$ and $b^R$ values are computed using the unlimited PPM (Section \ref{chp-adv1d-sec-hord0}) or the monotonic (Section \ref{chp-adv1d-sec-hord8})
+where the PPM perturbation values $b^L$ and $b^R$ values are computed using the unlimited PPM (Section \ref{chp-adv1d-sec-hord0}) or the monotonic (Section \ref{chp-adv1d-sec-hord8}).
+\textcolor{black}{
+Recall that when using the mt1 scheme, we compute the flux for $\psi=\sqrt{\mathfrak{g}}q$.
+We point out that, in this case, the perturbation values
+(Equations \eqref{chp-sec-flux:numerical-flux6} and \eqref{chp-sec-flux:numerical-flux7})
+use the exact expression of the metric term, namely:
+\begin{align}
+	\label{pert_left}
+	b_{ij}^L = \sqrt{\mathfrak{g}}_{i+\frac{1}{2},j}q_{ij}^{L,x} - \sqrt{\mathfrak{g}}_{ij} q_{ij}^n, \\
+	\label{pert_right}
+	b_{ij}^R = \sqrt{\mathfrak{g}}_{i,j+\frac{1}{2}}q_{ij}^{R,y} - \sqrt{\mathfrak{g}}_{ij} q_{ij}^n, 
+\end{align}
+where the edge values reconstruction values $q_{ij}^{R,x}$ and $q_{ij}^{L,x}$
+are computed using the UNLIM or MONO 1D PPM scheme in the $x$ and $y$ directions, respectively.
+Hence, when a monotonic filter is applied, it is applied only to the field $q$ instead of the field $\sqrt{\mathfrak{g}}q$,
+which is important to preserve monotonicity.
+}
 
 Therefore, we may rewrite Equation \eqref{1d-qx} as
 \begin{equation}
@@ -572,23 +588,23 @@ We shall made usage of the characteristic function $\chi_S$,  where $\chi_{S}(s)
 	\centering
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{h_tc-3_t0_alpha45_C384_g2_dg2_adv2_hord8_mf1_tf12}
+		\includegraphics[width=0.9\linewidth]{h_tc-3_t0_alpha45_C384_g2_dg2_adv2_hord8_mf1_tf12}
 		\caption{IC1. \label{chp5-ic1}}
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{h_tc1_t0_alpha45_C192_g2_dg2_adv2_hord8_mf1_tf12}
+		\includegraphics[width=0.9\linewidth]{h_tc1_t0_alpha45_C192_g2_dg2_adv2_hord8_mf1_tf12}
 		\caption{IC2. \label{chp5-ic2}}
 	\end{subfigure}
 
 	\begin{subfigure}{0.45\textwidth}
 	\centering
-	\includegraphics[width=1\linewidth]{h_tc-7_t0_alpha45_C192_g2_dg2_adv2_hord8_mf1_tf12}
+	\includegraphics[width=0.9\linewidth]{h_tc-7_t0_alpha45_C192_g2_dg2_adv2_hord8_mf1_tf12}
 	\caption{IC3. \label{chp5-ic3}}
     \end{subfigure}
     \begin{subfigure}{0.45\textwidth}
 	\centering
-	\includegraphics[width=1\linewidth]{h_tc-5_t0_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
+	\includegraphics[width=0.9\linewidth]{h_tc-5_t0_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
 	\caption{IC4. \label{chp5-ic4}}
     \end{subfigure}
 	\caption{ Illustration of the initial conditions considered in this chapter (Table \ref{chp5-tab1}).\label{chp5-ic}}
@@ -637,16 +653,8 @@ using the spherical midpoints formulation (Section \ref{cs-geo}) are going to be
 To compute the convergence, consider cubed-sphere grids with value of $N_k =  48\times2^{k}$,
 and $\Delta t^{(k)} = \frac{\Delta t^{(k)}}{2^k}$, $k=0, \ldots, 4$, where
 the value of $\Delta t^{(0)}$ in Table \ref{chp5-vf} for each VF.
-The relative error in the $p$-norm is computed as
-\begin{equation}
-	E_k = 
-	\frac{\| Q^{N_T} - q^0 \|_{p, \mathcal{CS}^N}}{\|q^0\|_{p,\mathcal{CS}^N}}.
-\end{equation}
-We are going to consider $p=2$ and $p=\infty$ (Equation \eqref{chp-advcs-pnorm}).
-The convergence rate is defined as
-\begin{equation*}
-	CR_k = \frac{\ln{\bigg(\frac{E_{k}}{E_{k-1}}}\bigg)}{\ln 2}, \quad \text{for} \quad k = 1, \ldots 4.
-\end{equation*}
+The relative error in the $p$-norm (Equation \eqref{chp-advcs-pnorm})
+and the convergence rate are defined as in Section \ref{chp-adv1d-sec-numerical-exp}.
 
 \newpage
 \subsection{Advection of one Gaussian hill through the rotated zonal wind}
