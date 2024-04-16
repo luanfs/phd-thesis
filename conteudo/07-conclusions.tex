@@ -54,7 +54,7 @@ This was observed in tests where we evaluated a Gaussian hill, cosine bell, and 
 As an application of our new scheme, in Chapter \ref{chp-cs-swm}, we provide a comprehensive description of the FV3 shallow-water solver.
 This solver utilizes the shallow-water equations in vector form and employs only advective finite volume fluxes
 to compute the fluid depth, kinetic energy, and absolute vorticity fluxes. 
-For simplicity, we consider our scheme only to solve the continuity equation.
+We consider our scheme only to solve the continuity equation and the absolute vorticity fluxes.
 We observe that for the geostrophic balanced flow test case, our scheme helps to reduce the maximum error slightly.
 Additionally, we analyze the total runtime for each method at different grid resolutions, and we conclude that our scheme adds a very small extra cost.
 

@@ -721,8 +721,7 @@ In terms of the $L_2$ norm, as shown in Figure \ref{chp-advcs-sec-exp-adv2-evol-
 no spikes are observed in the graphs corresponding to the days when the Gaussian passes over a corner.
 Another conclusion is that the mass fixer does not have too much impact on error evolution when the monotonic scheme is used.
 However, from Figure \ref{chp-advcs-sec-exp-adv2-evol-linf} we can see some small spikes in the $L_{\infty}$ error
-on the equi-edge grid (g0) when using the PL scheme, which is less pronounced in the LT scheme.
-This indicates that LT is slightly less sensitive to corners than PL when using MONO. 
+on the equi-edge grid (g0) when using the PL and LT schemes, which is less pronounced on the equiangular grid.
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=0.9\linewidth]{tc-3_C384_linf_errors}
@@ -1248,7 +1247,6 @@ PL is only accurate for divergence-free winds.
 
 Additionally, the Gaussian hill and cosine bell advection through a rotated zonal wind showed 
 that some errors of PL and LT presented small spikes whenever the Gaussian hill passed over a corner.
-However, LT error was slightly smaller.
 The overall results for these test showed that the LT scheme have slightly smaller errors for divergence-free winds.
 We could also observe that the mass fixer did not significantly impact the results,
 and the equi-edge grid (g0) grid generally exhibited smaller errors compared to the equiangular grid (g2), with LT showing good performance in both grids.
