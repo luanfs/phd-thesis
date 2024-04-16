@@ -917,7 +917,7 @@ Thus, we are going to use the DP1 scheme for the kinetic energy flux (Equation \
 There are two parts of the D-grid scheme where we may use the LT advection scheme from Chapter \ref{chp-cs-fv}:
 the fluid depth update and the vorticity fluxes (Equations \eqref{absvort1} and \eqref{absvort2}).
 Currently, these parts are solved using the PL advection scheme, and we propose assessing the impact of using the LT advection scheme
-only for the continuity equation for simplicity.
+for both parts.
 The shallow-water solver that uses PL for these fluxes is referred to simply as the PL scheme, and when LT is used, we refer to it as the LT scheme.
 
 \section{Numerical experiments}
@@ -949,24 +949,17 @@ as this averaging is second-order accurate and the wind conversion is an exact t
 %The outputs of ENDGame are interpolated to the cubed-sphere A-grid from the latitude-longitude grid using cubic interpolation,
 %giving us the reference solutions $(h^{REF})^n$, $(u_{\lambda}^{REF})^n$, and $(v_{\phi}^{REF})^n$.
 
-We will consider the global steady geostrophic flow test case from \citet{will:1992}.
-This test initializes the depth using Equation \eqref{duo-tc1} (Figure \ref{cs-duo-tc1}) and the winds using Equation \eqref{duo-wind1}.
-We set $\alpha=\frac{\pi}{4}$ so that the flow is oriented with the corners of a cube.
-In this setup, the Coriolis parameter (Equation \eqref{coriolis-eq2}) is modified as
-\begin{equation}
-	\label{coriolis-eq2}
-	f = 2 \Omega(-\cos{\phi}\cos{\lambda}\sin{\alpha} + \sin{\phi}\cos{\alpha}),
-\end{equation}
-and therefore, the initial condition does not change over time, allowing us to compute the exact solution.
-%All the test cases (TCs) that we are going to consider are presented in Table \ref{sw-tc}.
+
+All the test cases (TCs) that we are going to consider are presented in Table \ref{sw-tc}.
 
 To compute the error convergence, we consider cubed-sphere grids with values of
 $N_k = 48\times2^{k}$, and \textit{dt\textunderscore atmos}$^{(k)} = \frac{dt\textunderscore atmos^{(0)}}{2^k}$ for 
 $k=0, \ldots, 4$, where the value of \textit{dt\textunderscore atmos}$^{(0)}$ is taken from Table \ref{chp5-vf}. %for each TC.
 The value of n\_split is the same regardless of the value of $N_k$.
-We are going to consider both the equi-edge grid (g0) and the equiangular grid (g2) with the spherical midpoint formulation.%, and it will always be made clear whether the divergence damping is being used or not (Section \ref{dd-cs}).%Whenever we use divergence damping, we consider $d_4 = 0.12$ and $nord=2$, as used in \citet{mouallem:2023}.
-We also use divergence damping, we consider $d_4 = 0.12$ and $nord=2$, as used in \citet{mouallem:2023}.
+We are going to consider both the equi-edge grid (g0) and the equiangular grid (g2) with the spherical midpoint formulation, and it will always be made clear whether the divergence damping is being used or not (Section \ref{dd-cs}). Whenever we use divergence damping, we consider $d_4 = 0.12$ and $nord=2$, as used in \citet{mouallem:2023}.
 In this case, the dissipation is a fourth-order operator and therefore is more scale selective.
+Additionally, we shall use the \textbf{dg1} duo-grid interpolation method (Section \ref {cs-interp})
+as in \citet{mouallem:2023} to keep our analysis consistent with their results.
 \begin{table}[!ht]
 	\begin{tabular}{|l|l|l|l|l|l|}
 		\hline
@@ -982,60 +975,27 @@ In this case, the dissipation is a fourth-order operator and therefore is more s
 \label{sw-tc}
 \end{table}
 
-
-
-\begin{figure}[!h]
-	\centering
-	\begin{subfigure}{0.6\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{h_error_tc2_t5_alpha45_C192_g0_dg1_adv1_hord8_dd0.12_mf1_tf5}
-		\caption{PL scheme, max= $7.03\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-0a}}
-	\end{subfigure}
-	\begin{subfigure}{0.6\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{h_error_tc2_t5_alpha45_C192_g0_dg1_adv2_hord8_dd0.12_mf1_tf5}
-		\caption{ max= $5.37\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-0b}}
-	\end{subfigure}
-	\caption{
-		Geostrophic balanced flow test error distribution using the monotonic PPM (MONO)
-		with PL (top) and LT schemes (bottom) on the equi-edge grid (g0) with $N=192$. 
-		\label{chp-advcs-sec-exp-sw1-errors-0}}
-\end{figure}
 \newpage
-\begin{figure}[!h]
-	\centering
-	\begin{subfigure}{0.6\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{h_error_tc2_t5_alpha45_C192_g2_dg1_adv1_hord8_dd0.12_mf1_tf5}
-		\caption{PL scheme,  max= $6.27\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-2a}}
-	\end{subfigure}
-	\begin{subfigure}{0.6\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{h_error_tc2_t5_alpha45_C192_g2_dg1_adv2_hord8_dd0.12_mf1_tf5}
-		\caption{LT scheme, max= $5.49\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-2b}}
-	\end{subfigure}
-	\caption{As Figure \ref{chp-advcs-sec-exp-sw1-errors-0} but using the equiangular grid (g2).\label{chp-advcs-sec-exp-sw1-errors-2}}
-\end{figure}
-
-\begin{figure}[!htb]
-	\centering
-	\includegraphics[width=1\linewidth]{u_linferror_tc2_alpha45}
-	\caption{Error of the zonal wind component for the geostrophic case for the equi-edge grid (g0, eft) and the equiangular grid (g2, right) \label{chp-advcs-sec-exp-sw-l2}}
-\end{figure}
-
-\newpage
-From Figure \ref{chp-advcs-sec-exp-sw1-errors-0}, we observe the errors for the equi-edge grid (g0) using the PL and LT schemes. It is evident that the LT scheme has a smaller error. Furthermore, although both schemes exhibit grid imprinting, the PL scheme displays more pronounced grid imprinting, whereas the LT scheme shows a more evenly distributed error.
-For the equiangular grid (g2), LT reduces the maximum error, but the grid imprinting is very similar to the PL scheme.
-This test case demonstrates how the LT scheme improves performance for the equi-edge grid (g0) and the equiangular grid (g2).
-Additionally, Figure \ref{chp-advcs-sec-exp-sw-l2} shows the error convergence for the zonal wind in the $L_{\infty}$. 
-We observe that the error of the LT scheme is slightly smaller compared to PL scheme, and both schemes demonstrate second-order accuracy.
+\subsection{Global steady geostrophic flow}
+We will consider the global steady geostrophic flow test case from \citet{will:1992}.
+This test initializes the depth using Equation \eqref{duo-tc1} (Figure \ref{cs-duo-tc1}) and the winds using Equation \eqref{duo-wind1}.
+We set $\alpha=\frac{\pi}{4}$ so that the flow is oriented with the corners of a cube.
+In this setup, the Coriolis parameter (Equation \eqref{coriolis-eq}) is modified as
+\begin{equation}
+	\label{coriolis-eq2}
+	f = 2 \Omega(-\cos{\phi}\cos{\lambda}\sin{\alpha} + \sin{\phi}\cos{\alpha}),
+\end{equation}
+and therefore, the initial condition does not change over time, allowing us to compute the exact solution at any time instant.
+Additional information about the simulation is given in Table \ref{sw-tc}. This test is performed with and without divergence damping.
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=0.8\linewidth]{tc2_C192_linf_errors}
 	\caption{
-		$L_{\infty}$ error evolution for the geostrophic balanced flow test  on the equi-edge grid (g0, left)
-		 and on the equiangular (g2, right) grid for 5 days and $N=192$.
-		Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme. All schemes use the monotonic PPM (MONO).
+		$L_{\infty}$ error evolution for the geostrophic balanced flow test on the equi-edge grid (g0, left)
+		and on the equiangular grid (g2, right) for 5 days and $N=192$.
+		Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme.
+		All schemes use the monotonic PPM (MONO). 
+		Light colors do not use divergence damping (dd), whereas dark color use divergence damping coefficient of 0.12.
 		\label{chp-advcs-sec-exp-sw-evol-linf}}
 \end{figure}
 \begin{figure}[!htb]
@@ -1046,12 +1006,94 @@ We observe that the error of the LT scheme is slightly smaller compared to PL sc
 		\label{chp-advcs-sec-exp-sw-evol-l2}}
 \end{figure}
 
-Furthermore, in Figure \ref{chp-advcs-sec-exp-sw-evol-linf}, we present the evolution of the $L_{\infty}$ error in fluid depth over 5 days. 
-Once again, the LT scheme exhibits a slightly lower error than the PL scheme.
-On the other hand, Figure \ref{chp-advcs-sec-exp-sw-evol-l2} shows that the $L_2$ error evolution 
-of both schemes is similar for the equiangular grid (g2), with PL being slightly smaller. However, on the equi-edge grid (g0), the LT scheme grows faster and is larger than PL.
+\newpage
+In Figure \ref{chp-advcs-sec-exp-sw-evol-linf}, we present the evolution of the $L_{\infty}$ error in fluid depth over 5 days.
+We can observe that for the equi-edge grid, before day 1, both schemes LT and PL become numerically unstable when no divergence damping is employed.
+This behavior does not occur on the equiangular grid though.
+Both schemes are numerically stable on both grids when divergence damping is included.
+When the schemes are numerically stable, the errors of LT are only slightly smaller.
+On the other hand, Figure \ref{chp-advcs-sec-exp-sw-evol-l2} shows that the $L_2$ error evolution of both schemes is similar for the equiangular grid, 
+with PL being slightly smaller.
+On the equi-edge grid, the $L_2$ error of LT is slightly smaller.
+
+\begin{figure}[!h]
+	\centering
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_error_tc2_t5_alpha45_C192_g0_dg1_adv1_hord8_dd0.12_mf1_tf5}
+		\caption{PL scheme, max= $6.76\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-0a}}
+	\end{subfigure}
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_error_tc2_t5_alpha45_C192_g0_dg1_adv2_hord8_dd0.12_mf1_tf5}
+		\caption{ max= $6.40\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-0b}}
+	\end{subfigure}
+	\caption{
+		Geostrophic balanced flow test: depth error distribution after 5 days using the monotonic PPM (MONO)
+		with PL (left) and LT schemes (right) on the equi-edge grid (g0) with $N=192$. 
+		These results uses a divergence damping coefficient equal to 0.12.
+		\label{chp-advcs-sec-exp-sw1-errors-0}}
+\end{figure}
+
+\begin{figure}[!h]
+	\centering
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_error_tc2_t5_alpha45_C192_g2_dg1_adv1_hord8_dd0.12_mf1_tf5}
+		\caption{PL scheme,  max= $6.18\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-2a}}
+	\end{subfigure}
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_error_tc2_t5_alpha45_C192_g2_dg1_adv2_hord8_dd0.12_mf1_tf5}
+		\caption{LT scheme, max= $5.91\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-2b}}
+	\end{subfigure}
+	\caption{As Figure \ref{chp-advcs-sec-exp-sw1-errors-0} but using the equiangular grid (g2).
+		\label{chp-advcs-sec-exp-sw1-errors-2}}
+\end{figure}
+
+\newpage
+
+\begin{figure}[!h]
+	\centering
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_error_tc2_t5_alpha45_C192_g2_dg1_adv1_hord8_dd0_mf1_tf5}
+		\caption{PL scheme,  max= $6.37\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-3a}}
+	\end{subfigure}
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_error_tc2_t5_alpha45_C192_g2_dg1_adv2_hord8_dd0_mf1_tf5}
+		\caption{LT scheme, max= $6.01\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-3b}}
+	\end{subfigure}
+	\caption{As Figure \ref{chp-advcs-sec-exp-sw1-errors-2} but using no divergence damping.\label{chp-advcs-sec-exp-sw1-errors-3}}
+\end{figure}
 
 
+In Figures \ref{chp-advcs-sec-exp-sw1-errors-0} and \ref{chp-advcs-sec-exp-sw1-errors-2} we show the final errors
+for both grids with divergence damping.
+The errors distribution is very similar for both schemes, and grid imprinting is still present, 
+although the maximum errors, which occur at corners, are smaller for LT, indicating again that LT is slightly less sensitive to the corners.
+In Figure \ref{chp-advcs-sec-exp-sw1-errors-2}, we show the errors of PL and LT on the equiangular grid without divergence damping.
+Again, the errors of LT are slightly smaller. It is interesting to notice that in this case (no divergence damping), 
+we can see some spurious waves being generated by the corners and affecting the solution at a cube edge, which does not occur when divergence damping is used.
+At last, the errors without divergence damping on the equi-edge grid are not shown because the schemes are numerically unstable in that case.
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=0.9\linewidth]{h_linferror_tc2_alpha45}
+	\caption{$L_{\infty}$ error of the fluid depth component for the geostrophic flow test case after 5 days
+		for the equi-edge grid (left) and the equiangular grid (right)
+		considering the schemes LT (dark and light blue lines) and the PL (dark and light green lines). 
+		Light colors uses no divergence damping (dd) whereas dark colors use divergence damping.\label{chp-advcs-sec-exp-sw-linf}}
+\end{figure}
+
+\newpage
+In Figure \ref{chp-advcs-sec-exp-sw-linf}, we show the convergence of the error in the $L_{\infty}$ for the fluid depth for all schemes and grids.
+The results on the equi-edge grid without divergence damping are not shown because the scheme becomes numerically unstable in this case.
+We can see that when using divergence damping, both the LT and PL schemes achieve second-order accuracy on both the equi-edge and equiangular grids.
+However, we can that, when no divergence damping is employed, both schemes develop a very large error at a high resolution ($N=768$).
+This result indicates that the equiangular grid may also develop numerical stability when there is divergence damping. 
+However, this result shows that the equiangular grid is much more resilient to numerical instabilities than the equi-edge grid.
 
 Finally, in Table \ref{sw-time}, we show the times needed by each scheme for different grids and values of $N$. 
 It is clear that the LT scheme adds a very small cost, showing that this scheme does not degrade the computational performance of the shallow-water solver.
@@ -1061,26 +1103,27 @@ It is clear that the LT scheme adds a very small cost, showing that this scheme 
 		\hline
 		\multicolumn{1}{|c|}{\multirow{2}{*}{\textbf{$N$}}} & \multicolumn{4}{c|}{Total runtime (seconds)}                                                                              \\ \cline{2-5} 
 		\multicolumn{1}{|c|}{}                              & \multicolumn{1}{c|}{PL-g0}     & \multicolumn{1}{c|}{PL-g2}     & \multicolumn{1}{c|}{LT-g0}     & \multicolumn{1}{c|}{LT-g2} \\ \hline
-		48                                                  & \multicolumn{1}{l|}{2.8901}    & \multicolumn{1}{l|}{2.8996}    & \multicolumn{1}{l|}{2.9582}    & 2.9353                     \\ \hline
-		96                                                  & \multicolumn{1}{l|}{12.7231}   & \multicolumn{1}{l|}{12.6902}   & \multicolumn{1}{l|}{13.0833}   & 13.0697                    \\ \hline
-		192                                                 & \multicolumn{1}{l|}{93.2210}   & \multicolumn{1}{l|}{92.4684}   & \multicolumn{1}{l|}{94.8132}   & 95.3641                    \\ \hline
-		384                                                 & \multicolumn{1}{l|}{737.8164}  & \multicolumn{1}{l|}{727.3037}  & \multicolumn{1}{l|}{754.4678}  & 748.9158                   \\ \hline
-		768                                                 & \multicolumn{1}{l|}{7851.4003} & \multicolumn{1}{l|}{7606.7404} & \multicolumn{1}{l|}{7983.9900} & 7764.0984                  \\ \hline
+		48                                                  & \multicolumn{1}{l|}{2.7762}    & \multicolumn{1}{l|}{2.9247}    & \multicolumn{1}{l|}{2.8379 }    & 2.8775                     \\ \hline
+		96                                                  & \multicolumn{1}{l|}{12.2006}   & \multicolumn{1}{l|}{13.0276}   & \multicolumn{1}{l|}{12.5094}   & 13.1665                     \\ \hline
+		192                                                 & \multicolumn{1}{l|}{89.2555}   & \multicolumn{1}{l|}{95.9484}   & \multicolumn{1}{l|}{90.1434}   & 96.4775                    \\ \hline
+		384                                                 & \multicolumn{1}{l|}{719.8602}  & \multicolumn{1}{l|}{759.0486}  & \multicolumn{1}{l|}{705.6963}  & 743.4566                   \\ \hline
+		768                                                 & \multicolumn{1}{l|}{7308.6683} & \multicolumn{1}{l|}{7529.9261} & \multicolumn{1}{l|}{7190.8789} & 7418.2488                  \\ \hline
 	\end{tabular}
 	\caption{Total runtime for the LT and PL schemes using the equi-edge grid (g0) and the equiangular grid (g2) for different values of $N$.
 		The additional cost of the LT scheme is due to the computation of a second-order estimate of 1D departure points.}
 \label{sw-time}
 \end{table}
 
-%\subsection{Global steady geostrophic flow - to be written}
+
 
 %\subsection{Flow over a mountain}
 %\subsection{Barotropically unstable jet with perturbation}
+\newpage
 \section{Conclusions}
 \label{sec:conclusions}
-In this chapter, we provided a detailed description of the FV4 shallow-water solver on the cubed-sphere. 
-This solver begins with the shallow water equations written in the vector invariant form and considers their C and D grid discretization.
-We presented a general discretization of the shallow water equations on the C and D grids and showed that they can be solved using finite-volume fluxes.
+In this Chapter, we provided a detailed description of the FV3 shallow-water solver on the cubed-sphere. 
+This solver begins with the shallow water equations written in the vector invariant form and considers their C and D-grid discretization.
+We presented a general discretization of the shallow water equations on the C and D-grids and showed that they can be solved using finite-volume fluxes.
 The C-grid solver is computed for a half time step, and the finite-volume fluxes use the classical upwind scheme, providing the winds centered at time.
 This part of the scheme is designed to be computationally cheap.
 
@@ -1088,10 +1131,17 @@ Following that, the D-grid solver can use the time-centered winds from the C-gri
 as well as absolute vorticity and kinetic energy fluxes. 
 Then we discussed how our advection scheme from Chapter \ref{chp-cs-fv} can be used in the shallow-water solver. 
 Since the C-grid is supposed to be computationally inexpensive and our scheme uses PPM, we decided to leave it unchanged. 
-For simplicity, we consider our new finite-volume advection scheme only to compute the fluid depth on the D-grid.
+We consider our new finite-volume advection scheme to compute the fluid depth and the absolute vorticity fluxes on the D-grid.
 
-We then ran the geostrophic balance flow test case for 5 days. 
+We then ran the geostrophic balance flow test case for 5 days with and without divergence damping.
+We observed that both advection schemes become numerically unstable for the equi-edge grid when no divergence damping is used,
+which is not observed on the equiangular grid.
+With divergence damping, both schemes are numerically stable on both grids.
+Additionally, we noticed that our scheme helps to slightly reduce the $L_{\infty}$ errors when the scheme is numerically stable.
 We analyzed the runtime and found that our advection scheme adds a very small additional computational burden.
-Additionally, we noticed that our scheme helps to slightly reduce the $L_{\infty}$ errors.
+
 The goal of this chapter was to describe the shallow-water solver, demonstrate how our scheme may be used and compare the computational performance.
-However, a more comprehensive analysis of the shallow-water model using our scheme is certainly needed.
+However, a more comprehensive analysis of the shallow-water model using our scheme is certainly needed. 
+We point out that most of the classical shallow-water tests available in the literature \citep{will:1992, galewsky:2004} have no or small divergence. 
+Therefore, we expect that our scheme would introduce similar results in these tests because,
+ as we have seen in Chapter \ref{chp-cs-fv}, our advection is slightly better for divergence-free winds and  significantly better only for divergent winds.
