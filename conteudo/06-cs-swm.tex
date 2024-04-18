@@ -965,7 +965,8 @@ as in \citet{mouallem:2023} to keep our analysis consistent with their results.
 		\hline
 		Test case & Description            & Reference & \textit{dt\textunderscore atmos$^{(0)}$} & n\_split & Total time \\ \hline
 		TC2       & Geostrophic balance    & \citet{will:1992}       & 3600 \textit{s}               & 7     & 5 \textit{days}   \\ \hline
-		TC5       & Flow over a mountain   & \citet{will:1992}        & 1800 \textit{s}               & 7    & 15 \textit{days}  \\ \hline
+		TC5       & Flow over a mountain   & \citet{will:1992}       & 1800 \textit{s}               & 7    & 15 \textit{days}  \\ \hline
+		TC6       & Rossby-Haurwitz wave   & \citet{will:1992}       & 1200 \textit{s}             & 1  & 100 \textit{days}    \\ \hline
 		%TC7       & Barotropic instability & \citet{galewsky:2004}      & 1800 \textit{s}             & 8  & 7 \textit{days}    \\ \hline
 	\end{tabular}
 	\caption{The test case considered in the numerical experiments, including descriptions, references, 
@@ -1250,9 +1251,95 @@ The error is computed with a spacing of 1 day using ENDGame as the reference sol
 		\label{sw-mountain-h-error-l2}}
 \end{figure}
 
+\newpage
+\subsection{Rossby-Haurwitz wave}
+The test considered in this section is the Rossby-Haurwitz wave case, as suggested by \citet{will:1992}.
+The initial conditions are exact solutions to the barotropic vorticity equation.
+Thus, the wind is divergence-free in this case.
+The expressions of the initial fields may be found in \citet{will:1992}; we will omit them here.
+The solutions should propagate the wave to east and maintain its shape.
+Therefore, our goal in this test is to investigate the ability of the PL and LT schemes to preserve the wave shape.
 
+\begin{figure}[!h]
+	\centering
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc6_t60_alpha0_C96_g2_dg1_adv1_hord8_dd0_mf1_tf105}
+		\caption{PL at day 60.\label{sw-rossby-h-d60-pl}}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc6_t65_alpha0_C96_g2_dg1_adv1_hord8_dd0_mf1_tf105}
+		\caption{PL at day 65.\label{sw-rossby-h-d65-pl}}
+	\end{subfigure}
+	
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc6_t60_alpha0_C96_g2_dg1_adv2_hord8_dd0_mf1_tf105}
+		\caption{LT at day 60.\label{sw-rossby-h-d60-lt}}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc6_t65_alpha0_C96_g2_dg1_adv2_hord8_dd0_mf1_tf105}
+		\caption{LT at day 65.\label{sw-rossby-h-d65-lt}}
+	\end{subfigure}
+	\caption{Rossby-Haurwitz wave test case:
+		Fluid depth on the equiangular grid, with $N=96$ and without divergence damping.
+		PL scheme results are shown in (a) and (b) on days 60 and 65, respectively.
+		LT scheme results are shown in (c) and (d) on days 60 and 65, respectively.
+		\label{sw-rossby-h}}
+\end{figure}
+We ran this test for 100 days on the equi-edge and equiangular grids with $N=96$.
+When we did not employ divergence damping, the results of the equi-edge grid became unstable for both schemes before day 60.
+However, the equiangular grid could perform this test with divergence damping.
+We show the wave shapes at days 60 and 65 in both schemes in Figure \ref{sw-rossby-h}, 
+for the PL scheme (Figures \ref{sw-rossby-h-d60-pl} and \ref{sw-rossby-h-d65-pl}) and 
+for the LT scheme (Figures \ref{sw-rossby-h-d60-lt} and \ref{sw-rossby-h-d65-lt}).
+It is clear that the LT scheme can maintain the wave for 60 days, but the wave breaks at day 65. 
+However, PL can preserve the shape of the wave for more than 65 days. 
+In fact, it maintains the wave for approximately 100 days, as reported by \citet{mouallem:2023}.
 
+When we use divergence damping, the equi-edge grid achieves numerical stability,
+and we depict the wave in Figure \ref{sw-rossby-h-div-g0}.
+We can see that the addition of divergence damping anticipates the wave break for the LT scheme,
+which occurs at 55 days, as shown in Figures \ref{sw-rossby-h-d60-lt-div-g0} and \ref{sw-rossby-h-d65-lt-div-g0}. 
+The PL scheme, again, maintains the wave (Figures \ref{sw-rossby-h-d60-pl-div-g0} and \ref{sw-rossby-h-d65-pl-div-g0}).
+However, in this case, the wave breaks earlier as well, at approximately day 95 (not shown).
+Similar results are observed for the equiangular grid with divergence damping and we will omit them here.
 
+The PL ability to keep the wave for 100 days is remarkable.
+The Rossby-Haurwitz wave is known for being a dynamically unstable test case, as investigated by \citet{thuburn:2000}. 
+Although our scheme has reduced the wave shape, it is similar,
+for instance, to the spectral model breaking time, as reported by \citet{thuburn:2000}, which is between 50 and 55 days.
+\begin{figure}[!h]
+	\centering
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc6_t55_alpha0_C96_g0_dg1_adv1_hord8_dd0.12_mf1_tf105}
+		\caption{PL at day 55.\label{sw-rossby-h-d60-pl-div-g0}}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc6_t60_alpha0_C96_g0_dg1_adv1_hord8_dd0.12_mf1_tf105}
+		\caption{PL at day 60.\label{sw-rossby-h-d65-pl-div-g0}}
+	\end{subfigure}
+	
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc6_t55_alpha0_C96_g0_dg1_adv2_hord8_dd0.12_mf1_tf105}
+		\caption{LT at day 55.\label{sw-rossby-h-d60-lt-div-g0}}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc6_t60_alpha0_C96_g0_dg1_adv2_hord8_dd0.12_mf1_tf105}
+		\caption{LT at day 60.\label{sw-rossby-h-d65-lt-div-g0}}
+	\end{subfigure}
+	\caption{Rossby-Haurwitz wave test case:
+		Fluid depth on the equi-edge grid, with $N=96$ and divergence damping.
+		PL scheme results are shown in (a) and (b) on days 55 and 60, respectively.
+		LT scheme results are shown in (c) and (d) on days 55 and 60, respectively.
+		\label{sw-rossby-h-div-g0}}
+\end{figure}
 
 
 
@@ -1288,6 +1375,13 @@ Since this test case does not have an exact solution known, we have used the sem
 which is used in the current operational UK Met Office dynamical core, as the reference solution.
 Additionally, the equiangular grid managed to run this test without divergence damping,
 while the equi-edge grid required divergence damping to run this test without creating large errors.}
+
+\textcolor{black}{
+The Rossby-Haurwitz wave test case was also investigated. 
+The goal of this test is to assess the ability of a scheme to propagate the wave to the east and maintain the shape of the wave. 
+However, this test is dynamically unstable and the wave eventually breaks. 
+We showed that our scheme keeps the wave for 55-60 days, while the FV3 scheme keeps the wave for 95-100 days. 
+Although we have reduced the wave breaking time, we pointed out that it is a little better than, for instance, the spectral model.}
 
 The goal of this chapter was to describe the shallow-water solver, demonstrate how our scheme may be used and compare the computational performance.
 However, a more comprehensive analysis of the shallow-water model using our scheme is certainly needed. 

@@ -57,14 +57,18 @@ to compute the fluid depth, kinetic energy, and absolute vorticity fluxes.
 We consider our scheme only to solve the continuity equation and the absolute vorticity fluxes.
 We observe that for the geostrophic balanced flow test case, our scheme helps to reduce the maximum error slightly.
 Additionally, we analyze the total runtime for each method at different grid resolutions, and we conclude that our scheme adds a very small extra cost.
+\textcolor{black}{
+Another major conclusion of this chapter is that the equiangular grid is less susceptible to numerical instability,
+being able to perform better without the requirement of divergence damping.
+This was observed for both advection schemes.
+Finally, for the Rossby-Haurwitz wave test, the new scheme maintains the wave shape for 55-60 days, which is similar to the spectral model. The FV3 scheme, on the other hand, preserves the wave for approximately 95-100 days.}
 
 \section{Future work ideas}
-A possible extension of this work would be to consider more shallow-water test cases and explore our scheme's performance in handling absolute vorticity fluxes.
-Subsequently, we could employ the non-hydrostatic solver of FV3 to assess the new advection scheme's ability 
+A possible extension of this work would be to consider the non-hydrostatic solver of FV3 to assess the new advection scheme's ability 
 in three dimensions and conduct more realistic simulations, as we have only analyzed idealized test cases in this work.
 Furthermore, we could also investigate the new scheme's performance on the stretched grids available in FV3.
 
-Our modified advection scheme is slightly better for divergence-free flows, but for divergent winds, our new scheme is significantly better. 
+Our modified advection scheme is slightly better for divergence-free flows in some situations, but for divergent winds, our new scheme is significantly better. 
 We expect that our scheme would perform similarly to the current FV3 method in processes where there is small divergence/convergence of the wind, 
 and it should yield better results for processes where divergence plays a key role.
 
