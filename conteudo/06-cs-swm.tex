@@ -940,18 +940,16 @@ We point out that this does not impact the error check,
 provided our schemes are at best-case second-order, 
 as this averaging is second-order accurate and the wind conversion is an exact transformation.
 
-%Then, the errors are computed using a reference solution on the A-grid, denoted by $(h^{REF})^n$, $(u_{\lambda}^{REF})^n$ and $(v_{\phi}^{REF})^n$. 
-%The reference solution shall be assumed to be computed exactly or we follow the approach of \citet{peixoto:2016} and use
-%the ENDGame (Even Newer Dynamics for General atmospheric modelling of the environment) shallow-water solver developed by \citet{thuburn:2010},
-%which is the current UK MetOffice operational dynamical core 
-%(\url{https://www.metoffice.gov.uk/research/foundation/dynamics/endgame}, last accessed on April 3rd, 2024).
-%This model is semi-Lagrangian and semi-implicit on a latitude-longitude grid.
-%As suggested by \citet{peixoto:2016}, we use a grid size of 2048$\times$1024 with a time step of 50 seconds whenever we employ it.
-%This grid has a 20km resolution at the equator.
-%The outputs of ENDGame are interpolated to the cubed-sphere A-grid from the latitude-longitude grid using cubic interpolation,
-%giving us the reference solutions $(h^{REF})^n$, $(u_{\lambda}^{REF})^n$, and $(v_{\phi}^{REF})^n$.
-
-
+Then, the errors are computed using a reference solution on the A-grid, denoted by $(h^{REF})^n$, $(u_{\lambda}^{REF})^n$ and $(v_{\phi}^{REF})^n$. 
+The reference solution shall be assumed to be computed exactly or we follow the approach of \citet{peixoto:2016} and use
+the ENDGame (Even Newer Dynamics for General atmospheric modelling of the environment) shallow-water solver developed by \citet{thuburn:2010},
+which is the current UK MetOffice operational dynamical core 
+(\url{https://www.metoffice.gov.uk/research/foundation/dynamics/endgame}, last accessed on April 3rd, 2024).
+This model is semi-Lagrangian and semi-implicit on a latitude-longitude grid.
+As suggested by \citet{peixoto:2016}, we use a grid size of 2048$\times$1024 with a time step of 50 seconds whenever we employ it.
+This grid has a 20km resolution at the equator.
+The outputs of ENDGame are interpolated to the cubed-sphere A-grid from the latitude-longitude grid using cubic interpolation,
+giving us the reference solutions $(h^{REF})^n$, $(u_{\lambda}^{REF})^n$, and $(v_{\phi}^{REF})^n$.
 All the test cases (TCs) that we are going to consider are presented in Table \ref{sw-tc}.
 
 To compute the error convergence, we consider cubed-sphere grids with values of
@@ -967,7 +965,7 @@ as in \citet{mouallem:2023} to keep our analysis consistent with their results.
 		\hline
 		Test case & Description            & Reference & \textit{dt\textunderscore atmos$^{(0)}$} & n\_split & Total time \\ \hline
 		TC2       & Geostrophic balance    & \citet{will:1992}       & 3600 \textit{s}               & 7     & 5 \textit{days}   \\ \hline
-		%TC5       & Flow over a mountain   & \citet{will:1992}        & 1800 \textit{s}               & 7    & 15 \textit{days}  \\ \hline
+		TC5       & Flow over a mountain   & \citet{will:1992}        & 1800 \textit{s}               & 7    & 15 \textit{days}  \\ \hline
 		%TC7       & Barotropic instability & \citet{galewsky:2004}      & 1800 \textit{s}             & 8  & 7 \textit{days}    \\ \hline
 	\end{tabular}
 	\caption{The test case considered in the numerical experiments, including descriptions, references, 
@@ -992,9 +990,9 @@ Additional information about the simulation is given in Table \ref{sw-tc}. This 
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=0.8\linewidth]{tc2_C192_linf_errors}
-	\caption{
-		$L_{\infty}$ error evolution for the geostrophic balanced flow test on the equi-edge grid (g0, left)
-		and on the equiangular grid (g2, right) for 5 days and $N=192$.
+	\caption{Geostrophic balanced flow test:
+	$L_{\infty}$ relative error evolution for the fluid depth on the equi-edge grid (left)
+		and on the equiangular grid (right) for 5 days and $N=192$.
 		Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme.
 		All schemes use the monotonic PPM (MONO). 
 		Light colors do not use divergence damping (dd), whereas dark color use divergence damping coefficient of 0.12.
@@ -1117,10 +1115,152 @@ It is clear that the LT scheme adds a very small cost, showing that this scheme 
 \end{table}
 
 
-
-%\subsection{Flow over a mountain}
-%\subsection{Barotropically unstable jet with perturbation}
 \newpage
+\subsection{Flow over a mountain}
+In this section, we present the flow over a mountain test case of \citet{will:1992}. 
+This test uses the same initial condition as the geostrophic balance test case,
+where $h$ follows Equation \eqref{duo-tc1} with $h_0=5960$ meters, and the winds follow Equation \eqref{duo-wind1}.
+The rotation parameter $\alpha$ is set to 0, so the initial wind is purely zonal.
+This test consider a bottom topography given by:
+\begin{equation}
+	b(\lambda,\phi) = 2000\bigg(1-\frac{r}{r_0}\bigg),
+\end{equation}
+where
+\begin{equation}
+    r =
+	\begin{cases} 
+		\sqrt{(\lambda-\lambda_0)^2 +  (\phi-\phi_0)^2}  & \text{if }  \sqrt{(\lambda-\lambda_0)^2 +  (\phi-\phi_0)^2} \leq r_0 \\
+		r_0 &  \text{ otherwise,} \\
+	\end{cases}
+\end{equation}
+$\lambda_0=-\frac{\pi}{4}$, $\phi_0=\frac{\pi}{6}$ and $r_0=\frac{\pi}{9}$. 
+These parameters define the mountain over a cube corner (Figure \ref{sw-mountain-h-d0}).
+
+\begin{figure}[!h]
+	\centering
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc5_t0_alpha0_C192_g0_dg1_adv2_hord8_dd0.12_mf1_tf15}
+		\caption{Initial depth $h$.\label{sw-mountain-h-d0}}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{h_tc5_t5_alpha0_C192_g0_dg1_adv2_hord8_dd0.12_mf1_tf15}
+		\caption{Day 5.\label{sw-mountain-h-d5}}
+	\end{subfigure}
+
+	\begin{subfigure}{0.49\textwidth}
+	\centering
+	\includegraphics[width=1\linewidth]{h_tc5_t10_alpha0_C192_g0_dg1_adv2_hord8_dd0.12_mf1_tf15}
+	\caption{Day 10.\label{sw-mountain-h-d10}}
+\end{subfigure}
+\begin{subfigure}{0.49\textwidth}
+	\centering
+	\includegraphics[width=1\linewidth]{h_tc5_t15_alpha0_C192_g0_dg1_adv2_hord8_dd0.12_mf1_tf15}
+	\caption{Day 15.\label{sw-mountain-h-d15}}
+\end{subfigure}
+	\caption{Flow over a mountain: fluid depth initial condition (a) and after 5 (b), 10 (c), and 15 days (d). 
+		We are using the LT scheme on the equi-edge grid with $N=192$ and a divergence damping coefficient equal to 0.12. The black circle shows the mountain's location.
+		\label{sw-mountain-h}}
+\end{figure}
+
+We ran this test for 15 days.
+In Figures \ref{sw-mountain-h}, we show the evolution of fluid depth over time,
+specifically after 5, 10, and 15 days, using the LT scheme on an equi-edge grid with $N=192$ and divergence damping.
+Figures \ref{sw-mountain-u} is similar but shows the meridional wind, illustrating the formation of a Rossby wave.
+In Figure \ref{sw-mountain-div} we show the wind divergence at days 10 and 15.
+It is clear from this last figure that we have a small amount of wind divergence, with a maximum absolute value equal to $6.7 \times 10^{-6}$, over to the mountain.
+Hence, we expect that LT and PL should yield similar results.
+\newpage
+
+\begin{figure}[!h]
+	\centering
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{v_tc5_t0_alpha0_C192_g0_dg1_adv2_hord8_dd0.12_mf1_tf15}
+		\caption{Initial meridional wind $v_{\phi}$.\label{sw-mountain-v-d0}}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{v_tc5_t5_alpha0_C192_g0_dg1_adv2_hord8_dd0.12_mf1_tf15}
+		\caption{Day 5.\label{sw-mountain-v-d5}}
+	\end{subfigure}
+	
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{v_tc5_t10_alpha0_C192_g0_dg1_adv2_hord8_dd0.12_mf1_tf15}
+		\caption{Day 10.\label{sw-mountain-v-d10}}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{v_tc5_t15_alpha0_C192_g0_dg1_adv2_hord8_dd0.12_mf1_tf15}
+		\caption{Day 15.\label{sw-mountain-v-d15}}
+	\end{subfigure}
+	\caption{Flow over a mountain: meridional wind initial condition (a) and after 5 (b), 10 (c), and 15 days (d). 
+		We are using the LT scheme on the equi-edge grid with $N=192$ and a divergence damping coefficient equal to 0.12. The black circle shows the mountain's location.
+		\label{sw-mountain-u}}
+\end{figure}
+\begin{figure}[!h]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{eg_swe_run_ic5_cor1_div_t864000_512x256}
+		\caption{Day 10.\label{sw-mountain-div-d10}}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{eg_swe_run_ic5_cor1_div_t1296000_512x256}
+		\caption{Day 15.\label{sw-mountain-div-d15}}
+	\end{subfigure}
+	\caption{Flow over a mountain: illustration of the wind divergence at days 10 and 5.
+		The maximum absolute value of the divergence is $6.7\times 10^{-6}$.
+		\label{sw-mountain-div}}
+\end{figure}
+
+To assess the accuracy of LT and PL schemes, we compute the errors using the ENDGame solution as a reference.
+We are going to consider simulations with and without divergence damping on the equi-edge and equiangular grids with $N=192$.
+We shall investigate the error evolution over time.
+In fact, in Figures \ref{sw-mountain-h-error-linf} and \ref{sw-mountain-h-error-l2} we show the relative error evolution
+for the fluid depth on the $L_{\infty}$ and $L_2$ norms.
+It is clear that both PL and LT yield very similar results.
+When divergence damping is employed, the errors do not grow very much. 
+Otherwise, the errors may become much larger after day 12 at the equi-edge grid but not on the equiangular grid.
+This simulation agrees with the previous simulation (geostrophic balance flow),
+showing that the equiangular grid seems to be less susceptible to numerical instability.
+
+
+\newpage
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=0.9\linewidth]{h_linferror_tc5_N192}
+	\caption{Flow over a mountain test case:
+	$L_{\infty}$ relative error evolution for the fluid depth on the equi-edge grid (left)
+and on the equiangular grid (right) for 5 days and $N=192$.
+Blue lines indicate the use of the LT scheme, while green lines represent the PL scheme.
+All schemes use the monotonic PPM (MONO). 
+Light colors do not use divergence damping (dd), whereas dark color use divergence damping coefficient of 0.12.
+The error is computed with a spacing of 1 day using ENDGame as the reference solution.
+\label{sw-mountain-h-error-linf}}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=0.9\linewidth]{h_l2error_tc5_N192}
+	\caption{As Figure \ref{sw-mountain-h-error-linf} but using the $L_2$ norm.
+		\label{sw-mountain-h-error-l2}}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+\newpage
+%\subsection{Barotropically unstable jet with perturbation}
 \section{Conclusions}
 \label{sec:conclusions}
 In this Chapter, we provided a detailed description of the FV3 shallow-water solver on the cubed-sphere. 
@@ -1141,6 +1281,13 @@ which is not observed on the equiangular grid.
 With divergence damping, both schemes are numerically stable on both grids.
 Additionally, we noticed that our scheme helps to slightly reduce the $L_{\infty}$ errors when the scheme is numerically stable.
 We analyzed the runtime and found that our advection scheme adds a very small additional computational burden.
+
+\textcolor{black}{
+We also analyzed the flow over a mountain test case and showed that our scheme yields very similar results to the current FV3 advection scheme.
+Since this test case does not have an exact solution known, we have used the semi-Lagrangian semi-implicit shallow-water model ENDGame, 
+which is used in the current operational UK Met Office dynamical core, as the reference solution.
+Additionally, the equiangular grid managed to run this test without divergence damping,
+while the equi-edge grid required divergence damping to run this test without creating large errors.}
 
 The goal of this chapter was to describe the shallow-water solver, demonstrate how our scheme may be used and compare the computational performance.
 However, a more comprehensive analysis of the shallow-water model using our scheme is certainly needed. 
