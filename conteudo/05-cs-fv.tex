@@ -225,6 +225,7 @@ $\tilde{x}_{i\pm\frac{1}{2},j}^n$ is an estimate of the departure point in $x$ d
 CFL number $\tilde{c}^{x,n}_{i+\frac{1}{2},j}$ (Section \ref{chp-adv1d-sec-dp}),
 and $\widetilde{\sqrt{\mathfrak{g}}{q}}_j$ is a PPM reconstruction (or any other reconstruction) of $\sqrt{\mathfrak{g}}{q}$ (Section \ref{chp-adv1d-sec-recon})
 in the $x$ direction ($j$ is fixed).
+The time-averaged CFL number $\tilde{c}^{x,n}_{i+\frac{1}{2},j}$ shall be discussed in details in Section \ref{sec-cfl}.
 
 It is also possible to compute the PPM reconstruction in terms only of $q$, ignoring the metric term $\sqrt{\mathfrak{g}}$.
 In other words, we may assume that the metric is constant on each integration domain, which leads to the following first-order error:
@@ -316,8 +317,9 @@ and following the discussion on the metric term, we have the coefficients
 		\quad &\text{for mt1},
 	\end{cases}
 \end{align}
-where we have made use of Equation \eqref{distcube2} and Equation \eqref{mt-sina}, 
-and the PPM fluxes are
+where we have made use of the definitions of 
+$\hat{\delta} x_{i+\frac{1}{2},j}$ and $\hat{\delta} y_{i,j+\frac{1}{2}}$ (Equation \eqref{distcube2}) and the metric term relation given in Equation \eqref{mt-sina}.
+The PPM fluxes are
 \begin{align}
 	\label{ppmx-flux}
 	\mathcal{F}_{i+\frac{1}{2},j}^{PPM,x} [{{q}^n;\tilde{c}^{x,n}}] = 

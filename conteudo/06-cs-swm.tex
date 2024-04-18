@@ -95,11 +95,13 @@ subtracting the obtained results, we get that the absolute vorticity satisfies:
 One can also easily show (as described in Section \ref{chp-cs-adv}) that the total mass of $h$ and $\zeta$ is preserved.
 
 By replacing Equations \eqref{contra-uv} and \eqref{covari-uv} in Equation \eqref{ke-eq}, 
-it follows that the kinetic energy may be rewritten in terms of the normalized contravariant and covariant components as:
+it follows that the kinetic energy may be rewritten in terms of the normalized contravariant and covariant wind components as:
 \begin{equation}
 	\label{ke-eq2}
 	K = \frac{{u}{U}+{v}{V}}{2}.
 \end{equation}
+Recall that the normalized contravariant and covariant wind components
+are given by Equation \eqref{contra-uv} and Equation \eqref{norm-covariant-u}, respectively.
 
 The total energy is defined as:
 \begin{equation}
@@ -129,7 +131,7 @@ The full description of the C-grid and D-grid solvers proposed by
 \citet{lin:1997} will be provided in Sections \ref{csw-grid} and \ref{dsw-grid}, respectively.
 
 \subsubsection{D-grid discretization of the momentum equation }
-We introduce the following average operators for the covariant components in $x$ and $y$ directions, respectively:
+We introduce the following average operators for the covariant wind components in $x$ and $y$ directions, respectively:
 \begin{align}
 	\label{2d-sweq-int_u}
 	\overline{\mathfrak{U}^x_{i,j+\frac{1}{2}}}(t)&= \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \mathfrak{U}(x, y_{j+\frac{1}{2}}, t) \,dx , \quad i=1,\ldots,N,j=0,\ldots, N,\\
