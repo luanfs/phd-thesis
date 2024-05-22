@@ -72,8 +72,9 @@ Our modified advection scheme is slightly better for divergence-free flows in so
 We expect that our scheme would perform similarly to the current FV3 method in processes where there is small divergence/convergence of the wind, 
 and it should yield better results for processes where divergence plays a key role.
 
-An important process where wind divergence plays a key role is in hurricanes and tropical cyclones \citep{holton:2012}.
-These phenomena are fueled by strong horizontal wind convergence at the Earth's surface, with strong horizontal wind divergence occurring at high altitudes.
+\textcolor{red}{
+Horizontal wind divergence plays a pivotal role in many phenomena on the atmosphere such as in tropical cyclones, hurricanes and in the Intertropical Convergence Zone \citet{holton:2012}}.
+For example, hurricanes are fueled by strong horizontal wind convergence at the Earth's surface, with strong horizontal wind divergence occurring at high altitudes.
 We could perform a study based on \citet{gao:2021}, where the authors investigated the impact of using different PPM schemes of FV3 on hurricane intensity prediction.
 Their study highlights how modifying the advection scheme may improve hurricane intensity prediction and affect the eyewall convection location.
 Therefore, we could use our advection scheme in these simulations and observe its effect on hurricane intensity prediction.
