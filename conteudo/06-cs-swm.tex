@@ -860,7 +860,7 @@ The divergence on B-grid points may be computed using the D-grid contravariant w
 	\label{2d-sw-divdamp}
 	D_{i+\frac{1}{2},j+\frac{1}{2}}[u^n,v^n] &=
 	\frac{1}{\sqrt{\mathfrak{g}}_{i+\frac{1}{2},j+\frac{1}{2}}}\bigg[
-	\frac{(\sqrt{\mathfrak{g}}\mathfrak{u})_{i+1,j+\frac{1}{2}}^n-(\sqrt{\mathfrak{g}}\mathfrak{u})_{i,j-\frac{1}{2}}^n}{\Delta x}+
+	\frac{(\sqrt{\mathfrak{g}}\mathfrak{u})_{i+1,j+\frac{1}{2}}^n-(\sqrt{\mathfrak{g}}\mathfrak{u})_{i,j+\frac{1}{2}}^n}{\Delta x}+
 	\frac{(\sqrt{\mathfrak{g}}\mathfrak{v})_{i+\frac{1}{2},j+1}^n-(\sqrt{\mathfrak{g}}\mathfrak{v})_{i+\frac{1}{2},j}^n}{\Delta y}
 	\bigg]\nonumber\\
 	&= 
@@ -1027,7 +1027,7 @@ On the equi-edge grid, the $L_2$ error of LT is slightly smaller.
 	\begin{subfigure}{0.45\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{h_error_tc2_t5_alpha45_C192_g0_dg1_adv2_hord8_dd0.12_mf1_tf5}
-		\caption{ max= $6.40\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-0b}}
+		\caption{LT scheme max= $6.40\times10^{-2}$.\label{chp-advcs-sec-exp-sw1-errors-0b}}
 	\end{subfigure}
 	\caption{
 		Geostrophic balanced flow test: depth error distribution after 5 days using the monotonic PPM (MONO)

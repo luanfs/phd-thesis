@@ -619,23 +619,23 @@ $(\lambda_1,\phi_1) = (-\frac{\pi}{4},0)$ and
 $(\lambda_2,\phi_2) = ( \frac{\pi}{4},0)$, respectively.
 IC1 represents a Gaussian hill centered at a cube corner and we set $b_0 = -10$.
 IC2 represent a cosine bell centered at a cube corner, where $r_0 = \frac{R}{3}$, 
-for $\lambda_0=\frac{\pi}{4}$ and $\phi = \frac{\pi}{2}-\arccos{\big(\frac{1}{\sqrt{3}}\big)}$.
+for $\lambda_0=\frac{\pi}{4}$ and $\phi_0 = \frac{\pi}{2}-\arccos{\big(\frac{1}{\sqrt{3}}\big)}$.
 IC3 represent a cylinder where $r_0 = \frac{R}{3}$, 
-for $\lambda_0=\frac{\pi}{4}$ and $\phi = \frac{\pi}{2}-\arccos{\big(\frac{1}{\sqrt{3}}\big)}$,
+for $\lambda_0=\frac{\pi}{4}$ and $\phi_0 = \frac{\pi}{2}-\arccos{\big(\frac{1}{\sqrt{3}}\big)}$,
 and therefore the cylinder is also centered at a cube corner.
 IC4 represents two Gaussian hills as suggested by \citet{nair:2010} and we set $b_0 = -5$.
 The initial conditions are shown in Figure \ref{chp5-ic}.
 
 For the velocities provided in Table \ref{chp5-vf}, we adopt the following parameter values: 
-$\alpha=-\frac{45\pi}{180}$, $\lambda_p=\lambda-\frac{2\pi t}{T}$, $T=12$ days (12$\times$86400 seconds) and $R$ is the Earth radius.
-For VF1 and VF2, we use $u_0 = \frac{2\pi R}{T}$, while for VF3, we use $u_0 = \frac{\pi R}{2T}$.
+$\alpha=\frac{\pi}{4}$, $\lambda_p=\lambda-\frac{2\pi t}{T}$, $T=12$ days (12$\times$86400 seconds) and $R$ is the Earth radius.
+For VF1, VF2 and VF3, we use $u_0 = \frac{2\pi R}{T}$.
 In this context, VF1 represents the non-divergent rotated zonal field introduced in \citet{will:1992}.
 VF2 corresponds to the non-divergent deformational flow described in \citet{nair:2010},
 and VF3 represents the divergent flow also presented in \citet{nair:2010}.
 For all velocity fields presented here, the initial condition is equal to the final solution after 12 days.
 Furthermore, for VF1, we can compute the exact solution at any time instant for any initial condition.
 Therefore, we can analyze the temporal evolution of the error.
-For an expression of the exact solution when using VF1 and a general initial condition, refer to \citet[Theorem, p. 155]{brachet:2018}.
+For an expression of the exact solution when using VF1 and a general initial condition, refer to \citet[Theorem 5.1, p. 155]{brachet:2018}.
 
 We are going to consider the schemes LT-DP2 and PL-DP1 since these schemes yield better results on planar simulations (Section \ref{sec-ds-exp}).
 For a shorter notation, we shall denote LT-DP2 and PL-DP1 by \textbf{LT} and \textbf{PL} advection schemes. 
@@ -1249,6 +1249,6 @@ PL is only accurate for divergence-free winds.
 
 Additionally, the Gaussian hill and cosine bell advection through a rotated zonal wind showed 
 that some errors of PL and LT presented small spikes whenever the Gaussian hill passed over a corner.
-The overall results for these test showed that the LT scheme have slightly smaller errors for divergence-free winds.
+The overall results for this test showed that the LT scheme have slightly smaller errors.
 We could also observe that the mass fixer did not significantly impact the results,
 and the equi-edge grid (g0) grid generally exhibited smaller errors compared to the equiangular grid (g2), with LT showing good performance in both grids.

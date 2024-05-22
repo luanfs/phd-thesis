@@ -233,7 +233,7 @@ represents the space of $k$-times periodically differentiable functions over the
 \subsection{The 1D advection equation}
 In this Section, we will derive the integral form of the 1D advection equation with periodic boundary conditions over the interval $\Omega$.
 What is going to be presented here follows \citet{leveque:1990,leveque:2002} closely.
-The advection equation with periodic boundary conditions is given by the following PDE:
+The conservative advection equation with periodic boundary conditions is given by the following PDE:
 \begin{equation}
 	\label{chp-adv1d-sec-adv-eq1}
 	\begin{cases}
@@ -243,7 +243,7 @@ The advection equation with periodic boundary conditions is given by the followi
 		q_0(x) = q(x,0), \quad \forall x \in \Omega.
 	\end{cases}
 \end{equation}
-Here, $q \in \mathcal{C}_P^1{(\Omega)}$ represents the advected quantity, and $u \in \mathcal{C}_P^1{(\Omega)}$ represents the velocity or wind.
+Here, $q \in \mathcal{C}_P^1{(\Omega)}$ represents the advected quantity density \citep{zerroukat:2006}, and $u \in \mathcal{C}_P^1{(\Omega)}$ represents the velocity or wind.
 We will focus on Equation \eqref{chp-adv1d-sec-adv-eq1} over the domain $D = \Omega\times[0,T]$, where $T>0$ is a finite time.
 A strong or classical solution to the advection equation is defined as a function ${q}\in\mathcal{C}^1_P(\Omega)$ 
 and satisfies Equation \eqref{chp-adv1d-sec-adv-eq1}.
@@ -677,13 +677,13 @@ both in space and time. We overcome this using linear interpolation in space:
 	\begin{cases}
 		\big(1-\alpha_{i+\frac{1}{2}}^n \big)u^{n+\frac{1}{2}}_{i+\frac{1}{2}-k} +
         \alpha_{i+\frac{1}{2}}^n u^{n+\frac{1}{2}}_{i-\frac{1}{2}-k} & \text{if } {u}^n_{i+\frac{1}{2}}\geq 0,\\
-		\alpha_{i+\frac{1}{2}}^n u^{n+\frac{1}{2}}_{i+\frac{3}{2}-k} + \big(1-\alpha_{i+\frac{1}{2}}^n\big)
+		-\alpha_{i+\frac{1}{2}}^n u^{n+\frac{1}{2}}_{i+\frac{3}{2}-k} + \big(1+\alpha_{i+\frac{1}{2}}^n\big)
         u^{n+\frac{1}{2}}_{i+\frac{1}{2}-k} & \text{if } {u}^n_{i+\frac{1}{2}} < 0,\
 	\end{cases}
 \end{equation}
 where $\frac{c_{i+\frac{1}{2}}^n}{2} = \alpha_{i+\frac{1}{2}}^n + k$, 
 $k=\lfloor \frac{c_{i+\frac{1}{2}}^n}{2} \rfloor$, $\alpha_{i+\frac{1}{2}}^n \in [0,1[$, and $\lfloor \cdot \rfloor$ is
-the floor function. This scheme leads to a third-order error in the departure point estimate (see \textit{e.g.} 
+the floor function. This scheme leads to a third-order error in the departure point estimate (\textit{cf.} \textit{e.g.} 
 \citet[Section 7.1.2]{durran:2010}). This scheme shall be referred to as \textbf{DP2}.
 As we mention in scheme DP1, we use the exact values of the wind needed at the time step $n+\frac{1}{2}$ and cell edge indexes $i+\frac{1}{2}$.
 Notice that for this scheme, we need ghost values for the velocity, depending on how large the CFL number is.
