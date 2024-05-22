@@ -993,6 +993,7 @@ The Figure shows the deformation of the scalar field over time, eventually retur
 		8  \eqref{chp-adv2d-sec-exp-adv2-d},
 		10  \eqref{chp-adv2d-sec-exp-adv2-e},
 		and 12  \eqref{chp-adv2d-sec-exp-adv2-f} days.
+\textcolor{red}{The white arrows illustrate the velocity field}.
 		We are using the PL-DP1-MONO scheme, where MONO is the monotonic PPM. \label{chp-adv2d-sec-exp-adv2}}
 \end{figure}
 
@@ -1003,10 +1004,14 @@ resulting in a CFL number approximately equal to 0.79.
 We can observe from Figure \ref{chp-adv2d-sec-exp-adv2-error-linf} that for the unlimited PPM, PL-DP1 and LT-DP2 have smaller
 error and higher convergence order than PL-DP2 and LT-DP1.
 However, when considering the monotonic PPM, all the schemes have the same error in $L_{\infty}$ norm.
+\textcolor{red}{The results of the monotonic scheme have an order of approximately 1.5, which is expected, as the monotonic limiter reduces the order of accuracy.}
 The errors in $L_{1}$ norm (Figure \ref{chp-adv2d-sec-exp-adv2-error-l1}) exhibit a similar behavior; the only difference is 
 that PL-DP1 and LT-DP2 have smaller errors than PL-DP2 and LT-DP1, along with higher convergence order.
-
-\newpage
+\textcolor{red}{
+The reason that justifies why improving the departure point calculation of the PL scheme,
+moving from PL-DP1 to PL-DP2, does not improve the overall error, is justified by the analysis provided in Section \ref{sp-error},
+where it is pointed out that PL-DP2 will not satisfy the discrete divergence-free condition 
+(Equation \eqref{discrete-divfree}), introducing a first-order error in this case.}
 
 \begin{figure}[!htb]
 \centering
