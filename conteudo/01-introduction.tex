@@ -23,14 +23,15 @@ Seasonal forecasts (one up to three months) are important to energy planning and
 At last, longer-range forecasts (one century, for instance) are useful for climate change 
 projections that are important for government planning.
 
-The first global Numerical Weather Prediction models emerged in the 1960s
-with applications to weather, seasonal and climate forecasts. 
+\textcolor{red}{
+The first global Numerical Weather Prediction models emerged in the 1950s under the Joint Numerical Weather Prediction Unit (JNWPU), 
+a joint project by the U.S. Air Force, Navy, and Weather Bureau, with applications to weather, seasonal, and climate forecasts \citep{harper:2007}}.
 All these applications are essentially based on the same set of Partial Differential Equations
 (PDEs) but with distinct time scales \citep{stan:2008}. These PDEs are defined on the sphere
 and model the evolution of the atmospheric fluid given the initial conditions.
 One important component of global models is the dynamical core (dycore), which is responsible
-for solving the PDEs that governs the atmosphere dynamics on grid-scale \citep{will:2007}. 
-The development of numerical methods for dynamical cores has been an active research area since the 1960s.
+for solving the PDEs that \textcolor{red}{govern} the atmosphere dynamics on grid-scale \citep{will:2007}. 
+The development of numerical methods for dynamical cores has been an active research area since the \textcolor{red}{1950s}.
 
 Global models use the sphere as the computational domain and therefore they require a discretization
 of the sphere. 
@@ -39,8 +40,11 @@ very suitable for finite-differences schemes due to its orthogonality \citep{wil
 is the clustering of points at the poles, known as the ``pole problem'', which leads to extremely
 small time steps for explicit-in-time schemes due to the Courant-Friedrichs-Lewy (CFL) condition, 
 making these schemes computationally very expensive \citep{randall:2020}.
+\textcolor{red}{The latitude-longitude grid is highly non-isotropic due to the pole problem, with a much higher resolution at the poles than elsewhere (Figure \ref{latlon-grid}).
+Additionally, polar filters may be required by explicit schemes to stabilize short waves that tend to be over-resolved at high latitudes, 
+which may degrade the solution accuracy \citep{will:2007}.}
 
-The most successful method adopted in global atmospheric dynamical cores that overcomes the CFL 
+The most successful method adopted in global atmospheric dynamical cores \textcolor{red}{on latitude-longitude grids} that overcomes the CFL 
 restriction is the Semi-Implicit Semi-Lagrangian (SI-SL) scheme \citep{randall:2018}, which 
 emerged in the 1980s and consists of the Lagrangian advection scheme applied at each time-step 
 and the solution of fast gravity waves implicitly, allowing very large time steps despite the pole problem.
@@ -49,7 +53,7 @@ the UK Met Office global model ENDGame \citep{wood:2014}.
 The expensive part of the  SI-SL approach is to solve an elliptic equation at each time step,
 that comes from the semi-implicit discretization, which requires global data communication,
 being inefficient to run in massive parallel supercomputers. Besides that, 
-Semi-Lagrangian schemes are inherently non-conservatives for mass,
+traditional Semi-Lagrangian schemes are inherently non-conservatives for mass,
 which is critical for climate forecasts \citep{will:2007}.
 
 \begin{figure}
@@ -173,7 +177,7 @@ Nonhydrostatic Unified Model of the Atmosphere (NUMA) from the US Navy using Dis
 methods \citep{giraldo:2013}. The cubed-sphere was also chosen to be used in the next UK Met Office
 global model using mixed finite elements \citep{melvin:2022}.
 At last, the Finite­ Volume Cubed-Sphere dynamical core (FV3) from the Geophysical Fluid 
-Dynamics Laboratory (GFDL) and the National Oceanic and Atmospheric Administration (NOAA)
+Dynamics Laboratory (GFDL) \textcolor{red}{at} the National Oceanic and Atmospheric Administration (NOAA)
 \citep{putman:2007,harris:2013} is another example
 of new generation dynamical core based on the cubed-sphere.
 
@@ -188,20 +192,23 @@ An important feature is that the FVcore combines the  Arakawa C- and D-grids \ci
 where the C-grid values are computed in and intermediate time step. 
 The full global model was then presented by \citet{lin:2004}.
 
-A computational disadvantage of the FVcore is its Semi-Lagrangian formulation that creates more demand
-for MPI communication when computing the accumulated fluxes \citep{lin:1996}.
-The FVcore was then adapted to the cubed-sphere grid \citep{putmanthesis:2007, putman:2007}, 
+\textcolor{red}{
+A disadvantage of the FVcore is its Semi-Lagrangian formulation, which introduces parallelization difficulties. 
+Indeed, as noted by \citet{putman:2007}, it creates a load balancing problem, 
+primarily due to a larger halo region needed in the zonal direction near the poles.}
+Then, the FVcore was then adapted to the cubed-sphere grid \citep{putmanthesis:2007, putman:2007}, 
 to reach better performance in parallel computers, leading to the FV3 dycore.
 Later, the FV3 also was improved to allow locally refinement grids 
 through grid-nesting or grid-stretching \citep{harris:2013}.
+\textcolor{red}{More recently, FV3 introduced two-way multiple same-level and telescoping grid nesting capabilities, as detailed by \citet{mouallem:2022}.}
 
 Currently, the FV3 dycore is capable of performing both hydrostatic and non-hydrostatic atmospheric simulations. 
-\textcolor{black}{It was chosen as the new US GFS dynamical core, indeed replacing the spectral transform GFS in 2019, as mentioned before.}
+It was chosen as the new US GFS dynamical core, indeed replacing the spectral transform GFS in 2019, as mentioned before.
 Additionally, the FV3 dynamical core is employed in the GEOS Chem model \citep{martin:2022} from Harvard University, 
 in NASA’s next-generation Mars Climate Model \citep{wilson:2022}, 
 and also in the System for High-resolution prediction on Earth-to-Local Domain (SHiELD) model from GFDL \citep{harris:2020}.
 
-However, a well-known problem that occurs on cubed-sphere models that use low-order numerical methods
+However, a well-known problem that occurs on cubed-sphere models
 is the grid imprinting visible due to the coordinate system discontinuity, 
 especially at larger scales, leading to the emergence of a wavenumber 4 pattern.
 This was reported in the paper of \citet{rancic:2017}, where the authors employ a 
