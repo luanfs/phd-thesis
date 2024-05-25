@@ -1,0 +1,70 @@
+\documentclass[varwidth=\maxdimen]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{fit}
+\usepackage[nomessages]{fp}
+
+\tikzset{every label/.style={font=\footnotesize,inner sep=1.5pt}}
+
+\newcommand{\pc}[4][]{\node[circle, fill, label={below:#4},#1] at (#2) (#3) {}}
+\newcommand{\pcghost}[4][]{\node[circle, fill=gray, label={below:#4},#1] at (#2) (#3) {}}
+\newcommand{\pu}[4][]{\node[rectangle, fill, label={above:#4},#1] at (#2) (#3) {}}
+\newcommand{\pughost}[4][]{\node[rectangle, fill=gray, label={above:#4},#1] at (#2) (#3) {}}
+\newcommand{\nx}{4} %number of cells in x direction
+\newcommand{\nghost}{2} %number of ghost cells in x direction
+\newcommand{\xmin}{0}  %grid start
+\newcommand{\xmax}{12} %grid end
+
+\begin{document}
+	\begin{figure}[h]
+		\centering
+		\begin{tikzpicture}
+			% Grid lines
+			\FPeval{\dx}{clip((\xmax-\xmin)/\nx)}
+			\draw[gray!50, thin] (\xmin -\nghost*\dx,0) -- (\xmax+\nghost*\dx,0);
+			\draw[black!100, thin] (\xmin,0) -- (\xmax,0);
+			% Interior grid centers
+			\foreach \i in {1,...,\nx}{
+				\FPeval{\xc}{clip(\xmin+(\i-0.5)*\dx)}
+				\node at (\xc,-1) {$x_{\i}$};
+				\pc{\xc,0}{5}{};
+			}
+
+			\node at (0.7,1) {$=a$};
+			\node at (12.7,1) {$=b$};
+			% Ghost cell centers
+			\foreach \i in {1,...,\nghost}{
+				\FPeval{\xc}{clip(\xmin-(\nghost-\i+0.5)*\dx)}
+				\FPeval{\ii}{clip(\i-\nghost)}
+				\FPeval{\iii}{clip(\nx+\ii)}
+				\node[gray] at (\xc,-1) {$x_{\ii}$};
+				\pcghost{\xc,0}{5}{};
+
+				\FPeval{\xc}{clip(\xmax+(\i-0.5)*\dx)}
+				\FPeval{\ii}{clip(\nx+\i)}
+				\FPeval{\iii}{clip(\i)}
+				\node[gray] at (\xc,-1) {$x_{\ii}$};
+				\pcghost{\xc,0}{5}{};
+			}
+			
+			% Interior grid edges
+			\foreach \i in {0,...,\nx}{
+				\FPeval{\xc}{clip(\xmin+\i*\dx)}
+				\node at (\xc,1) {$x_{\i+\frac{1}{2}}$};
+				\pu{\xc,0}{}{};
+			}
+			% Ghost cell edges
+			\foreach \i in {1,...,\nghost}{					
+				\FPeval{\xc}{clip(\xmax+\i*\dx)}
+				\FPeval{\ii}{clip(\nx+\i)}
+				\FPeval{\iii}{clip(\i)}
+				\node[gray] at (\xc,1) {$x_{\ii + \frac{1}{2}}$};
+				\pughost{\xc,0}{5}{};
+
+				\FPeval{\xc}{clip(\xmin-(\nghost-\i+1)*\dx)}
+				\FPeval{\ii}{clip(\i-\nghost-1)}
+				\node[gray] at (\xc,1) {$x_{\ii + \frac{1}{2}}$};
+				\pughost{\xc,0}{5}{};
+			}
+		\end{tikzpicture}
+	\end{figure}
+\end{document}

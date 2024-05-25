@@ -1,0 +1,56 @@
+\documentclass[varwidth=\maxdimen]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{fit}
+\usepackage[nomessages]{fp}
+
+\tikzset{every label/.style={font=\footnotesize,inner sep=1.5pt}}
+
+\newcommand{\pu}[4][]{\node[rectangle, fill, label={above:#4},#1] at (#2) (#3) {}}
+\newcommand{\pudep}[4][]{\node[rectangle, fill=blue, label={below:#4},#1] at (#2) (#3) {}}
+\newcommand{\nx}{2} %number of cells in x direction
+\newcommand{\xmin}{0}  %grid start
+\newcommand{\xmax}{20} %grid end
+
+\begin{document}
+	\begin{figure}[h]
+		\centering
+		\begin{tikzpicture}
+			\FPeval{\dt}{clip(0.1)}
+			\FPeval{\dx}{clip((\xmax-\xmin)/\nx)}
+			\FPeval{\t0}{clip(0)}
+			\foreach \t in {0,1}{
+				% Grid lines
+				\draw[gray!50, thin] (\xmin,\t0) -- (\xmax,\t0);			
+				% Interior grid edges
+				\foreach \i in {0,...,\nx}{
+					\FPeval{\xc}{clip(\xmin+\i*\dx)}
+					\FPeval{\ii}{clip(2*\i+1-2)}
+					\ifnum \ii>0
+					\node at (\xc,\t0+0.5) {\huge$x_{i+\frac{\ii}{2}}$};
+					\else
+					\FPeval{\ii}{clip(-\ii)}
+					\node at (\xc,\t0+0.5) {\huge$x_{i-\frac{\ii}{2}}$};
+					\fi
+					\pu{\xc,\t0}{}{};
+				}
+				\ifnum \t>0
+				\node at (\xmax+3,\t0) {\huge$t^{n+\t}$};
+				\else
+				\node at (\xmax+3,\t0) {\huge$t^{n}$};
+				\fi
+				\FPeval{\t0}{clip(\t0+\dt)}
+			}
+			
+			% Curve connecting grid edges
+			\FPeval{\nx}{clip(\nx-1)}
+			\foreach \i in {0,...,\nx}{
+				\FPeval{\xc}{clip(\xmin+\i*\dx)}
+				\FPeval{\ii}{clip(2*\i+1)}
+				\pgfmathsetmacro{\nexti}{int(\i+1)}
+				\FPeval{\nextxc}{clip(\xmin+\nexti*\dx)}
+				\draw[blue] (\xc+1,\t0) to[out=90,in=-90] (\nextxc,10);
+				\pudep{\xc+1,\t0}{}{{\textcolor{blue}{ \huge$x_{i+\frac{\ii}{2}}^d(t^n,t^{n+1})$}}};
+			}
+		\end{tikzpicture}
+	\end{figure}
+\end{document}
