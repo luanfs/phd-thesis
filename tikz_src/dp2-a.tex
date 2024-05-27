@@ -1,0 +1,45 @@
+\documentclass[tikz,border=3mm]{standalone}
+%% The amssymb package provides various useful mathematical symbols
+\usepackage{amssymb}
+%% The amsmath package provides various useful equation environments.
+\usepackage{amsmath}
+%% The amsthm package provides extended theorem environments
+\usepackage{amsthm}
+
+\begin{document}
+	\begin{tikzpicture}[bullet/.style={circle,fill=#1,inner sep=1.5pt}] 
+    \draw[->] (-1,-1) -- (7.5,-1) node[right] {$x$};
+    \draw[->] (-1,-1) -- (-1,5.5) node[above] {$t$};
+	\draw (0,0) grid[xstep=6, ystep=4] (6,4);
+	\draw (0,0) grid[xstep=6, ystep=4] (6,4);
+	\draw[dashed] (0,0) grid[xstep=3, ystep=2] (6,4);
+	\draw[dashed] (-1,-1) grid[xstep=3, ystep=2]  (7,0);
+	\draw[dashed] (-1,-1) grid[xstep=3, ystep=2]  (0,5);
+	\draw[dashed] (4,-1) grid[xstep=3, ystep=2]  (7,5);
+
+    \node[left,font=\large] at (-1.2,0) {$t^{n}$};
+    \node[left,font=\large] at (-1.2,2) {$t^{n+\frac{1}{2}}$};
+    \node[left,font=\large] at (-1.2,4) {$t^{n+1}$};
+    \node[below,font=\large] at (0,-1.2) {$x_{i-\frac{1}{2}}$};
+    \node[below,font=\large] at (6,-1.2) {$x_{i+\frac{1}{2}}$};
+    \node[below,font=\large] at (0,5.5) {$x_{i-\frac{1}{2}}$};
+    \node[below,font=\large] at (6,5.5) {$x_{i+\frac{1}{2}}$};  
+
+%u points
+%\node[bullet=blue,label={[below, above left]:${u}^{n+\frac{1}{2}}_{i-\frac{1}{2}}$}, minimum size=0.25cm] at (0,2.0) {};
+%\node[bullet=blue,label={[below, above right]:${u}^{n+\frac{1}{2}}_{i+\frac{1}{2}}$}, minimum size=0.25cm] at (6,2.0) {};
+
+\node[bullet=blue,label={[below, above left]:${u}^{n}_{i-\frac{1}{2}}$}, minimum size=0.25cm] at (0,0.0) {};
+\node[bullet=blue,label={[below, above right]:${u}^{n}_{i+\frac{1}{2}}$}, minimum size=0.25cm] at (6,0.0) {};
+
+%departure point     
+\draw[->,blue] (4,2) -- (6,4) node[red,right] {};
+\node[rectangle,color=blue,fill] at (6,4) {};
+\node[bullet=orange,label={[above]:$\tilde{x}_{i+\frac{1}{2}}^{n+\frac{1}{2}}$}, minimum size=0.25cm] at (4,2) {};
+\draw[<->] (4,1.8) -- node[below] {$ {u}^{n}_{i+\frac{1}{2}}\frac{\Delta t}{2} $} (6,1.8);
+%corner points
+%\node[rectangle,fill] at (0,4) {};
+%\node[rectangle,fill] at (6,0) {};
+%\node[rectangle,fill] at (0,0) {};
+	\end{tikzpicture}
+\end{document}

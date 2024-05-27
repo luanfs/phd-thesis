@@ -614,7 +614,18 @@ One possible way of estimating the time-averaged wind is by using:
 	\label{chp-sec-dp-eq5}
 	\tilde{u}^n_{i+\frac{1}{2}} = u^{n+\frac{1}{2}}_{i+\frac{1}{2}},
 \end{equation}
-as in FV3 papers \citep{lin:1996,putman:2007}. 
+as in FV3 papers \citep{lin:1996,putman:2007}.
+\textcolor{red}{The idea behind DP1 is illustrated in Figure \ref{dp1-fig}.}
+
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=.7\linewidth]{dp1}
+	\caption{
+		\textcolor{red}{
+		Illustration of the scheme DP1 for computing the departure point at time level $n+1$ emanating from $x_{i+\frac{1}{2}}$ (blue square) at time level $n$, assuming $u^{n+\frac{1}{2}}_{i+\frac{1}{2}}>0$. The winds used are denoted by blue circles. The estimated departure point $\tilde{x}_{i+\frac{1}{2}}^n$ is illustrated by a red circle. \label{dp1-fig}}}
+\end{figure}
+
 In this case, the time-averaged CFL is given by:
 \begin{equation}
 	\label{chp-sec-dp-eq5b}
@@ -688,7 +699,30 @@ both in space and time. We overcome this using linear interpolation in space:
 where $\frac{c_{i+\frac{1}{2}}^n}{2} = \alpha_{i+\frac{1}{2}}^n + k$, 
 $k=\lfloor \frac{c_{i+\frac{1}{2}}^n}{2} \rfloor$, $\alpha_{i+\frac{1}{2}}^n \in [0,1[$, and $\lfloor \cdot \rfloor$ is
 the floor function. This scheme leads to a third-order error in the departure point estimate (\textit{cf.} \textit{e.g.} 
-\citet[Section 7.1.2]{durran:2010}). This scheme shall be referred to as \textbf{DP2}.
+\citet[Section 7.1.2]{durran:2010}).
+\textcolor{red}{
+This scheme shall be referred to as \textbf{DP2} and the idea behind this scheme is depicted in Figure \ref{dp2-fig}.}
+
+\begin{figure}[!htb]
+	\centering	
+	\begin{subfigure}{0.6\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{dp2-a}
+		\caption{\textcolor{red}{Intermediate departure point $\tilde{x}_{i+\frac{1}{2}}^{n+\frac{1}{2}}$ (orange circle). The winds used are depicted by blue circles.\label{dp2-fig-1}}}
+	\end{subfigure}
+	
+	\begin{subfigure}{0.6\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{dp2-b}
+		\caption{\textcolor{red}{Final departure point $\tilde{x}_{i+\frac{1}{2}}^n$ (red circle) using the wind $\tilde{u}_{i+\frac{1}{2}}^n$ (orange circle) obtained using linear interpolation using the winds at time level $n+\frac{1}{2}$ (blue circles). \label{dp2-fig-2}}}
+	\end{subfigure}
+	\caption{
+		\textcolor{red}{
+			Illustration of the scheme DP2 for computing the departure point at time level $n$ emanating from $x_{i+\frac{1}{2}}$ (blue square) at time level $n+1$, assuming ${u}_{i+\frac{1}{2}}^n>0$.
+			The estimated departure point $\tilde{x}_{i+\frac{1}{2}}^n$ is illustrated by a red circle. \label{dp2-fig}}}
+\end{figure}
+
+
 As we mention in scheme DP1, we use the exact values of the wind needed at the time step $n+\frac{1}{2}$ and cell edge indexes $i+\frac{1}{2}$.
 Notice that for this scheme, we need ghost values for the velocity, depending on how large the CFL number is.
 In particular, if the CFL number is less than 2, then $k=0$ and we need the ghost values $u_{-1+\frac{1}{2}}^n$ and $u_{N+\frac{3}{2}}^n$.
@@ -698,11 +732,12 @@ In this case, it useful to work with the time-averaged CFL number:
 	\tilde{c}^n_{i+\frac{1}{2}} =
 	\begin{cases}
 		\bigg(1-\frac{c_{i+\frac{1}{2}}^n}{2} \bigg)c^{n+\frac{1}{2}}_{i+\frac{1}{2}} +
-     \frac{c_{i+\frac{1}{2}}^n}{2} c^{n+\frac{1}{2}}_{i-\frac{1}{2}} & \text{if } {c}^n_{i+\frac{1}{2}}\geq 0,\\
+		\frac{c_{i+\frac{1}{2}}^n}{2} c^{n+\frac{1}{2}}_{i-\frac{1}{2}} & \text{if } {c}^n_{i+\frac{1}{2}}\geq 0,\\
 		\frac{c_{i+\frac{1}{2}}^n}{2} c^{n+\frac{1}{2}}_{i+\frac{3}{2}} + \bigg(1-\frac{c_{i+\frac{1}{2}}^n}{2}\bigg)
-        c^{n+\frac{1}{2}}_{i+\frac{1}{2}} & \text{if } {c}^n_{i+\frac{1}{2}} < 0.\
+		c^{n+\frac{1}{2}}_{i+\frac{1}{2}} & \text{if } {c}^n_{i+\frac{1}{2}} < 0.\
 	\end{cases}
 \end{equation}
+
 
 \section{Reconstruction: the Piecewise-Parabolic Method}
 \label{chp-adv1d-sec-recon}
