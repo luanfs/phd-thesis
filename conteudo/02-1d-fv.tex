@@ -249,7 +249,7 @@ A strong or classical solution to the advection equation is defined as a functio
 and satisfies Equation \eqref{chp-adv1d-sec-adv-eq1}.
 In order to deduce the integral form of Equation \eqref{chp-adv1d-sec-adv-eq1}, we consider
 $[x_1, x_2]\times[t_1,t_2]\subset D$. 
-Integrating Equation \eqref{chp-adv1d-sec-adv-eq2} over $[x_1, x_2]$, we obtain:
+Integrating Equation \eqref{chp-adv1d-sec-adv-eq1} over $[x_1, x_2]$, we obtain:
 \begin{equation}
     \label{chp-adv1d-sec-adv-eq2}
 	\frac{d}{dt} \int_{x_1}^{x_2} q(x,t) \,dx =  
@@ -333,8 +333,8 @@ and then Equation \eqref{chp-adv1d-sec-adv-eq4} can be rewritten as:
 Now we can define a discretized version of Problem \ref{chp-adv1d-sec2-prob1} as Problem \ref{chp-adv1d-sec2-prob2}.
 \begin{prob}
 	\label{chp-adv1d-sec2-prob2}
-	Let us consider the f
-	m \ref{chp-adv1d-sec2-prob1} and a $(\Delta x, \Delta t, \lambda)$-discretization of 
+	Let us consider the framework
+	of Problem \ref{chp-adv1d-sec2-prob1} and a $(\Delta x, \Delta t, \lambda)$-discretization of 
 	$\Omega \times [0,T]$. Since we are operating within the framework of Problem \ref{chp-adv1d-sec2-prob1}, the following relationship holds:
 	\begin{equation}
 		\label{1d-fvexact-scheme}
@@ -726,6 +726,7 @@ This scheme shall be referred to as \textbf{DP2} and the idea behind this scheme
 As we mention in scheme DP1, we use the exact values of the wind needed at the time step $n+\frac{1}{2}$ and cell edge indexes $i+\frac{1}{2}$.
 Notice that for this scheme, we need ghost values for the velocity, depending on how large the CFL number is.
 In particular, if the CFL number is less than 2, then $k=0$ and we need the ghost values $u_{-1+\frac{1}{2}}^n$ and $u_{N+\frac{3}{2}}^n$.
+\textcolor{red}{If we consider large CFL numbers, more ghost cells are needed.}
 In this case, it useful to work with the time-averaged CFL number:
 \begin{equation}
 	\label{cfl-dp2}
@@ -1211,7 +1212,7 @@ as well as the generation of new extrema, which aligns with our expectations.
 
 \subsection{Flow deformation with divergent wind}
 \label{chp-adv1d-sec-numerical-exp-2}
-As a second experiment, we shall investigate the how the PPM schemes behave when the velocity
+As a second experiment, we shall investigate how the PPM schemes behave when the velocity
 is variable.
 This cases is useful to assess the departure point schemes, which shall not be exact as in the previous test.
 We are going to consider the velocity
