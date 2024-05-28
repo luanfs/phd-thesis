@@ -562,8 +562,9 @@ We shall made usage of the characteristic function $\chi_S$,  where $\chi_{S}(s)
 		\hline
 		IC name & \multicolumn{1}{c|}{$q_0$} \\ \hline
 		IC1   & $\exp(b_0((X-X_0)^2+ (Y-Y_0)^2 + (Z-Z_0)^2))$ \\ \hline
-		IC2   & $0.5+0.5(1+\cos{\frac{\pi r}{r_0}})\chi_{r<r_0}(r)$  \\ \hline
-		IC3   & $0.1+0.9\chi_{r<r_0}(r)$ \\ \hline
+		IC2   & $0.5+0.5(1+\cos{\frac{\pi r}{r_0}})\chi_{\{r<r_0\}}(r)$  \\ \hline
+		IC3   & $0.1+0.9\chi_{\{r<r_0\}}(r)
+		\chi_{\{|\lambda-\lambda_0|\leq0.05 \text{ or } \phi\leq\phi_0 \}}(\lambda,\phi)$ \\ \hline
 		IC4   & $\exp(b_0[(X-X_1)^2+ (Y-Y_1)^2 + (Z-Z_1)^2]) + \exp(b_0[(X-X_2)^2+ (Y-Y_2)^2 + (Z-Z_2)^2])$ \\ \hline
 	\end{tabular}
 	\caption{Initial conditions considered in the numerical experiments (Figure \ref{chp5-ic}).}
@@ -620,9 +621,9 @@ $(\lambda_2,\phi_2) = ( \frac{\pi}{4},0)$, respectively.
 IC1 represents a Gaussian hill centered at a cube corner and we set $b_0 = -10$.
 IC2 represent a cosine bell centered at a cube corner, where $r_0 = \frac{R}{3}$, 
 for $\lambda_0=\frac{\pi}{4}$ and $\phi_0 = \frac{\pi}{2}-\arccos{\big(\frac{1}{\sqrt{3}}\big)}$.
-IC3 represent a cylinder where $r_0 = \frac{R}{3}$, 
+IC3 represent a slotted cylinder, based on  \citet{nair:2010}, where $r_0 = \frac{R}{3}$, 
 for $\lambda_0=\frac{\pi}{4}$ and $\phi_0 = \frac{\pi}{2}-\arccos{\big(\frac{1}{\sqrt{3}}\big)}$,
-and therefore the cylinder is also centered at a cube corner.
+and therefore the slotted cylinder is also centered at a cube corner.
 IC4 represents two Gaussian hills as suggested by \citet{nair:2010} and we set $b_0 = -5$.
 The initial conditions are shown in Figure \ref{chp5-ic}.
 
@@ -903,8 +904,8 @@ Finally, the $L_2$ errors are very similar (Figure \ref{chp-advcs-sec-exp-adv5-l
 \end{figure}
 
 \newpage
-\subsection{Advection of a cylinder through the rotated zonal wind}
-The third test case here is the cylinder advection, given by IC3 from Table \ref{chp5-ic} and using again the rotated zonal wind VF1 (Table \ref{chp5-vf}).
+\subsection{Advection of a slotted cylinder through the rotated zonal wind}
+The third test case here is the slotted cylinder advection, given by IC3 from Table \ref{chp5-ic} and using again the rotated zonal wind VF1 (Table \ref{chp5-vf}).
 We show how the solution evolves with time in Figure \ref{chp-advcs-sec-exp-adv6}.
 
 \begin{figure}[!htb]
@@ -941,7 +942,7 @@ We show how the solution evolves with time in Figure \ref{chp-advcs-sec-exp-adv6
 		\includegraphics[width=1\linewidth]{h_tc-7_t12_alpha45_C192_g0_dg2_adv2_hord8_mf1_tf12}
 		\caption{$t=12$ days.\label{chp-advcs-sec-exp-adv6-f}}
 	\end{subfigure}
-	\caption{Advection experiment results using the cylinder at a cube corner (IC3, Table \ref{chp5-ic}) and 
+	\caption{Advection experiment results using the slotted cylinder at a cube corner (IC3, Table \ref{chp5-ic}) and 
 		the rotated zonal wind (VF1, Table \ref{chp5-vf}).
 		These figures show the advected profile after
 		2 \eqref{chp-advcs-sec-exp-adv6-a}, 
@@ -954,11 +955,11 @@ We show how the solution evolves with time in Figure \ref{chp-advcs-sec-exp-adv6
 \end{figure}
 
 The goal of this test is to assess the qualitative behavior of the solution, 
-especially to see if the limiter prevents oscillations that are expected since the cylinder has a discontinuous profile.
-Also, as the cylinder is located at a cube corner, we would like to see if the corner affects the solution.
+especially to see if the limiter prevents oscillations that are expected since the slotted cylinder has a discontinuous profile.
+Also, as the slotted cylinder is located at a cube corner, we would like to see if the corner affects the solution.
 In Figure \ref{chp-advcs-sec-exp-adv7}, we present the final solutions for $N=192$ as well the reference solution.
 It is evident that all the schemes yield similar results, and we cannot observe any interference of the corner despite using a discontinuous initial condition.
-\newpage
+
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.3\textwidth}
@@ -988,7 +989,7 @@ It is evident that all the schemes yield similar results, and we cannot observe 
 	\includegraphics[width=1\linewidth]{h_tc-7_t0_alpha45_C192_g0_dg2_adv1_hord8_mf1_tf12}
 	\caption{IC and exact solution at day 12.\label{chp-advcs-sec-exp-adv7-a}}
     \end{subfigure}
-	\caption{Cylinder at corner test with $N=192$ after 12 days for the schemes 
+	\caption{Slotted cylinder at corner test with $N=192$ after 12 days for the schemes 
 	PL-MONO at the equi-edge grid (g0) (a),	LT-MONO at the equi-edge grid (g0) (b), 
 	PL-MONO at the equiangular grid (g2) (c) and LT-MONO at the equiangular grid (g2) (d).
 	(e) depicts the reference solution. The monotonic scheme is denoted by MONO.
