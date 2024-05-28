@@ -1049,6 +1049,7 @@ This test is the spherical analogous of the planar divergence free deformational
 		We are using the LT-MONO-mf1 scheme on the equiangular grid (g2) with $N=384$.\label{chp-advcs-sec-exp-adv3}}
 \end{figure}
 
+\newpage
 Figures \ref{chp-advcs-sec-exp-adv3-errors-0} and \ref{chp-advcs-sec-exp-adv3-errors-2} show 
 the final error at a cube face for the equi-edge grid (g0) and the equiangular grid (g2), respectively.
 The results without a mass fixer are very similar and are not shown here. 
@@ -1130,34 +1131,34 @@ This test is the spherical analogous of the planar divergent deformational flow 
 	\centering
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{h_tc-6_t2_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
+		\includegraphics[width=1\linewidth]{h_tc-6_t2_alpha0_C384_g0_dg2_adv2_hord8_mf1_tf12}
 		\caption{$t=2$ days.\label{chp-advcs-sec-exp-adv4-a}}
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{h_tc-6_t4_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
+		\includegraphics[width=1\linewidth]{h_tc-6_t4_alpha0_C384_g0_dg2_adv2_hord8_mf1_tf12}
 		\caption{$t=4$ days.\label{chp-advcs-sec-exp-adv4-b}}
 	\end{subfigure}
 
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{h_tc-6_t6_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
+		\includegraphics[width=1\linewidth]{h_tc-6_t6_alpha0_C384_g0_dg2_adv2_hord8_mf1_tf12}
 		\caption{$t=6$ days.\label{chp-advcs-sec-exp-adv4-c}}
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{h_tc-6_t8_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
+		\includegraphics[width=1\linewidth]{h_tc-6_t8_alpha0_C384_g0_dg2_adv2_hord8_mf1_tf12}
 		\caption{$t=8$ days.\label{chp-advcs-sec-exp-adv4-d}}
 	\end{subfigure}
 
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{h_tc-6_t10_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
+		\includegraphics[width=1\linewidth]{h_tc-6_t10_alpha0_C384_g0_dg2_adv2_hord8_mf1_tf12}
 		\caption{$t=10$ days.\label{chp-advcs-sec-exp-adv4-e}}
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{h_tc-6_t12_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
+		\includegraphics[width=1\linewidth]{h_tc-6_t12_alpha0_C384_g0_dg2_adv2_hord8_mf1_tf12}
 		\caption{$t=12$ days.\label{chp-advcs-sec-exp-adv4-f}}
 	\end{subfigure}
 	\caption{
@@ -1177,7 +1178,7 @@ Figures \ref{chp-advcs-sec-exp-adv4-errors-0} and \ref{chp-advcs-sec-exp-adv4-er
 for the equi-edge grid (g0) and the equiangular grid (g2), respectively.
 The results without a mass fixer are very similar and are not shown here. 
 We can observe that the errors for PL are much larger, with significant errors present in many cells, whereas LT has smaller errors that are concentrated in some ripples.
-\newpage
+
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
@@ -1219,11 +1220,10 @@ LT with the monotonic scheme (MONO) exhibits smaller errors in the $L_{\infty}$ 
 This discrepancy arises because the PL splitting is designed for divergence-free flows, while LT is designed to be second-order regardless of the flow characteristics.
 Finally, these results are similar to the planar divergent deformational flow test presented in Section \ref{2d-adv-divflow}.
 
-\newpage
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=1\linewidth]{linferror_tc-6_alpha0}
+	\includegraphics[width=0.9\linewidth]{linferror_tc-6_alpha0}
 	\caption{
 		$L_{\infty}$ error convergence for the advection on the sphere test using the two Gaussian hills  (IC4, Table \ref{chp5-ic}) and the divergent wind
 		(VF3, Table \ref{chp5-vf}) on the equi-edge grid (g0, left) 
@@ -1236,7 +1236,7 @@ Finally, these results are similar to the planar divergent deformational flow te
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=1\linewidth]{l2error_tc-6_alpha0}
+	\includegraphics[width=0.9\linewidth]{l2error_tc-6_alpha0}
 	\caption{As Figure \ref{chp-advcs-sec-exp-adv4-linf} but considering the $L_2$ norm. \label{chp-advcs-sec-exp-adv4-l2}}
 \end{figure}
 
