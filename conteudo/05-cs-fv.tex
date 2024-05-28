@@ -606,7 +606,7 @@ We shall made usage of the characteristic function $\chi_S$,  where $\chi_{S}(s)
     \end{subfigure}
     \begin{subfigure}{0.45\textwidth}
 	\centering
-	\includegraphics[width=0.9\linewidth]{h_tc-5_t0_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
+	\includegraphics[width=0.9\linewidth]{h_tc-5_t0_alpha0_C384_g0_dg2_adv2_hord8_mf1_tf12}
 	\caption{IC4. \label{chp5-ic4}}
     \end{subfigure}
 	\caption{ Illustration of the initial conditions considered in this chapter (Table \ref{chp5-tab1}).\label{chp5-ic}}
@@ -1007,34 +1007,34 @@ This test is the spherical analogous of the planar divergence free deformational
 	\centering
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{h_tc-5_t2_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
+		\includegraphics[width=1\linewidth]{h_tc-5_t2_alpha0_C384_g0_dg2_adv2_hord8_mf1_tf12}
 		\caption{$t=2$ days.\label{chp-advcs-sec-exp-adv3-a}}
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{h_tc-5_t4_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
+		\includegraphics[width=1\linewidth]{h_tc-5_t4_alpha0_C384_g0_dg2_adv2_hord8_mf1_tf12}
 		\caption{$t=4$ days.\label{chp-advcs-sec-exp-adv3-b}}
 	\end{subfigure}
 
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{h_tc-5_t6_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
+		\includegraphics[width=1\linewidth]{h_tc-5_t6_alpha0_C384_g0_dg2_adv2_hord8_mf1_tf12}
 		\caption{$t=6$ days.\label{chp-advcs-sec-exp-adv3-c}}
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{h_tc-5_t8_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
+		\includegraphics[width=1\linewidth]{h_tc-5_t8_alpha0_C384_g0_dg2_adv2_hord8_mf1_tf12}
 		\caption{$t=8$ days.\label{chp-advcs-sec-exp-adv3-d}}
 	\end{subfigure}
 
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{h_tc-5_t10_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
+		\includegraphics[width=1\linewidth]{h_tc-5_t10_alpha0_C384_g0_dg2_adv2_hord8_mf1_tf12}
 		\caption{$t=10$ days.\label{chp-advcs-sec-exp-adv3-e}}
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{h_tc-5_t12_alpha0_C384_g2_dg2_adv2_hord8_mf1_tf12}
+		\includegraphics[width=1\linewidth]{h_tc-5_t12_alpha0_C384_g0_dg2_adv2_hord8_mf1_tf12}
 		\caption{$t=12$ days.\label{chp-advcs-sec-exp-adv3-f}}
 	\end{subfigure}
 	\caption{Advection experiment results using the two Gaussian hills  (IC4, Table \ref{chp5-ic}) and 
@@ -1053,7 +1053,7 @@ Figures \ref{chp-advcs-sec-exp-adv3-errors-0} and \ref{chp-advcs-sec-exp-adv3-er
 the final error at a cube face for the equi-edge grid (g0) and the equiangular grid (g2), respectively.
 The results without a mass fixer are very similar and are not shown here. 
 We can observe that the errors for both PL and LT are very similar, and also the type of grid does not have a significant impact.
-\newpage
+
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
@@ -1076,7 +1076,7 @@ These figures show the advected profile after
 8  \eqref{chp-advcs-sec-exp-adv3-d},
 10  \eqref{chp-advcs-sec-exp-adv3-e},
 and 12  \eqref{chp-advcs-sec-exp-adv3-f} days.
-We are using the LT-MONO-mf1 scheme on the equiangular grid (g2) with $N=384$.
+We are using the LT-MONO-mf1 scheme on the equi-edge grid (g0) with $N=384$.
 		 \label{chp-advcs-sec-exp-adv3-errors-0}}
 \end{figure}
 \begin{figure}[!htb]
@@ -1098,7 +1098,7 @@ Once more, it is evident that all schemes with the unlimited PPM (UNLIM) achieve
 in $L_{\infty}$ norm. In $L_{2}$ norm, the order is 2 for MONO.
 Furthermore, LT and PL demonstrate almost the same errors when utilizing MONO, with the LT scheme being slightly smaller.
 We also notice that the mass fixer does not impact the errors.
-\newpage
+
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=1\linewidth]{linferror_tc-5_alpha0}
