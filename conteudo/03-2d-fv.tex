@@ -954,34 +954,34 @@ The Figure shows the deformation of the scalar field over time, eventually retur
 	\centering
 	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1.2\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t2}
+		\includegraphics[width=1.25\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t2}
 		\caption{$t=2$ days.\label{chp-adv2d-sec-exp-adv2-a}}
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1.2\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t4}
+		\includegraphics[width=1.25\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t4}
 		\caption{$t=4$ days.\label{chp-adv2d-sec-exp-adv2-b}}
 	\end{subfigure}
 
 	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1.2\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t6}
+		\includegraphics[width=1.25\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t6}
 		\caption{$t=6$ days.\label{chp-adv2d-sec-exp-adv2-c}}
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1.2\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t8}
+		\includegraphics[width=1.25\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t8}
 		\caption{$t=8$ days.\label{chp-adv2d-sec-exp-adv2-d}}
 	\end{subfigure}
 
 	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1.2\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t10}
+		\includegraphics[width=1.25\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t10}
 		\caption{$t=10$ days.\label{chp-adv2d-sec-exp-adv2-e}}
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1.2\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t12}
+		\includegraphics[width=1.25\linewidth]{adv2d_tc3_N768_hord8_iadv1_dp1_t12}
 		\caption{$t=12$ days.\label{chp-adv2d-sec-exp-adv2-f}}
 	\end{subfigure}
 	\caption{Linear advection experiment using the velocity from Equation \eqref{chp-adv2d-vf1},
@@ -1048,47 +1048,50 @@ Figure \ref{chp-adv2d-sec-exp-adv3} illustrates the results obtained using two G
 from Equation \eqref{chp-adv2d-vf2}, similarly to Figure  \ref{chp-adv2d-sec-exp-adv2}.
 Again, the IC returns to its initial position after 12 days, allowing us to compute the error.
 
-We employ time steps $\Delta t^{(k)}=\frac{14400}{2^{k}}$ for 
-$k = 0, \ldots, 4$, to analyse the error convergence, 
-along with the spatial discretization as described at the beginning of Section \ref{sec-ds-exp},
-resulting in a CFL number approximately equal to 0.67.
 \begin{figure}[!htb]
 	\centering
-	\begin{subfigure}{0.25\textwidth}
+	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t2}
+		\includegraphics[width=1.25\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t2}
 		\caption{$t=2$ days.\label{chp-adv2d-sec-exp-adv3-a}}
 	\end{subfigure}
-	\begin{subfigure}{0.25\textwidth}
+	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t4}
+		\includegraphics[width=1.25\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t4}
 		\caption{$t=4$ days.\label{chp-adv2d-sec-exp-adv3-b}}
 	\end{subfigure}
-	\begin{subfigure}{0.25\textwidth}
+
+	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t6}
+		\includegraphics[width=1.25\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t6}
 		\caption{$t=6$ days.\label{chp-adv2d-sec-exp-adv3-c}}
-	\end{subfigure}
-	
-	\begin{subfigure}{0.25\textwidth}
+	\end{subfigure}	
+	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t8}
+		\includegraphics[width=1.25\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t8}
 		\caption{$t=8$ days.\label{chp-adv2d-sec-exp-adv3-d}}
 	\end{subfigure}
-	\begin{subfigure}{0.25\textwidth}
+
+	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t10}
+		\includegraphics[width=1.25\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t10}
 		\caption{$t=10$ days.\label{chp-adv2d-sec-exp-adv3-e}}
 	\end{subfigure}
-	\begin{subfigure}{0.25\textwidth}
+	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t12}
+		\includegraphics[width=1.25\linewidth]{adv2d_tc4_N768_hord8_iadv1_dp1_t12}
 		\caption{$t=12$ days.\label{chp-adv2d-sec-exp-adv3-f}}
 	\end{subfigure}
 	\caption{Similar to Figure \ref{chp-adv2d-sec-exp-adv2}
 		but using the wind from Equation \eqref{chp-adv2d-vf2}.
 		We are using the PL-DP1-MONO scheme, where MONO is the monotonic PPM.\label{chp-adv2d-sec-exp-adv3}}
 \end{figure}
+
+
+We employ time steps $\Delta t^{(k)}=\frac{14400}{2^{k}}$ for 
+$k = 0, \ldots, 4$, to analyse the error convergence, 
+along with the spatial discretization as described at the beginning of Section \ref{sec-ds-exp},
+resulting in a CFL number approximately equal to 0.67.
 
 We can observe from Figure \ref{chp-adv2d-sec-exp-adv3-error-linf} that for the unlimited PPM, PL-DP1 has the bigger error,
 while LT-DP2 has the smaller error and the highest convergence rate.
@@ -1097,10 +1100,9 @@ Regarding the error in $L_{1}$ norm (Figure \ref{chp-adv2d-sec-exp-adv3-error-l1
 LT-DP2 achieves second-order accuracy, while PL-DP1 achieves only first order.
 Finally, the schemes PL-DP2 and LT-DP1 have the same errors for both the unlimited and monotonic PPM, in both $L_{\infty}$ and $L_{1}$ norms.
 
-\newpage
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=1\linewidth]{adv2d_tc4_linf_error}
+	\includegraphics[width=0.8\linewidth]{adv2d_tc4_linf_error}
 	\caption{$L_{\infty}$ error for the two Gaussian hills (Equation \ref{chp-adv2d-ic2})
 			with the velocity from Equation \eqref{chp-adv2d-vf2}.
 			Schemes using the unlimited PPM (UNLIM) are on the left, and monotonic PPM (MONO) are on the right.
@@ -1110,7 +1112,7 @@ Finally, the schemes PL-DP2 and LT-DP1 have the same errors for both the unlimit
 
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=1\linewidth]{adv2d_tc4_l1_error}
+	\includegraphics[width=0.8\linewidth]{adv2d_tc4_l1_error}
 	\caption{Similar to Figure \ref{chp-adv2d-sec-exp-adv3-error-linf} but considering the $L_1$ error.
 		\label{chp-adv2d-sec-exp-adv3-error-l1}}
 \end{figure}
