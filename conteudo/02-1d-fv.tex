@@ -471,8 +471,8 @@ in terms of the departure point, avoiding the need for knowledge about $q$ over 
 entire interval $[t^n, t^{n+1}]$. This is described in Problem \ref{chp-adv1d-sec2-prob3}:
 \begin{prob}
     \label{chp-adv1d-sec2-prob3}
-	\textcolor{black}{Assume the framework of Problem \ref{chp-adv1d-sec2-prob2}.
-    It follows from Proposition \ref{chp-adv1d-sec-flux:prop1} that}:
+	Assume the framework of Problem \ref{chp-adv1d-sec2-prob2}.
+    It follows from Proposition \ref{chp-adv1d-sec-flux:prop1} that:
 \begin{equation}
 	\label{1d-fvslexact-scheme}
 	\begin{split}
@@ -615,15 +615,13 @@ One possible way of estimating the time-averaged wind is by using:
 	\tilde{u}^n_{i+\frac{1}{2}} = u^{n+\frac{1}{2}}_{i+\frac{1}{2}},
 \end{equation}
 as in FV3 papers \citep{lin:1996,putman:2007}.
-\textcolor{red}{The idea behind DP1 is illustrated in Figure \ref{dp1-fig}.}
+{The idea behind DP1 is illustrated in Figure \ref{dp1-fig}.}
 
 
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=.7\linewidth]{dp1}
-	\caption{
-		\textcolor{red}{
-		Illustration of the scheme DP1 for computing the departure point at time level $n$ emanating from $x_{i+\frac{1}{2}}$ (blue square) at time level $n+1$, assuming $u^{n+\frac{1}{2}}_{i+\frac{1}{2}}>0$. The winds used are denoted by blue circles. The estimated departure point $\tilde{x}_{i+\frac{1}{2}}^n$ is illustrated by a red circle. \label{dp1-fig}}}
+	\caption{Illustration of the scheme DP1 for computing the departure point at time level $n$ emanating from $x_{i+\frac{1}{2}}$ (blue square) at time level $n+1$, assuming $u^{n+\frac{1}{2}}_{i+\frac{1}{2}}>0$. The winds used are denoted by blue circles. The estimated departure point $\tilde{x}_{i+\frac{1}{2}}^n$ is illustrated by a red circle. \label{dp1-fig}}
 \end{figure}
 
 In this case, the time-averaged CFL is given by:
@@ -700,33 +698,30 @@ where $\frac{c_{i+\frac{1}{2}}^n}{2} = \alpha_{i+\frac{1}{2}}^n + k$,
 $k=\lfloor \frac{c_{i+\frac{1}{2}}^n}{2} \rfloor$, $\alpha_{i+\frac{1}{2}}^n \in [0,1[$, and $\lfloor \cdot \rfloor$ is
 the floor function. This scheme leads to a third-order error in the departure point estimate (\textit{cf.} \textit{e.g.} 
 \citet[Section 7.1.2]{durran:2010}).
-\textcolor{red}{
-This scheme shall be referred to as \textbf{DP2} and the idea behind this scheme is depicted in Figure \ref{dp2-fig}.}
+This scheme shall be referred to as \textbf{DP2} and the idea behind this scheme is depicted in Figure \ref{dp2-fig}.
 
 \begin{figure}[!htb]
 	\centering	
 	\begin{subfigure}{0.6\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{dp2-a}
-		\caption{\textcolor{red}{Intermediate departure point $\tilde{x}_{i+\frac{1}{2}}^{n+\frac{1}{2}}$ (orange circle). The winds used are depicted by blue circles.\label{dp2-fig-1}}}
+		\caption{Intermediate departure point $\tilde{x}_{i+\frac{1}{2}}^{n+\frac{1}{2}}$ (orange circle). The winds used are depicted by blue circles.\label{dp2-fig-1}}
 	\end{subfigure}
 	
 	\begin{subfigure}{0.6\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{dp2-b}
-		\caption{\textcolor{red}{Final departure point $\tilde{x}_{i+\frac{1}{2}}^n$ (red circle) using the wind $\tilde{u}_{i+\frac{1}{2}}^n$ (orange circle) obtained using linear interpolation using the winds at time level $n+\frac{1}{2}$ (blue circles). \label{dp2-fig-2}}}
+		\caption{Final departure point $\tilde{x}_{i+\frac{1}{2}}^n$ (red circle) using the wind $\tilde{u}_{i+\frac{1}{2}}^n$ (orange circle) obtained using linear interpolation using the winds at time level $n+\frac{1}{2}$ (blue circles). \label{dp2-fig-2}}
 	\end{subfigure}
-	\caption{
-		\textcolor{red}{
-			Illustration of the scheme DP2 for computing the departure point at time level $n$ emanating from $x_{i+\frac{1}{2}}$ (blue square) at time level $n+1$, assuming ${u}_{i+\frac{1}{2}}^n>0$.
-			The estimated departure point $\tilde{x}_{i+\frac{1}{2}}^n$ is illustrated by a red circle. \label{dp2-fig}}}
+	\caption{ Illustration of the scheme DP2 for computing the departure point at time level $n$ emanating from $x_{i+\frac{1}{2}}$ (blue square) at time level $n+1$, assuming ${u}_{i+\frac{1}{2}}^n>0$.
+			The estimated departure point $\tilde{x}_{i+\frac{1}{2}}^n$ is illustrated by a red circle. \label{dp2-fig}}
 \end{figure}
 
 
 As we mention in scheme DP1, we use the exact values of the wind needed at the time step $n+\frac{1}{2}$ and cell edge indexes $i+\frac{1}{2}$.
 Notice that for this scheme, we need ghost values for the velocity, depending on how large the CFL number is.
 In particular, if the CFL number is less than 2, then $k=0$ and we need the ghost values $u_{-1+\frac{1}{2}}^n$ and $u_{N+\frac{3}{2}}^n$.
-\textcolor{red}{If we consider large CFL numbers, more ghost cells are needed.}
+If we consider large CFL numbers, more ghost cells are needed.
 In this case, it useful to work with the time-averaged CFL number:
 \begin{equation}
 	\label{cfl-dp2}
@@ -916,10 +911,9 @@ The expression for the values of $q_{R,i}$ and $q_{L,i}$ are given by:
 	q_{L,i} = q_{i-\frac{1}{2}}.
 \end{align}
 During this work, we refer to this PPM scheme as \textbf{UNLIM}.
-\textcolor{black}{
 In FV3, the 1D advection solver input is named ``hord'' (horizontal advection method).
 We note that UNLIM is not implemented in FV3, but we implemented it because, since it has no limiter, it is suitable for checking order of accuracy for the schemes investigated in this work.
-For a list of reconstruction schemes available in FV3, refer to \citet{harris:2021}. One may see that the scheme hord=5 in FV3 is the closest to UNLIM, as hord=5 only applies a filter on the UNLIM flux to remove  2$\Delta x$ numerical noise}.
+For a list of reconstruction schemes available in FV3, refer to \citet{harris:2021}. One may see that the scheme hord=5 in FV3 is the closest to UNLIM, as hord=5 only applies a filter on the UNLIM flux to remove  2$\Delta x$ numerical noise.
 
 \subsection{Monotonic PPM reconstruction}
 \label{chp-adv1d-sec-hord8}
@@ -979,11 +973,9 @@ At last, we point out again that many other PPM reconstruction schemes are avail
 		\caption{Monotonic PPM reconstruction of the periodic Gaussian  hill (red curve).\label{recon-ppm-fig-mono}}
 	\end{subfigure}
 	\caption{
-	\textcolor{red}{
-    Illustration of the periodic Gaussian  hill from Equation \eqref{chp-adv1d-ic2} and its average values (a). The unlimited and monotonic PPM reconstructions are depicted in (b) and (c). We are considering $N=8$ control volumes, whose boundaries are illustrated using vertical dashed lines.\label{recon-ppm-fig}}}
+    Illustration of the periodic Gaussian  hill from Equation \eqref{chp-adv1d-ic2} and its average values (a). The unlimited and monotonic PPM reconstructions are depicted in (b) and (c). We are considering $N=8$ control volumes, whose boundaries are illustrated using vertical dashed lines.\label{recon-ppm-fig}}
 \end{figure}
 
-\textcolor{red}{
 To conclude this section, we illustrate the difference between the UNLIM and MONO reconstructions using a numerical experiment. 
 Following the approach in \citet{trefethen:2000}, we consider the periodic Gaussian profile defined as:
 \begin{equation}
@@ -993,7 +985,7 @@ Following the approach in \citet{trefethen:2000}, we consider the periodic Gauss
 where $L = \frac{\pi}{2} R$, and $R = 6.371 \times 10^{6}$ meters is the Earth's radius.
 Figure \ref{recon-ppm-fig} depicts the periodic Gaussian hill along with its average values (Figure \ref{recon-ppm-fig-av}) for $N=8$ control volumes,
 with unlimited (Figure \ref{recon-ppm-fig-unlim}) and monotonic (Figure \ref{recon-ppm-fig-mono}) reconstructions. 
-It is clear that the unlimited reconstruction (Figure \ref{recon-ppm-fig-unlim}) creates new extrema, which are not observed in the monotonic reconstruction (Figure \ref{recon-ppm-fig-mono}).}
+It is clear that the unlimited reconstruction (Figure \ref{recon-ppm-fig-unlim}) creates new extrema, which are not observed in the monotonic reconstruction (Figure \ref{recon-ppm-fig-mono}).
 
 \section{Flux}
 \label{chp-adv1d-sec-flux}
@@ -1221,7 +1213,7 @@ We are going to consider the velocity
 	u(x,t) = u_0\cos{\bigg(\frac{\pi t}{T}\bigg)}\cos^2\bigg(\pi \bigg(\frac{x}{L}-\frac{t}{T}\bigg)\bigg) + u_1.
 \end{equation}
 We adopt the parameters $T = 12$ days and  $u_0 = u_1 = \frac{L}{T}$.
-\textcolor{red}{We set the periodic Gaussian profile defined in Equation $\eqref{chp-adv1d-ic2}$ as the initial condition.}
+We set the periodic Gaussian profile defined in Equation $\eqref{chp-adv1d-ic2}$ as the initial condition.
 The velocity function given by Equation \eqref{chp-adv1d-vel2} is based
 on the deformational flow test case in \citet{nair:2010},
 where we add a constant wind $u_1$ to prevent error cancellations.
