@@ -57,8 +57,7 @@ to compute the fluid depth, kinetic energy, and absolute vorticity fluxes.
 We consider our scheme only to solve the continuity equation and the absolute vorticity fluxes.
 We observe that for the geostrophic balanced flow test case, our scheme helps to reduce the maximum error slightly.
 Additionally, we analyze the total runtime for each method at different grid resolutions, and we conclude that our scheme adds a very small extra cost.
-\textcolor{black}{
-Another major conclusion of this chapter is that the equiangular grid is less susceptible to numerical instability,
+{Another major conclusion of this chapter is that the equiangular grid is less susceptible to numerical instability,
 being able to perform better without the requirement of divergence damping.
 This was observed for both advection schemes.
 Finally, for the Rossby-Haurwitz wave test, the new scheme maintains the wave shape for 55-60 days, which is similar to the spectral model. The FV3 scheme, on the other hand, preserves the wave for approximately 95-100 days.}
@@ -72,8 +71,7 @@ Our modified advection scheme is slightly better for divergence-free flows in so
 We expect that our scheme would perform similarly to the current FV3 method in processes where there is small divergence/convergence of the wind, 
 and it should yield better results for processes where divergence plays a key role.
 
-\textcolor{red}{
-Horizontal wind divergence plays a pivotal role in many phenomena on the atmosphere such as in tropical cyclones, hurricanes and in the Intertropical Convergence Zone \citet{holton:2012}}.
+Horizontal wind divergence plays a pivotal role in many phenomena on the atmosphere such as in tropical cyclones, hurricanes and in the Intertropical Convergence Zone \citep{holton:2012}.
 For example, hurricanes are fueled by strong horizontal wind convergence at the Earth's surface, with strong horizontal wind divergence occurring at high altitudes.
 We could perform a study based on \citet{gao:2021}, where the authors investigated the impact of using different PPM schemes of FV3 on hurricane intensity prediction.
 Their study highlights how modifying the advection scheme may improve hurricane intensity prediction and affect the eyewall convection location.
