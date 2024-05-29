@@ -314,10 +314,12 @@ This grid is denoted by \textbf{g2}, for the same reason of the notation \textbf
 
 \subsection{Equi-edge cubed-sphere}
 \label{cs-equiedge}
-Another cubed-sphere mapping is the equi-edge proposed by
+Another cubed-sphere mapping is the equi-edge reported by
 \citet{chen:2021} using $\beta(x) = \sqrt{2}\tan{x}$ and
 $\alpha=\arcsin{\big(\frac{1}{\sqrt{3}}\big)}$.
-Figure \ref{chp-cs-equiedge} illustrates the equi-edge mapping.
+\textcolor{red}{ It is worth noting that while this mapping technique had been used previously
+in FV3, it was not formally documented until the work of \citet{chen:2021}.
+Figure \ref{chp-cs-equiedge} illustrates the equi-edge mapping.}
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.42\textwidth}
@@ -887,7 +889,7 @@ Recall that
 \begin{equation}
 \langle 	\boldsymbol{e}_x, \boldsymbol{e}_y \rangle(x,y,p) = \cos \alpha(x,y,p),
 \end{equation}
-where $\alpha(x,y,p)$ is the angle between and 	$\boldsymbol{e}_x$, $\boldsymbol{e}_y$, which
+where $\alpha(x,y,p)$ is the angle between $\boldsymbol{e}_x$ and $\boldsymbol{e}_y$, which
 is the formula implemented in FV3 following \citet{putman:2007}.
 We may express the normalized contravariant components in terms of 
 the normalized covariant terms inverting Equation \eqref{norm-contravariant-to-covariant}.
