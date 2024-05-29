@@ -1092,13 +1092,13 @@ At last, the errors without divergence damping on the equi-edge grid are not sho
 In Figure \ref{chp-advcs-sec-exp-sw-linf}, we show the convergence of the error in the $L_{\infty}$ for the fluid depth for all schemes and grids.
 The results on the equi-edge grid without divergence damping are not shown because the scheme becomes numerically unstable in this case.
 We can see that when using divergence damping, both the LT and PL schemes achieve second-order accuracy on both the equi-edge and equiangular grids.
-However, we can \textcolor{red}{see} that, when no divergence damping is employed, both schemes develop a very large error at a high resolution ($N=768$).
+However, we can see that, when no divergence damping is employed, both schemes develop a very large error at a high resolution ($N=768$).
 This result indicates that the equiangular grid may also develop numerical stability when there is divergence damping. 
 However, this result shows that the equiangular grid is much more resilient to numerical instabilities than the equi-edge grid.
 
 Finally, in Table \ref{sw-time}, we show the times needed by each scheme for different grids and values of $N$.
-\textcolor{red}{The results reflect the total execution time of the code on the ybytu machine from IME-USP (see Appendix \ref{anexo-code}), 
-with the total number of MPI processes fixed at 6 due to processor limitations.}
+The results reflect the total execution time of the code on the ybytu machine from IME-USP (see Appendix \ref{anexo-code}), 
+with the total number of MPI processes fixed at 6 due to processor limitations.
 It is clear that the LT scheme adds a very small cost, showing that this scheme does not degrade the computational performance of the shallow-water solver.
 
 \begin{table}[!h]
@@ -1114,8 +1114,8 @@ It is clear that the LT scheme adds a very small cost, showing that this scheme 
 	\end{tabular}
 	\caption{Total runtime for the LT and PL schemes using the equi-edge grid (g0) and the equiangular grid (g2) for different values of $N$.
 		The additional cost of the LT scheme is due to the computation of a second-order estimate of 1D departure points.
-	\textcolor{red}{These results are obtained on the ybytu machine (refer to Appendix \ref{anexo-code}), 
-	employing just one MPI process per cube face, resulting in a total of 6 MPI processes.}}
+	These results are obtained on the ybytu machine (refer to Appendix \ref{anexo-code}), 
+	employing just one MPI process per cube face, resulting in a total of 6 MPI processes.}
 \label{sw-time}
 \end{table}
 
@@ -1295,7 +1295,7 @@ Therefore, our goal in this test is to investigate the ability of the PL and LT 
 \end{figure}
 We ran this test for 100 days on the equi-edge and equiangular grids with $N=96$.
 When we did not employ divergence damping, the results of the equi-edge grid became unstable for both schemes before day 60.
-However, the equiangular grid could perform this test \textcolor{red}{without} divergence damping.
+However, the equiangular grid could perform this test without divergence damping.
 We show the wave shapes at days 60 and 65 in both schemes in Figure \ref{sw-rossby-h}, 
 for the PL scheme (Figures \ref{sw-rossby-h-d60-pl} and \ref{sw-rossby-h-d65-pl}) and 
 for the LT scheme (Figures \ref{sw-rossby-h-d60-lt} and \ref{sw-rossby-h-d65-lt}).
@@ -1373,19 +1373,17 @@ With divergence damping, both schemes are numerically stable on both grids.
 Additionally, we noticed that our scheme helps to slightly reduce the $L_{\infty}$ errors when the scheme is numerically stable.
 We analyzed the runtime and found that our advection scheme adds a very small additional computational burden.
 
-\textcolor{black}{
 We also analyzed the flow over a mountain test case and showed that our scheme yields very similar results to the current FV3 advection scheme.
 Since this test case does not have an exact solution known, we have used the semi-Lagrangian semi-implicit shallow-water model ENDGame, 
 which is used in the current operational UK Met Office dynamical core, as the reference solution.
 Additionally, the equiangular grid managed to run this test without divergence damping,
-while the equi-edge grid required divergence damping to run this test without creating large errors.}
+while the equi-edge grid required divergence damping to run this test without creating large errors.
 
-\textcolor{black}{
 The Rossby-Haurwitz wave test case was also investigated. 
 The goal of this test is to assess the ability of a scheme to propagate the wave to the east and maintain the shape of the wave. 
 However, this test is dynamically unstable and the wave eventually breaks. 
 We showed that our scheme keeps the wave for 55-60 days, while the FV3 scheme keeps the wave for 95-100 days. 
-Although we have reduced the wave breaking time, we pointed out that it is a little better than, for instance, the spectral model.}
+Although we have reduced the wave breaking time, we pointed out that it is a little better than, for instance, the spectral model.
 
 The goal of this chapter was to describe the shallow-water solver, demonstrate how our scheme may be used and compare the computational performance.
 However, a more comprehensive analysis of the shallow-water model using our scheme is certainly needed. 
