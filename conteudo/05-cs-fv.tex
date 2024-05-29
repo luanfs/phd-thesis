@@ -275,7 +275,6 @@ we introduce the following PPM flux in the $x$ direction (recall Equation \eqref
 \end{align}
 for each $j=-\nu+1, \ldots, N+\nu$ and $i=1, \ldots, N$, and
 where the PPM perturbation values $b^L$ and $b^R$ values are computed using the unlimited PPM (Section \ref{chp-adv1d-sec-hord0}) or the monotonic (Section \ref{chp-adv1d-sec-hord8}).
-\textcolor{black}{
 Recall that when using the mt1 scheme, we compute the flux for $\psi=\sqrt{\mathfrak{g}}q$.
 We point out that, in this case, the perturbation values
 (Equations \eqref{chp-sec-flux:numerical-flux6} and \eqref{chp-sec-flux:numerical-flux7})
@@ -290,7 +289,6 @@ where the edge values reconstruction values $q_{ij}^{R,x}$ and $q_{ij}^{L,x}$
 are computed using the UNLIM or MONO 1D PPM scheme in the $x$ and $y$ directions, respectively.
 Hence, when a monotonic filter is applied, it is applied only to the field $q$ instead of the field $\sqrt{\mathfrak{g}}q$,
 which is important to preserve monotonicity.
-}
 
 Therefore, we may rewrite Equation \eqref{1d-qx} as
 \begin{equation}
@@ -591,23 +589,23 @@ We shall made usage of the characteristic function $\chi_S$,  where $\chi_{S}(s)
 	\centering
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=0.9\linewidth]{h_tc-3_t0_alpha45_C384_g0_dg2_adv2_hord8_mf1_tf12}
+		\includegraphics[width=1\linewidth]{h_tc-3_t0_alpha45_C384_g0_dg2_adv2_hord8_mf1_tf12}
 		\caption{IC1. \label{chp5-ic1}}
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=0.9\linewidth]{h_tc1_t0_alpha45_C384_g0_dg2_adv2_hord8_mf1_tf12}
+		\includegraphics[width=1\linewidth]{h_tc1_t0_alpha45_C384_g0_dg2_adv2_hord8_mf1_tf12}
 		\caption{IC2. \label{chp5-ic2}}
 	\end{subfigure}
 
 	\begin{subfigure}{0.45\textwidth}
 	\centering
-	\includegraphics[width=0.9\linewidth]{h_tc-7_t0_alpha45_C192_g0_dg2_adv2_hord8_mf1_tf12}
+	\includegraphics[width=1\linewidth]{h_tc-7_t0_alpha45_C192_g0_dg2_adv2_hord8_mf1_tf12}
 	\caption{IC3. \label{chp5-ic3}}
     \end{subfigure}
     \begin{subfigure}{0.45\textwidth}
 	\centering
-	\includegraphics[width=0.9\linewidth]{h_tc-5_t0_alpha0_C384_g0_dg2_adv2_hord8_mf1_tf12}
+	\includegraphics[width=1\linewidth]{h_tc-5_t0_alpha0_C384_g0_dg2_adv2_hord8_mf1_tf12}
 	\caption{IC4. \label{chp5-ic4}}
     \end{subfigure}
 	\caption{ Illustration of the initial conditions considered in this chapter (Table \ref{chp5-tab1}).\label{chp5-ic}}
